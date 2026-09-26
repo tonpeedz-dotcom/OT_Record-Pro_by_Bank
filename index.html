@@ -42,6 +42,7 @@
             
             --danger: #ef4444; 
             --danger-track: #ff6b6b; 
+            --success: #10b981;
         }
 
         body {
@@ -144,6 +145,21 @@
         .sync-btn:active { transform: scale(0.95); }
         .sync-btn:hover { filter: brightness(0.95); }
 
+        .btn-add-cost {
+            background: var(--pastel-sky-blue);
+            color: var(--text);
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Kanit', sans-serif;
+            transition: all 0.2s;
+        }
+        .btn-add-cost:hover { filter: brightness(0.95); }
+        .btn-add-cost:active { transform: scale(0.95); }
+
         .export-btn {
             background: #10b981;
             color: white;
@@ -163,7 +179,7 @@
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9rem; }
         
-        input[type="number"], select {
+        input[type="number"], input[type="text"], select {
             width: 100%;
             padding: 12px;
             border: 1px solid var(--border);
@@ -246,6 +262,44 @@
             padding-right: 42px; 
         }
 
+        /* --- Fix Cost Styles --- */
+        .fix-cost-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .fix-cost-row input[type="text"] {
+            flex: 2;
+            padding: 9px 12px;
+            font-size: 0.95rem;
+        }
+        .fix-cost-row input[type="number"] {
+            flex: 1.3;
+            padding: 9px 12px;
+            font-size: 0.95rem;
+        }
+        .del-cost-btn {
+            background: #fee2e2;
+            color: var(--danger);
+            border: none;
+            width: 34px;
+            height: 38px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .del-cost-btn:hover {
+            background: #fca5a5;
+            color: white;
+        }
+
         /* --- Results Section --- */
         .results {
             background: #fdfdfd;
@@ -262,10 +316,10 @@
         }
 
         .result-row.total {
-            border-top: 1px solid var(--border);
+            border-top: 2px solid var(--border);
             padding-top: 10px;
             font-weight: 800;
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             color: var(--text);
         }
 
@@ -289,7 +343,7 @@
             cursor: pointer;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             font-family: 'Kanit', sans-serif;
-            display: none; /* ซ่อนปุ่ม Confirm เพราะเราทำ Auto Sync แล้ว */
+            display: none;
         }
 
         .calendar-grid {
@@ -451,15 +505,37 @@
 
     let calendarData = { 'my-ot': {}, 'forecast': {} };
     let currentEditTab = null;
-    let currentEditDay = null; // จะเก็บเป็นรูปแบบ YYYY-MM-DD
+    let currentEditDay = null; // YYYY-MM-DD
+
+    // รายการ Fix Cost เริ่มต้น (ตามตาราง 7 รายการ ยุบรวมค่างวดรถและ VAT)
+    const defaultFixCosts = [
+        { name: 'เงินกู้สหกรณ์ออมทรัพย์', amount: 11633.00 },
+        { name: 'กองทุนสำรองเลี้ยงชีพ (15%)', amount: 10639.50 },
+        { name: 'เงินเช่าซื้อรถยนต์ (รวม VAT)', amount: 6079.74 },
+        { name: 'ค่าหุ้นสหกรณ์ออมทรัพย์', amount: 3000.00 },
+        { name: 'ประกันสังคม', amount: 875.00 },
+        { name: 'ค่าฌาปนกิจ สหภาพ (Max)', amount: 380.00 },
+        { name: 'ค่าฌาปนกิจ บริษัท (Max)', amount: 170.00 }
+    ];
+    
+    let fixCostData = {
+        'my-ot': JSON.parse(JSON.stringify(defaultFixCosts)),
+        'forecast': JSON.parse(JSON.stringify(defaultFixCosts))
+    };
 
     document.addEventListener('DOMContentLoaded', () => {
         renderLayout('my-ot');
         renderLayout('forecast');
+        
+        loadFixCostData('my-ot');
+        loadFixCostData('forecast');
+        
         setupTab('my-ot');
         setupTab('forecast');
         
-        // เราจะไม่ใช้ข้อมูล Setup อันเก่าแล้ว เพราะจะคำนวณวันและเดือนอัตโนมัติ
+        renderFixCostList('my-ot');
+        renderFixCostList('forecast');
+
         restoreCalendar('my-ot');
         restoreCalendar('forecast');
         switchTab('my-ot');
@@ -472,7 +548,7 @@
             <div class="card">
                 <button class="reset-btn" onclick="resetData('${tabId}')">Reset All</button>
                 <h2>${title}</h2>
-                <div class="form-group"><label>Salary (THB)</label><input type="number" id="salary_${tabId}" placeholder="Enter Salary" oninput="calculate('${tabId}')"></div>
+                <div class="form-group"><label>Salary (THB)</label><input type="number" id="salary_${tabId}" placeholder="Enter Salary (e.g. 70930)" oninput="calculate('${tabId}')"></div>
                 <div class="date-row">
                     <div class="form-group" style="flex:1">
                         <label>Month</label>
@@ -490,7 +566,6 @@
                 <h3>OT Calendar Forecast</h3>
                 <p style="font-size:0.9rem; color:#6b7280;">(วันที่ของเดือนเปลี่ยนอัตโนมัติเมื่อเลือกเดือน/ปี)</p>
                 <div class="calendar-setup" style="display:none;">
-                    <!-- ซ่อนระบบตั้งค่าแบบ Manual แล้วให้โค้ดรัน Auto -->
                     <input type="hidden" id="calStartDay_${tabId}" value="0">
                     <input type="hidden" id="calTotalDays_${tabId}" value="31">
                     <button class="btn-confirm" onclick="generateCalendar('${tabId}')">Confirm & Generate</button>
@@ -505,6 +580,22 @@
 
             <div id="sliders_${tabId}" class="card"></div>
 
+            <!-- การ์ดระบบ Fix Cost -->
+            <div class="card" style="border-top: 4px solid var(--secondary);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <div>
+                        <h3 style="margin:0;">Fix Cost (รายจ่ายประจำ)</h3>
+                        <span style="font-size:0.8rem; color:#6b7280;">รายจ่ายคงที่ที่ต้องชำระทุกเดือน</span>
+                    </div>
+                    <button class="btn-add-cost" onclick="addFixCostItem('${tabId}')">+ เพิ่มรายการ</button>
+                </div>
+                <div id="fixCostList_${tabId}"></div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px; padding-top:10px; border-top: 1px dashed var(--border); font-weight:700;">
+                    <span>รวมรายจ่ายประจำ:</span>
+                    <span id="fixCostTotalCard_${tabId}" style="color:var(--danger); font-size:1.05rem;">0 THB</span>
+                </div>
+            </div>
+
             <div class="card" id="exportArea_${tabId}">
                 <h3>Final Summary</h3>
                 <div class="results">
@@ -514,7 +605,19 @@
                     <div class="result-row" style="border-top: 1px dashed #cbd5e1; padding-top: 8px;"><span>Fix: อาหารกลางวัน:</span> <span>${FIX_LUNCH_ALLOWANCE.toLocaleString('en-US')} THB</span></div>
                     <div class="result-row"><span>Fix: สถานที่:</span> <span>${FIX_LOCATION_ALLOWANCE.toLocaleString('en-US')} THB</span></div>
                     <div class="result-row" style="border-top: 1px dashed #cbd5e1; padding-top: 8px;"><span>Salary:</span> <span id="dispSalary_${tabId}">0 THB</span></div>
-                    <div class="result-row total"><span>Total Income:</span> <span id="totalIncome_${tabId}">0 THB</span></div>
+                    
+                    <div class="result-row" style="border-top: 1px solid #cbd5e1; padding-top: 8px; font-weight:700;">
+                        <span>Total Gross Income (รายรับรวม):</span>
+                        <span id="totalIncome_${tabId}">0 THB</span>
+                    </div>
+                    <div class="result-row" style="color: var(--danger); font-weight:600;">
+                        <span>Total Fix Cost (หักรายจ่ายประจำ):</span>
+                        <span id="dispFixCost_${tabId}">-0 THB</span>
+                    </div>
+                    <div class="result-row total">
+                        <span>Net Income (เงินคงเหลือสุทธิ):</span>
+                        <span id="netIncome_${tabId}" style="color: var(--success);">0 THB</span>
+                    </div>
                 </div>
                 <div style="margin-top:10px; font-size:0.85rem; color:#6b7280;"><strong>Rates per Hour:</strong><br><span id="rates_${tabId}"></span></div>
             </div>
@@ -550,6 +653,82 @@
         loadData(tabId);
     }
 
+    /* --- ฟังก์ชันจัดการ Fix Cost --- */
+    function renderFixCostList(tabId) {
+        const listEl = document.getElementById(`fixCostList_${tabId}`);
+        if (!listEl) return;
+        listEl.innerHTML = '';
+        
+        const list = fixCostData[tabId] || [];
+        if (list.length === 0) {
+            listEl.innerHTML = `<div style="text-align:center; color:#9ca3af; font-size:0.9rem; padding:10px 0;">ไม่มีรายการรายจ่ายประจำ กดปุ่ม '+ เพิ่มรายการ' ด้านบนได้เลยครับ</div>`;
+            return;
+        }
+
+        list.forEach((item, index) => {
+            const row = document.createElement('div');
+            row.className = 'fix-cost-row';
+            row.innerHTML = `
+                <input type="text" placeholder="ชื่อรายการ" value="${escapeHtml(item.name)}" oninput="updateFixCostItem('${tabId}', ${index}, 'name', this.value)">
+                <input type="number" placeholder="จำนวน (THB)" min="0" step="any" value="${item.amount > 0 ? item.amount : ''}" oninput="updateFixCostItem('${tabId}', ${index}, 'amount', this.value)">
+                <button type="button" class="del-cost-btn" onclick="removeFixCostItem('${tabId}', ${index})" title="ลบรายการ">✕</button>
+            `;
+            listEl.appendChild(row);
+        });
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#039;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function updateFixCostItem(tabId, index, field, value) {
+        if (!fixCostData[tabId] || !fixCostData[tabId][index]) return;
+        if (field === 'amount') {
+            fixCostData[tabId][index].amount = parseFloat(value) || 0;
+        } else {
+            fixCostData[tabId][index].name = value;
+        }
+        saveFixCostData(tabId);
+        calculate(tabId);
+    }
+
+    function addFixCostItem(tabId) {
+        if (!fixCostData[tabId]) fixCostData[tabId] = [];
+        fixCostData[tabId].push({ name: '', amount: 0 });
+        saveFixCostData(tabId);
+        renderFixCostList(tabId);
+        calculate(tabId);
+    }
+
+    function removeFixCostItem(tabId, index) {
+        if (!fixCostData[tabId]) return;
+        fixCostData[tabId].splice(index, 1);
+        saveFixCostData(tabId);
+        renderFixCostList(tabId);
+        calculate(tabId);
+    }
+
+    function getFixCostTotal(tabId) {
+        if (!fixCostData[tabId]) return 0;
+        return fixCostData[tabId].reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
+    }
+
+    function saveFixCostData(tabId) {
+        localStorage.setItem(`otPro_fix_cost_${tabId}`, JSON.stringify(fixCostData[tabId]));
+    }
+
+    function loadFixCostData(tabId) {
+        const saved = localStorage.getItem(`otPro_fix_cost_${tabId}`);
+        if (saved) {
+            try {
+                fixCostData[tabId] = JSON.parse(saved);
+            } catch(e) {
+                console.error("Could not parse fix cost data", e);
+            }
+        }
+    }
+
     function switchTab(tabId) {
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.content-area').forEach(c => c.classList.remove('active'));
@@ -562,7 +741,6 @@
         return ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].indexOf(monthStr) + 1;
     }
 
-    // ====== แก้ไขระบบสลับเดือน ให้รีเซ็ตปฏิทินแบบ Auto Align วันที่ ======
     function handleDateChange(tabId) {
         saveData(tabId);
         const monthStr = document.getElementById(`month_${tabId}`).value;
@@ -570,15 +748,12 @@
         const monthIndex = getMonthIndex(monthStr); 
         
         if (monthIndex > 0) {
-            // คำนวณจำนวนวันในเดือนนั้นๆ
             const daysInMonth = new Date(yearVal, monthIndex, 0).getDate();
-            // คำนวณว่าวันที่ 1 ตรงกับวันอะไร (0=Sun, 1=Mon, ..., 6=Sat)
             const startDay = new Date(yearVal, monthIndex - 1, 1).getDay();
             
             document.getElementById(`calTotalDays_${tabId}`).value = daysInMonth;
             document.getElementById(`calStartDay_${tabId}`).value = startDay;
             
-            // รีเฟรชปฏิทินเสมอเมื่อมีการเปลี่ยนเดือนหรือปี
             generateCalendar(tabId); 
         }
     }
@@ -608,13 +783,28 @@
 
         const calendarTotals = getCalendarTotals(tabId);
         const totalMealAllowance = calendarTotals.mealTotal;
-        const finalIncome = salary + totalMoney + totalMealAllowance + FIX_LUNCH_ALLOWANCE + FIX_LOCATION_ALLOWANCE;
+        const grossIncome = salary + totalMoney + totalMealAllowance + FIX_LUNCH_ALLOWANCE + FIX_LOCATION_ALLOWANCE;
+        
+        // คำนวณ Fix Cost และ Net Income
+        const totalFixCost = getFixCostTotal(tabId);
+        const netIncome = grossIncome - totalFixCost;
+
+        // อัปเดตแสดงผลในหน้าจอ
+        const fixCostCardDisp = document.getElementById(`fixCostTotalCard_${tabId}`);
+        if(fixCostCardDisp) fixCostCardDisp.innerText = totalFixCost.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' THB';
 
         document.getElementById(`totalHours_${tabId}`).innerText = totalHours + ' Hrs';
         document.getElementById(`totalMoney_${tabId}`).innerText = totalMoney.toLocaleString('en-US', {maximumFractionDigits:2}) + ' THB';
         document.getElementById(`totalMeal_${tabId}`).innerText = totalMealAllowance.toLocaleString('en-US') + ' THB';
         document.getElementById(`dispSalary_${tabId}`).innerText = salary.toLocaleString('en-US') + ' THB';
-        document.getElementById(`totalIncome_${tabId}`).innerText = finalIncome.toLocaleString('en-US', {maximumFractionDigits:2}) + ' THB';
+        
+        document.getElementById(`totalIncome_${tabId}`).innerText = grossIncome.toLocaleString('en-US', {maximumFractionDigits:2}) + ' THB';
+        document.getElementById(`dispFixCost_${tabId}`).innerText = '- ' + totalFixCost.toLocaleString('en-US', {maximumFractionDigits:2}) + ' THB';
+        
+        const netIncomeEl = document.getElementById(`netIncome_${tabId}`);
+        netIncomeEl.innerText = netIncome.toLocaleString('en-US', {maximumFractionDigits:2}) + ' THB';
+        netIncomeEl.style.color = netIncome < 0 ? 'var(--danger)' : 'var(--success)';
+
         document.getElementById(`rates_${tabId}`).innerHTML = rateText;
 
         saveData(tabId);
@@ -637,7 +827,6 @@
             : `linear-gradient(to right, ${tF} 0%, ${tF} ${pV}%, ${tE} ${pV}%, ${tE} 100%)`;
     }
 
-    // ====== แก้ไขการเข้าถึง Calendar Data โดยใช้ YYYY-MM-DD แทน Day แบบเก่า ======
     function getCalendarTotals(tabId) {
         let t15 = 0, t15l = 0, t20 = 0, t30 = 0, mealCountTotal = 0;
         const totalDays = parseInt(document.getElementById(`calTotalDays_${tabId}`)?.value || 31);
@@ -648,7 +837,6 @@
 
         if(calendarData[tabId]) {
             for(let d=1; d<=totalDays; d++) {
-                // สร้าง Key ของวันนั้นๆ เช่น "2026-07-01"
                 const dateKey = `${yearVal}-${monthStr}-${d.toString().padStart(2, '0')}`;
                 const dayData = calendarData[tabId][dateKey];
                 
@@ -681,7 +869,6 @@
         const monthIndex = getMonthIndex(document.getElementById(`month_${tabId}`).value);
         const monthStr = monthIndex.toString().padStart(2, '0');
 
-        // เติมช่องว่างด้านหน้าตาม Start Day (เพื่อให้วันที่ 1 เริ่มตรงกับวันบนหัวตาราง)
         for(let i=0; i<startDay; i++) {
             const cell = document.createElement('div');
             cell.className = 'cal-cell';
@@ -693,7 +880,6 @@
             const cell = document.createElement('div');
             cell.className = 'cal-cell';
             
-            // ใช้ dateKey สำหรับการดึงข้อมูลและทำไฮไลท์
             const dateKey = `${yearVal}-${monthStr}-${d.toString().padStart(2, '0')}`;
             
             let isHolidayByImage = false;
@@ -763,32 +949,33 @@
         content.style.padding = '0';
         
         wrapper.innerHTML = `
-            <h1 style="text-align:center; color: var(--primary-dark); font-size: 3.5rem; margin-bottom: 50px;">
-                สรุปผลตอบแทน (OT & Income)<br>ประจำเดือน ${monthStr} ${yearVal}
+            <h1 style="text-align:center; color: var(--primary-dark); font-size: 3.2rem; margin-bottom: 40px;">
+                สรุปผลตอบแทน & รายจ่าย (Income & Fix Cost)<br>ประจำเดือน ${monthStr} ${yearVal}
             </h1>
         `;
         
         const resultsDiv = content.querySelector('.results');
-        resultsDiv.style.fontSize = '2.5rem';
+        resultsDiv.style.fontSize = '2.2rem';
         resultsDiv.style.border = '3px solid #e5e7eb';
         resultsDiv.style.borderRadius = '16px';
         resultsDiv.style.padding = '40px';
         
         const rows = resultsDiv.querySelectorAll('.result-row');
         rows.forEach(r => {
-            r.style.marginBottom = '25px';
+            r.style.marginBottom = '20px';
             if (r.classList.contains('total')) {
-                r.style.fontSize = '3rem';
+                r.style.fontSize = '2.8rem';
                 r.style.borderTop = '3px solid #cbd5e1';
-                r.style.paddingTop = '30px';
+                r.style.paddingTop = '25px';
                 r.style.marginTop = '20px';
-                r.style.color = '#1f2937';
             }
         });
 
         const rateDiv = content.querySelector('div[style*="font-size"]');
-        rateDiv.style.fontSize = '2rem';
-        rateDiv.style.marginTop = '50px';
+        if (rateDiv) {
+            rateDiv.style.fontSize = '1.8rem';
+            rateDiv.style.marginTop = '40px';
+        }
 
         wrapper.appendChild(content);
         document.body.appendChild(wrapper);
@@ -805,16 +992,14 @@
     function generateCalendar(tabId) {
         const startDay = parseInt(document.getElementById(`calStartDay_${tabId}`).value);
         const totalDays = parseInt(document.getElementById(`calTotalDays_${tabId}`).value);
-        localStorage.setItem(`otCalculator_cal_setup_${tabId}`, JSON.stringify({startDay, totalDays}));
+        localStorage.setItem(`otPro_cal_setup_${tabId}`, JSON.stringify({startDay, totalDays}));
         renderCalendarGrid(tabId, startDay, totalDays);
         syncSlidersToCalendar(tabId); 
     }
     
     function restoreCalendar(tabId) {
-        const data = JSON.parse(localStorage.getItem(`otCalculator_cal_data_${tabId}`));
+        const data = JSON.parse(localStorage.getItem(`otPro_cal_data_${tabId}`));
         if(data) calendarData[tabId] = data;
-        
-        // บังคับอัพเดทค่าวันที่ใหม่เสมอแทนที่จะใช้ค่าเก่าที่เซฟไว้ตอนเปิดครั้งแรก
         handleDateChange(tabId);
     }
 
@@ -828,10 +1013,9 @@
         calculate(tabId);
     }
 
-    // Modal รับค่า dateKey (YYYY-MM-DD) มาด้วย
     function openDayModal(tabId, day, dateKey) {
         currentEditTab = tabId; 
-        currentEditDay = dateKey; // ล็อกเป้าหมายการแก้ไขเป็น YYYY-MM-DD
+        currentEditDay = dateKey;
 
         document.getElementById('modalTitle').innerText = `Forecast for ${dateKey}`;
         document.getElementById('dayModal').style.display = 'flex';
@@ -859,7 +1043,6 @@
         const isNoOT = document.getElementById('modalNoOT').checked, tabId = currentEditTab;
         if(!calendarData[tabId]) calendarData[tabId] = {};
         
-        // บันทึกโดยอิงจาก YYYY-MM-DD
         if(isNoOT) {
             calendarData[tabId][currentEditDay] = { noOT: true };
         } else {
@@ -872,8 +1055,8 @@
             };
         }
         
-        localStorage.setItem(`otCalculator_cal_data_${tabId}`, JSON.stringify(calendarData[tabId]));
-        generateCalendar(tabId); // รีเฟรชปฏิทิน
+        localStorage.setItem(`otPro_cal_data_${tabId}`, JSON.stringify(calendarData[tabId]));
+        generateCalendar(tabId);
         syncSlidersToCalendar(tabId);
         closeModal();
     }
@@ -889,7 +1072,7 @@
     }
 
     function saveData(tabId) {
-        const prefix = `otCalculator_${tabId}_`;
+        const prefix = `otPro_${tabId}_`;
         localStorage.setItem(prefix + 'salary', document.getElementById(`salary_${tabId}`).value);
         localStorage.setItem(prefix + 'month', document.getElementById(`month_${tabId}`).value);
         localStorage.setItem(prefix + 'year', document.getElementById(`year_${tabId}`).value);
@@ -901,7 +1084,7 @@
     }
 
     function loadData(tabId) {
-        const prefix = `otCalculator_${tabId}_`;
+        const prefix = `otPro_${tabId}_`;
         if(localStorage.getItem(prefix + 'salary')) document.getElementById(`salary_${tabId}`).value = localStorage.getItem(prefix + 'salary');
         if(localStorage.getItem(prefix + 'month')) document.getElementById(`month_${tabId}`).value = localStorage.getItem(prefix + 'month');
         if(localStorage.getItem(prefix + 'year')) document.getElementById(`year_${tabId}`).value = localStorage.getItem(prefix + 'year');
@@ -924,7 +1107,13 @@
         Object.keys(localStorage).forEach(key => { if(key.includes(`_${tabId}`)) localStorage.removeItem(key); });
         
         calendarData[tabId] = {};
-        handleDateChange(tabId); // รีบิลด์ปฏิทินให้สะอาด
+        
+        // คืนค่า Fix Cost เป็นค่าเริ่มต้น
+        fixCostData[tabId] = JSON.parse(JSON.stringify(defaultFixCosts));
+        localStorage.removeItem(`otPro_fix_cost_${tabId}`);
+        renderFixCostList(tabId);
+
+        handleDateChange(tabId);
         updateCalendarSummary(tabId);
         calculate(tabId);
     }
