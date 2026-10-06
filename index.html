@@ -629,7 +629,6 @@
 
     const MEAL_ALLOWANCE = 83;
     const FIX_LUNCH_ALLOWANCE = 1700;
-    const FIX_LOCATION_ALLOWANCE = 1300;
     const DEFAULT_SALARY = 50000;
     const DEFAULT_YEAR = 2026;
     const SLIDER_MAX_HOURS = 200;
@@ -672,6 +671,7 @@
     const STORAGE_PREFIX = 'otPro_';
     const STORAGE_KEYS = Object.freeze({
         salary:         (tabId) => `${STORAGE_PREFIX}${tabId}_salary`,
+        plant:          (tabId) => `${STORAGE_PREFIX}${tabId}_plant`,
         month:          (tabId) => `${STORAGE_PREFIX}${tabId}_month`,
         year:           (tabId) => `${STORAGE_PREFIX}${tabId}_year`,
         sliderHours:    (tabId, typeId) => `${STORAGE_PREFIX}${tabId}_hrs_${typeId}`,
@@ -920,9 +920,10 @@
 
     const saveFixCostData = (tabId) => storage.setJSON(STORAGE_KEYS.fixCosts(tabId), fixCostData[tabId]);
 
-    /** บันทึกค่าฟอร์มหลัก (เงินเดือน, เดือน, ปี, Slider) */
+    /** บันทึกค่าฟอร์มหลัก (เงินเดือน, โรงงาน, เดือน, ปี, Slider) */
     function saveData(tabId) {
         storage.setRaw(STORAGE_KEYS.salary(tabId), getTabElement('salary', tabId).value);
+        storage.setRaw(STORAGE_KEYS.plant(tabId), getTabElement('plant', tabId).value);
         storage.setRaw(STORAGE_KEYS.month(tabId), getTabElement('month', tabId).value);
         storage.setRaw(STORAGE_KEYS.year(tabId), getTabElement('year', tabId).value);
         OT_TYPES.forEach((type) => {
@@ -940,6 +941,9 @@
     function loadData(tabId) {
         const savedSalary = storage.getRaw(STORAGE_KEYS.salary(tabId));
         getTabElement('salary', tabId).value = savedSalary !== null ? savedSalary : DEFAULT_SALARY;
+
+        const savedPlant = storage.getRaw(STORAGE_KEYS.plant(tabId));
+        if (savedPlant === "1300" || savedPlant === "1700") getTabElement('plant', tabId).value = savedPlant;
 
         const savedMonth = storage.getRaw(STORAGE_KEYS.month(tabId));
         if (MONTH_NAMES.includes(savedMonth)) getTabElement('month', tabId).value = savedMonth;
@@ -987,10 +991,19 @@
             <div class="card">
                 <button type="button" class="reset-btn" data-action="reset" data-tab="${tabId}">Reset All</button>
                 <h2>${TAB_TITLES[tabId]}</h2>
-                <div class="form-group">
-                    <label for="salary_${tabId}">Salary (THB)</label>
-                    <input type="number" id="salary_${tabId}" min="0" inputmode="decimal" placeholder="Enter Salary (e.g. ${DEFAULT_SALARY})"
-                           data-action="recalculate" data-tab="${tabId}">
+                <div class="date-row">
+                    <div class="form-group form-group--grow">
+                        <label for="salary_${tabId}">Salary (THB)</label>
+                        <input type="number" id="salary_${tabId}" min="0" inputmode="decimal" placeholder="Enter Salary"
+                               data-action="recalculate" data-tab="${tabId}">
+                    </div>
+                    <div class="form-group form-group--grow">
+                        <label for="plant_${tabId}">Plant</label>
+                        <select id="plant_${tabId}" data-action="recalculate" data-tab="${tabId}">
+                            <option value="1300">BANPHO PLANT</option>
+                            <option value="1700">GATEWAY PLANT</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="date-row">
                     <div class="form-group form-group--grow">
@@ -1044,7 +1057,7 @@
                     <div class="result-row"><span>Total OT Pay:</span><span id="totalMoney_${tabId}">0 THB</span></div>
                     <div class="result-row"><span>Total Meal Allowance:</span><span id="totalMeal_${tabId}">0 THB</span></div>
                     <div class="result-row result-row--dashed"><span>Fix: อาหารกลางวัน:</span><span>${FIX_LUNCH_ALLOWANCE.toLocaleString('en-US')} THB</span></div>
-                    <div class="result-row"><span>Fix: สถานที่:</span><span>${FIX_LOCATION_ALLOWANCE.toLocaleString('en-US')} THB</span></div>
+                    <div class="result-row"><span>Fix: สถานที่:</span><span id="dispFixLocation_${tabId}">1,300 THB</span></div>
                     <div class="result-row result-row--dashed"><span>Salary:</span><span id="dispSalary_${tabId}">0 THB</span></div>
                     <div class="result-row result-row--subtotal"><span>Total Gross Income (รายรับรวม):</span><span id="totalIncome_${tabId}">0 THB</span></div>
                     <div class="result-row result-row--deduction"><span>Total Fix Cost (หักรายจ่ายประจำ):</span><span id="dispFixCost_${tabId}">-0 THB</span></div>
@@ -1197,6 +1210,7 @@
        ========================================================= */
     function calculate(tabId) {
         const salary = toFiniteNumber(getTabElement('salary', tabId).value);
+        const fixLocationAllowance = toFiniteNumber(getTabElement('plant', tabId).value);
         const hourlyRate = Math.round((salary * 3 / 500) * 10) / 10;
 
         let totalOtHours = 0;
@@ -1222,7 +1236,7 @@
         });
 
         const { mealTotal } = getCalendarTotals(tabId);
-        const grossIncome = salary + totalOtPay + mealTotal + FIX_LUNCH_ALLOWANCE + FIX_LOCATION_ALLOWANCE;
+        const grossIncome = salary + totalOtPay + mealTotal + FIX_LUNCH_ALLOWANCE + fixLocationAllowance;
         const totalFixCost = getFixCostTotal(tabId);
         const netIncome = grossIncome - totalFixCost;
 
@@ -1231,6 +1245,7 @@
         getTabElement('totalMoney', tabId).textContent = `${formatUpTo2(totalOtPay)} THB`;
         getTabElement('totalMeal', tabId).textContent = `${formatUpTo2(mealTotal)} THB`;
         getTabElement('dispSalary', tabId).textContent = `${formatUpTo2(salary)} THB`;
+        getTabElement('dispFixLocation', tabId).textContent = `${formatUpTo2(fixLocationAllowance)} THB`;
         getTabElement('totalIncome', tabId).textContent = `${formatUpTo2(grossIncome)} THB`;
         getTabElement('dispFixCost', tabId).textContent = `- ${formatUpTo2(totalFixCost)} THB`;
 
@@ -1380,6 +1395,7 @@
         calendarData[tabId] = {};
         fixCostData[tabId] = cloneDefaultFixCosts();
         getTabElement('salary', tabId).value = DEFAULT_SALARY;
+        getTabElement('plant', tabId).value = "1300"; // Reset โรงงานกลับเป็น 1300
 
         renderFixCostList(tabId);
         handleDateChange(tabId); // วาดปฏิทินใหม่ + sync slider เป็น 0 + คำนวณ + บันทึก
@@ -1495,6 +1511,7 @@
     function handleAppChange(event) {
         const { action, tab: tabId } = event.target.dataset;
         if (action === 'change-period') handleDateChange(tabId);
+        else if (action === 'recalculate') calculate(tabId);
     }
 
     function handleAppKeydown(event) {
