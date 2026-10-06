@@ -4,21 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>OT Calculator ProMax</title>
-
     <meta name="theme-color" content="#CDB4DB">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="application-name" content="OT Manager">
 
-    <!-- นำเข้า Font Kanit ให้ดูน่ารัก สบายตา -->
+    <!-- Font: Kanit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- นำเข้า html2canvas สำหรับ Export Report -->
+
+    <!-- html2canvas: ใช้สำหรับ Export Report เป็น JPEG -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
-        /* --- Pastel Dreamland Adventure Palette --- */
+        /* =========================================================
+           1. DESIGN TOKENS — Pastel Dreamland Adventure Palette
+           ========================================================= */
         :root {
             --pastel-pink-orchid: #CDB4DB;
             --pastel-petal: #FFC8DD;
@@ -26,94 +27,119 @@
             --pastel-icy-blue: #BDE0FE;
             --pastel-sky-blue: #A2D2FF;
 
-            /* Functional Mapping */
+            /* Functional mapping */
             --primary: var(--pastel-pink-orchid);
             --primary-dark: #b392c6;
             --secondary: var(--pastel-sky-blue);
             --accent: var(--pastel-blush-pop);
-            
-            --weekend: var(--pastel-petal); 
-            --weekend-dark: var(--pastel-blush-pop); 
-            
-            --bg: #f8fafc; 
+            --weekend: var(--pastel-petal);
+            --weekend-dark: var(--pastel-blush-pop);
+            --bg: #f8fafc;
             --card: #ffffff;
-            --text: #1f2937; 
+            --text: #1f2937;
+            --text-muted: #6b7280;
+            --text-subtle: #9ca3af;
             --border: #e5e7eb;
-            
-            --danger: #ef4444; 
-            --danger-track: #ff6b6b; 
+            --divider: #cbd5e1;
+            --danger: #ef4444;
+            --danger-track: #ff6b6b;
             --success: #10b981;
+            --meal-bg: #fcd34d;
+            --meal-text: #92400e;
         }
 
+        /* =========================================================
+           2. BASE
+           ========================================================= */
         body {
             font-family: 'Kanit', sans-serif;
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
-            padding: 0;
-            padding-bottom: 40px;
+            padding: 0 0 40px;
             overscroll-behavior-y: none;
         }
 
-        /* --- Header & Tabs --- */
+        h2, h3 { margin-top: 0; color: var(--text); }
+
+        button { font-family: 'Kanit', sans-serif; }
+
+        /* =========================================================
+           3. HEADER & TABS
+           ========================================================= */
         .header {
             background: var(--primary);
             color: var(--text);
             padding: 15px;
             padding-top: calc(15px + env(safe-area-inset-top));
             text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             position: sticky;
             top: 0;
             z-index: 100;
         }
+        .header h3 { margin: 0; }
 
         .tab-container {
             display: flex;
             background: white;
             border-bottom: 1px solid var(--border);
         }
-
         .tab {
             flex: 1;
             padding: 15px;
             text-align: center;
             cursor: pointer;
             font-weight: 600;
+            font-size: 1rem;
             transition: all 0.2s;
+            background: transparent;
+            border: none;
             border-bottom: 3px solid transparent;
             color: #4b5563;
         }
-
         .tab.active {
             border-bottom-color: var(--secondary);
             color: var(--text);
             background: #f4f9ff;
         }
 
-        /* --- Content Layout --- */
+        /* =========================================================
+           4. LAYOUT & CARDS
+           ========================================================= */
         .content-area {
             display: none;
             padding: 15px;
             max-width: 600px;
             margin: 0 auto;
         }
-
-        .content-area.active {
-            display: block;
-        }
+        .content-area.active { display: block; }
 
         .card {
             background: var(--card);
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
-            border: 1px solid rgba(0,0,0,0.02);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(0, 0, 0, 0.02);
         }
+        .card--accent-primary { border-top: 4px solid var(--primary); }
+        .card--accent-secondary { border-top: 4px solid var(--secondary); }
 
-        h2, h3 { margin-top: 0; color: var(--text); }
-        
+        .card-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .card-header-row h3 { margin: 0; }
+
+        .muted-text { font-size: 0.9rem; color: var(--text-muted); }
+        .muted-caption { font-size: 0.8rem; color: var(--text-muted); }
+
+        /* =========================================================
+           5. BUTTONS
+           ========================================================= */
         .reset-btn {
             background: var(--danger);
             color: white;
@@ -125,9 +151,7 @@
             float: right;
             cursor: pointer;
             box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
-            font-family: 'Kanit', sans-serif;
         }
-
         .sync-btn {
             background: var(--accent);
             color: var(--text);
@@ -138,13 +162,8 @@
             font-weight: 600;
             cursor: pointer;
             transition: transform 0.1s, filter 0.2s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            font-family: 'Kanit', sans-serif;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
-        
-        .sync-btn:active { transform: scale(0.95); }
-        .sync-btn:hover { filter: brightness(0.95); }
-
         .btn-add-cost {
             background: var(--pastel-sky-blue);
             color: var(--text);
@@ -154,14 +173,13 @@
             font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
-            font-family: 'Kanit', sans-serif;
             transition: all 0.2s;
         }
-        .btn-add-cost:hover { filter: brightness(0.95); }
-        .btn-add-cost:active { transform: scale(0.95); }
+        .sync-btn:hover, .btn-add-cost:hover { filter: brightness(0.95); }
+        .sync-btn:active, .btn-add-cost:active { transform: scale(0.95); }
 
         .export-btn {
-            background: #10b981;
+            background: var(--success);
             color: white;
             border: none;
             padding: 12px;
@@ -172,13 +190,16 @@
             cursor: pointer;
             margin-top: 15px;
             box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
-            font-family: 'Kanit', sans-serif;
         }
+        .export-btn:disabled { opacity: 0.6; cursor: progress; }
 
-        /* --- Form Elements --- */
+        /* =========================================================
+           6. FORM ELEMENTS
+           ========================================================= */
         .form-group { margin-bottom: 15px; }
+        .form-group--grow { flex: 1; }
         label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9rem; }
-        
+
         input[type="number"], input[type="text"], select {
             width: 100%;
             padding: 12px;
@@ -190,40 +211,41 @@
             color: var(--text);
             font-family: 'Kanit', sans-serif;
         }
-
         .date-row { display: flex; gap: 10px; }
 
-        /* --- Slider Controls --- */
+        /* =========================================================
+           7. SLIDERS
+           ========================================================= */
         .slider-container {
             margin-bottom: 25px;
             padding-bottom: 15px;
             border-bottom: 1px solid var(--border);
         }
-
         .slider-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 8px;
         }
-
-        .slider-controls {
-            display: flex;
-            align-items: center;
-            gap: 5px;
+        .slider-hours {
+            font-weight: 800;
+            color: var(--text);
+            transition: color 0.2s;
         }
+        .slider-hours.is-diverged { color: var(--danger); }
+
+        .slider-controls { display: flex; align-items: center; gap: 5px; }
 
         input[type="range"] {
             -webkit-appearance: none;
             appearance: none;
             flex-grow: 1;
             height: 8px;
-            background: #e5e7eb;
+            background: var(--border);
             border-radius: 4px;
             outline: none;
             margin: 0 10px;
         }
-
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
@@ -233,9 +255,8 @@
             border: 3px solid var(--secondary);
             border-radius: 50%;
             cursor: pointer;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
-
         .adj-btn {
             background: var(--secondary);
             color: var(--text);
@@ -250,35 +271,37 @@
             justify-content: center;
             cursor: pointer;
             flex-shrink: 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
-        
         .money-display {
             font-size: 0.95rem;
             color: var(--primary-dark);
             font-weight: 700;
             text-align: right;
             margin-top: 6px;
-            padding-right: 42px; 
+            padding-right: 42px;
         }
 
-        /* --- Fix Cost Styles --- */
+        /* =========================================================
+           8. FIX COST
+           ========================================================= */
+        .fix-cost-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .fix-cost-header h3 { margin: 0; }
+
         .fix-cost-row {
             display: flex;
             gap: 8px;
             align-items: center;
             margin-bottom: 10px;
         }
-        .fix-cost-row input[type="text"] {
-            flex: 2;
-            padding: 9px 12px;
-            font-size: 0.95rem;
-        }
-        .fix-cost-row input[type="number"] {
-            flex: 1.3;
-            padding: 9px 12px;
-            font-size: 0.95rem;
-        }
+        .fix-cost-row input[type="text"] { flex: 2; padding: 9px 12px; font-size: 0.95rem; }
+        .fix-cost-row input[type="number"] { flex: 1.3; padding: 9px 12px; font-size: 0.95rem; }
+
         .del-cost-btn {
             background: #fee2e2;
             color: var(--danger);
@@ -295,26 +318,44 @@
             transition: all 0.2s;
             flex-shrink: 0;
         }
-        .del-cost-btn:hover {
-            background: #fca5a5;
-            color: white;
+        .del-cost-btn:hover { background: #fca5a5; color: white; }
+
+        .fix-cost-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--border);
+            font-weight: 700;
+        }
+        .fix-cost-total { color: var(--danger); font-size: 1.05rem; }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-subtle);
+            font-size: 0.9rem;
+            padding: 10px 0;
         }
 
-        /* --- Results Section --- */
+        /* =========================================================
+           9. RESULTS / FINAL SUMMARY
+           ========================================================= */
         .results {
             background: #fdfdfd;
             border: 1px solid var(--border);
             border-radius: 8px;
             padding: 15px;
         }
-
         .result-row {
             display: flex;
             justify-content: space-between;
             margin-bottom: 8px;
             font-size: 0.95rem;
         }
-
+        .result-row--dashed { border-top: 1px dashed var(--divider); padding-top: 8px; }
+        .result-row--subtotal { border-top: 1px solid var(--divider); padding-top: 8px; font-weight: 700; }
+        .result-row--deduction { color: var(--danger); font-weight: 600; }
         .result-row.total {
             border-top: 2px solid var(--border);
             padding-top: 10px;
@@ -322,47 +363,32 @@
             font-size: 1.15rem;
             color: var(--text);
         }
+        .net-income { color: var(--success); }
+        .net-income.is-negative { color: var(--danger); }
 
-        /* --- CALENDAR SECTION --- */
-        .calendar-setup {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
+        .rates-note { margin-top: 10px; font-size: 0.85rem; color: var(--text-muted); }
 
-        .btn-confirm {
-            grid-column: span 2;
-            background: var(--secondary);
-            color: var(--text);
-            font-weight: 600;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 1rem;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            font-family: 'Kanit', sans-serif;
-            display: none;
-        }
-
+        /* =========================================================
+           10. CALENDAR
+           ========================================================= */
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             gap: 4px;
-            margin-top: 15px;
         }
+        .calendar-grid--header { margin-top: 15px; }
+        .calendar-grid--body { margin-top: 0; }
 
         .cal-header {
             text-align: center;
             font-weight: bold;
             font-size: 0.8rem;
             padding: 5px 0;
-            color: #6b7280;
+            color: var(--text-muted);
         }
 
         .cal-cell {
-            min-height: 85px; 
+            min-height: 85px;
             border: 1px solid var(--border);
             border-radius: 6px;
             display: flex;
@@ -377,18 +403,35 @@
             position: relative;
             transition: background 0.2s;
             overflow-y: auto;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
-
         .cal-cell::-webkit-scrollbar { display: none; }
-        .cal-cell { -ms-overflow-style: none; scrollbar-width: none; }
-
+        .cal-cell:active { transform: scale(0.95); }
+        .cal-cell:focus-visible { outline: 2px solid var(--primary-dark); outline-offset: 1px; }
         .cal-cell.weekend {
             background-color: var(--weekend);
             border-color: var(--weekend-dark);
         }
+        .cal-cell--placeholder {
+            background: #f3f4f6;
+            cursor: default;
+        }
+        .cal-cell--placeholder:active { transform: none; }
 
-        .cal-cell:active { transform: scale(0.95); }
-        
+        .cal-day-number { font-weight: bold; }
+
+        /* 📝 ไอคอนแสดงว่าวันนั้นมีบันทึกรายละเอียดงาน */
+        .cal-note-icon {
+            position: absolute;
+            top: 2px;
+            right: 3px;
+            font-size: 0.75rem;
+            line-height: 1;
+            opacity: 0.85;
+            pointer-events: none;
+        }
+
         .meal-badge, .ot-indicator {
             font-size: 0.55rem;
             border-radius: 3px;
@@ -399,12 +442,11 @@
             white-space: nowrap;
             font-weight: 600;
         }
-
-        .meal-badge { background: #fcd34d; color: #92400e; }
+        .meal-badge { background: var(--meal-bg); color: var(--meal-text); }
         .ot-indicator { color: var(--text); }
         .ot-indicator.breakdown { background: var(--secondary); }
         .ot-indicator.sum { background: var(--primary); font-weight: 800; margin-top: 4px; }
-        .ot-indicator.no-ot { background: #e5e7eb; color: #4b5563; }
+        .ot-indicator.no-ot { background: var(--border); color: #4b5563; }
 
         .cal-summary {
             margin-top: 15px;
@@ -414,101 +456,209 @@
             border-radius: 8px;
             font-size: 0.9rem;
         }
+        .cal-summary__meal { color: var(--meal-text); font-weight: 600; font-size: 0.85rem; }
 
-        /* --- MODAL --- */
+        /* =========================================================
+           11. MODAL
+           ========================================================= */
         .modal-overlay {
             display: none;
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            inset: 0;
             background: rgba(31, 41, 55, 0.6);
             z-index: 1000;
             justify-content: center;
             align-items: center;
         }
-        
+        .modal-overlay.is-open { display: flex; }
+
         .modal {
             background: white;
             padding: 20px;
             border-radius: 12px;
             width: 85%;
             max-width: 350px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
+        .modal-noot-row { text-align: center; }
+        .modal-noot-row label { display: inline; }
+
+        .modal-ot-fields {
+            border: 0;
+            margin: 0;
+            padding: 0;
+            min-width: 0;
+            transition: opacity 0.2s;
+        }
+        .modal-ot-fields:disabled { opacity: 0.3; }
 
         .modal-input-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .modal-input-row label { width: 40%; margin: 0; }
         .modal-input-row input { width: 55%; }
 
+        /* ช่อง "รายละเอียดงาน" — แสดงเต็มความกว้าง และยังแก้ไขได้แม้ติ๊ก No OT */
+        .modal-detail-row {
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 1px dashed var(--border);
+        }
+        .modal-detail-row label { margin-bottom: 6px; }
+        .modal-detail-row input { width: 100%; }
+
         .modal-btns { display: flex; gap: 10px; margin-top: 20px; }
-        .btn-save { background: var(--secondary); color: var(--text); font-weight: bold; flex: 1; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-family: 'Kanit';}
-        .btn-cancel { background: #e5e7eb; color: var(--text); font-weight: bold; flex: 1; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-family: 'Kanit';}
+        .btn-save, .btn-cancel {
+            color: var(--text);
+            font-weight: bold;
+            flex: 1;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+        .btn-save { background: var(--secondary); }
+        .btn-cancel { background: var(--border); }
+
+        /* =========================================================
+           12. EXPORT SHEET (A3 @ 1123 x 1587 px, render off-screen)
+           ========================================================= */
+        .export-sheet {
+            position: absolute;
+            left: -9999px;
+            top: 0;
+            width: 1123px;
+            height: 1587px;
+            background: #ffffff;
+            padding: 80px;
+            box-sizing: border-box;
+            font-family: 'Kanit', sans-serif;
+        }
+        .export-title {
+            text-align: center;
+            color: var(--primary-dark);
+            font-size: 3.2rem;
+            margin-bottom: 40px;
+        }
+        .export-sheet .export-card { box-shadow: none; border: none; padding: 0; }
+        .export-sheet .results {
+            font-size: 2.2rem;
+            border: 3px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+        }
+        .export-sheet .result-row { font-size: inherit; margin-bottom: 20px; }
+        .export-sheet .result-row.total {
+            font-size: 2.8rem;
+            border-top: 3px solid var(--divider);
+            padding-top: 25px;
+            margin-top: 20px;
+        }
+        .export-sheet .rates-note { font-size: 1.8rem; margin-top: 40px; }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <h3 style="margin:0;">OT Calculator ProMax by AJ'Bank</h3>
-</div>
+<header class="header">
+    <h3>OT Calculator ProMax by AJ'Bank</h3>
+</header>
 
-<div class="tab-container">
-    <div class="tab active" onclick="switchTab('my-ot')">My OT</div>
-    <div class="tab" onclick="switchTab('forecast')">Forecast / Other</div>
-</div>
+<nav class="tab-container" role="tablist">
+    <button type="button" class="tab active" role="tab" data-tab-target="my-ot">My OT</button>
+    <button type="button" class="tab" role="tab" data-tab-target="forecast">Forecast / Other</button>
+</nav>
 
-<div id="app-content"></div>
+<main id="app-content"></main>
 
-<div id="dayModal" class="modal-overlay">
-    <div class="modal">
+<!-- ===================== Day Edit Modal ===================== -->
+<div id="dayModal" class="modal-overlay" aria-hidden="true">
+    <form id="dayModalForm" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" novalidate>
         <h3 id="modalTitle">Edit Day X</h3>
-        <div class="form-group" style="text-align:center;">
-             <input type="checkbox" id="modalNoOT" onchange="toggleNoOT()"> <label style="display:inline;" for="modalNoOT">No OT (0 Hour)</label>
+
+        <div class="form-group modal-noot-row">
+            <input type="checkbox" id="modalNoOT">
+            <label for="modalNoOT">No OT (0 Hour)</label>
         </div>
-        <div id="modalInputs">
-            <div class="modal-input-row"><label>1.5x</label><input type="number" step="0.5" id="in_1_5"></div>
-            <div class="modal-input-row"><label>1.5x Lunch</label><input type="number" step="0.5" id="in_1_5l"></div>
-            <div class="modal-input-row"><label>2.0x</label><input type="number" step="0.5" id="in_2_0"></div>
-            <div class="modal-input-row"><label>3.0x</label><input type="number" step="0.5" id="in_3_0"></div>
+
+        <fieldset id="modalInputs" class="modal-ot-fields">
+            <div class="modal-input-row"><label for="in_1_5">1.5x</label><input type="number" min="0" step="0.5" inputmode="decimal" id="in_1_5"></div>
+            <div class="modal-input-row"><label for="in_1_5l">1.5x Lunch</label><input type="number" min="0" step="0.5" inputmode="decimal" id="in_1_5l"></div>
+            <div class="modal-input-row"><label for="in_2_0">2.0x</label><input type="number" min="0" step="0.5" inputmode="decimal" id="in_2_0"></div>
+            <div class="modal-input-row"><label for="in_3_0">3.0x</label><input type="number" min="0" step="0.5" inputmode="decimal" id="in_3_0"></div>
+        </fieldset>
+
+        <div class="modal-detail-row">
+            <label for="in_detail">📝 Detail (รายละเอียดงาน)</label>
+            <input type="text" id="in_detail" maxlength="200" autocomplete="off" placeholder="เช่น ปรับตั้งเครื่อง Line A / ซ่อม Jig">
         </div>
+
         <div class="modal-btns">
-            <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-            <button class="btn-save" onclick="saveDayData()">Save</button>
+            <button type="button" class="btn-cancel" id="modalCancelBtn">Cancel</button>
+            <button type="submit" class="btn-save">Save</button>
         </div>
-    </div>
+    </form>
 </div>
 
 <script>
-    // --- Configuration ---
-    const otTypes = [
-        { id: '1.5x', dataKey: '1.5', label: '1.5x Overtime', mult: 1.5 },
-        { id: '1.5xl', dataKey: '1.5l', label: '1.5x Lunch', mult: 1.5 },
-        { id: '2.0x', dataKey: '2.0', label: '2.0x Holiday', mult: 2.0 },
-        { id: '3.0x', dataKey: '3.0', label: '3.0x Special', mult: 3.0 }
-    ];
-    const MEAL_ALLOWANCE = 83; 
+(() => {
+    'use strict';
+
+    /* =========================================================
+       1. CONFIGURATION
+       ========================================================= */
+    const TAB_IDS = Object.freeze(['my-ot', 'forecast']);
+    const TAB_TITLES = Object.freeze({ 'my-ot': 'My Calculations', 'forecast': 'Forecast / Others' });
+
+    /**
+     * ประเภท OT ทั้งหมด — เป็น Single Source of Truth ของทั้งแอป
+     * dataKey      : key ที่ใช้เก็บใน calendarData (ห้ามเปลี่ยน เพื่อให้เข้ากันกับข้อมูลเดิม)
+     * id           : ใช้ประกอบ element id และ localStorage key ของ slider (ห้ามเปลี่ยน)
+     * modalInputId : id ของ input ใน #dayModal
+     */
+    const OT_TYPES = Object.freeze([
+        { id: '1.5x',  dataKey: '1.5',  label: '1.5x Overtime', cellLabel: '1.5',  summaryLabel: '1.5x',        modalInputId: 'in_1_5',  multiplier: 1.5 },
+        { id: '1.5xl', dataKey: '1.5l', label: '1.5x Lunch',    cellLabel: '1.5l', summaryLabel: '1.5x(Lunch)', modalInputId: 'in_1_5l', multiplier: 1.5 },
+        { id: '2.0x',  dataKey: '2.0',  label: '2.0x Holiday',  cellLabel: '2.0',  summaryLabel: '2.0x',        modalInputId: 'in_2_0',  multiplier: 2.0 },
+        { id: '3.0x',  dataKey: '3.0',  label: '3.0x Special',  cellLabel: '3.0',  summaryLabel: '3.0x',        modalInputId: 'in_3_0',  multiplier: 3.0 }
+    ]);
+
+    const MONTH_NAMES = Object.freeze([
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ]);
+    const WEEKDAY_LABELS = Object.freeze(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']);
+
+    const MEAL_ALLOWANCE = 83;
     const FIX_LUNCH_ALLOWANCE = 1700;
     const FIX_LOCATION_ALLOWANCE = 1300;
+    const DEFAULT_SALARY = 50000;
+    const DEFAULT_YEAR = 2026;
+    const SLIDER_MAX_HOURS = 200;
+    const SLIDER_STEP_HOURS = 0.5;
+    const DETAIL_MAX_LENGTH = 200;
 
-    const holidays2026 = {
-        1: [1,2,3,4,10,11,18,24,25,31],
-        2: [1,7,8,14,15,21,22,28],
-        3: [1,2,3,7,8,14,15,21,22,28,29],
-        4: [4,5,11,12,13,14,15,16,17,18,19,25,26],
-        5: [1,2,3,4,9,10,16,17,23,24,30,31],
-        6: [1,2,3,6,7,13,14,20,21,27,28],
-        7: [4,5,11,12,18,19,25,26,27,28,29],
-        8: [1,2,8,9,12,15,16,22,23,29,30],
-        9: [5,6,12,13,19,20,26,27],
-        10: [3,4,10,11,12,13,18,19,23,24,25,31],
-        11: [1,7,8,14,15,21,22,28,29],
-        12: [5,6,7,10,12,13,19,20,26,27,28,29,30,31]
-    };
+    /** เงื่อนไขค่าอาหาร OT: 1.5x (รวม Lunch) >= 1 ชม. หรือ 2.0x / 3.0x >= 8 ชม. */
+    const MEAL_RULE = Object.freeze({ minWeekdayOtHours: 1.0, minHolidayOtHours: 8.0 });
 
-    let calendarData = { 'my-ot': {}, 'forecast': {} };
-    let currentEditTab = null;
-    let currentEditDay = null; // YYYY-MM-DD
+    /** วันหยุดบริษัท แยกตามปี → เดือน (1-12) → วันที่ */
+    const COMPANY_HOLIDAYS = Object.freeze({
+        2026: {
+            1:  [1, 2, 3, 4, 10, 11, 18, 24, 25, 31],
+            2:  [1, 7, 8, 14, 15, 21, 22, 28],
+            3:  [1, 2, 3, 7, 8, 14, 15, 21, 22, 28, 29],
+            4:  [4, 5, 11, 12, 13, 14, 15, 16, 17, 18, 19, 25, 26],
+            5:  [1, 2, 3, 4, 9, 10, 16, 17, 23, 24, 30, 31],
+            6:  [1, 2, 3, 6, 7, 13, 14, 20, 21, 27, 28],
+            7:  [4, 5, 11, 12, 18, 19, 25, 26, 27, 28, 29],
+            8:  [1, 2, 8, 9, 12, 15, 16, 22, 23, 29, 30],
+            9:  [5, 6, 12, 13, 19, 20, 26, 27],
+            10: [3, 4, 10, 11, 12, 13, 18, 19, 23, 24, 25, 31],
+            11: [1, 7, 8, 14, 15, 21, 22, 28, 29],
+            12: [5, 6, 7, 10, 12, 13, 19, 20, 26, 27, 28, 29, 30, 31]
+        }
+    });
 
-    // รายการ Fix Cost เริ่มต้น (ตามตาราง 7 รายการ ยุบรวมค่างวดรถและ VAT)
-    const defaultFixCosts = [
+    /** รายการ Fix Cost เริ่มต้น */
+    const DEFAULT_FIX_COSTS = Object.freeze([
         { name: 'เงินกู้สหกรณ์ออมทรัพย์', amount: 11633.00 },
         { name: 'กองทุนสำรองเลี้ยงชีพ (15%)', amount: 10639.50 },
         { name: 'เงินเช่าซื้อรถยนต์ (รวม VAT)', amount: 6079.74 },
@@ -516,185 +666,617 @@
         { name: 'ประกันสังคม', amount: 875.00 },
         { name: 'ค่าฌาปนกิจ สหภาพ (Max)', amount: 380.00 },
         { name: 'ค่าฌาปนกิจ บริษัท (Max)', amount: 170.00 }
-    ];
-    
-    let fixCostData = {
-        'my-ot': JSON.parse(JSON.stringify(defaultFixCosts)),
-        'forecast': JSON.parse(JSON.stringify(defaultFixCosts))
-    };
+    ]);
 
-    document.addEventListener('DOMContentLoaded', () => {
-        renderLayout('my-ot');
-        renderLayout('forecast');
-        
-        loadFixCostData('my-ot');
-        loadFixCostData('forecast');
-        
-        setupTab('my-ot');
-        setupTab('forecast');
-        
-        renderFixCostList('my-ot');
-        renderFixCostList('forecast');
-
-        restoreCalendar('my-ot');
-        restoreCalendar('forecast');
-        switchTab('my-ot');
+    /** LocalStorage keys — คงรูปแบบเดิมไว้ทั้งหมด เพื่อไม่ให้ข้อมูลเก่าของผู้ใช้หาย */
+    const STORAGE_PREFIX = 'otPro_';
+    const STORAGE_KEYS = Object.freeze({
+        salary:         (tabId) => `${STORAGE_PREFIX}${tabId}_salary`,
+        month:          (tabId) => `${STORAGE_PREFIX}${tabId}_month`,
+        year:           (tabId) => `${STORAGE_PREFIX}${tabId}_year`,
+        sliderHours:    (tabId, typeId) => `${STORAGE_PREFIX}${tabId}_hrs_${typeId}`,
+        sliderCalTotal: (tabId, typeId) => `${STORAGE_PREFIX}${tabId}_calTotal_${typeId}`,
+        calendarData:   (tabId) => `${STORAGE_PREFIX}cal_data_${tabId}`,
+        fixCosts:       (tabId) => `${STORAGE_PREFIX}fix_cost_${tabId}`
     });
 
-    function renderLayout(tabId) {
-        const title = tabId === 'my-ot' ? 'My Calculations' : 'Forecast / Others';
-        const html = `
-        <div id="${tabId}" class="content-area">
+    /* =========================================================
+       2. GENERIC UTILITIES
+       ========================================================= */
+    const isPlainObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
+
+    const toFiniteNumber = (value, fallback = 0) => {
+        const parsed = parseFloat(value);
+        return Number.isFinite(parsed) ? parsed : fallback;
+    };
+    const toNonNegativeNumber = (value) => Math.max(0, toFiniteNumber(value));
+    const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+    const formatFixed2 = (value) => value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const formatUpTo2 = (value) => value.toLocaleString('en-US', { maximumFractionDigits: 2 });
+
+    const padTwoDigits = (number) => String(number).padStart(2, '0');
+    const buildDateKey = (year, monthIndex, day) => `${year}-${padTwoDigits(monthIndex)}-${padTwoDigits(day)}`;
+    const DATE_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
+    /** ดึง element ที่ id รูปแบบ `${prefix}_${tabId}` */
+    const getTabElement = (prefix, tabId) => document.getElementById(`${prefix}_${tabId}`);
+
+    function escapeHtml(value) {
+        if (value === null || value === undefined) return '';
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+    }
+
+    function createElementWithText(tagName, className, text) {
+        const element = document.createElement(tagName);
+        if (className) element.className = className;
+        element.textContent = text;
+        return element;
+    }
+
+    function cloneDefaultFixCosts() {
+        return DEFAULT_FIX_COSTS.map((item) => ({ ...item }));
+    }
+
+    /* =========================================================
+       3. SAFE STORAGE LAYER (กัน LocalStorage พัง / ข้อมูลเสีย / พื้นที่เต็ม)
+       ========================================================= */
+    const storage = (() => {
+        let hasWarnedUserAboutWriteFailure = false;
+
+        function getRaw(key) {
+            try {
+                return window.localStorage.getItem(key);
+            } catch (error) {
+                console.warn(`[storage] Cannot read "${key}"`, error);
+                return null;
+            }
+        }
+
+        function setRaw(key, value) {
+            try {
+                window.localStorage.setItem(key, String(value));
+                return true;
+            } catch (error) {
+                console.error(`[storage] Cannot write "${key}"`, error);
+                if (!hasWarnedUserAboutWriteFailure) {
+                    hasWarnedUserAboutWriteFailure = true;
+                    window.alert('⚠️ ไม่สามารถบันทึกข้อมูลลงเครื่องได้ (พื้นที่เต็ม หรือเปิดโหมดไม่ระบุตัวตน)\nข้อมูลอาจหายเมื่อปิดหน้าเว็บ');
+                }
+                return false;
+            }
+        }
+
+        function remove(key) {
+            try {
+                window.localStorage.removeItem(key);
+            } catch (error) {
+                console.warn(`[storage] Cannot remove "${key}"`, error);
+            }
+        }
+
+        function listKeys() {
+            try {
+                return Object.keys(window.localStorage);
+            } catch (error) {
+                console.warn('[storage] Cannot list keys', error);
+                return [];
+            }
+        }
+
+        /**
+         * อ่าน JSON อย่างปลอดภัย: ถ้าไม่มี key / JSON เสีย / โครงสร้างผิด → คืนค่า fallback
+         * @param {string} key
+         * @param {*} fallback
+         * @param {(parsed:any)=>boolean} isValidShape
+         */
+        function getJSON(key, fallback, isValidShape = () => true) {
+            const raw = getRaw(key);
+            if (raw === null) return fallback;
+            try {
+                const parsed = JSON.parse(raw);
+                if (isValidShape(parsed)) return parsed;
+                console.warn(`[storage] Unexpected data shape in "${key}" — using fallback.`);
+            } catch (error) {
+                console.warn(`[storage] Corrupted JSON in "${key}" — using fallback.`, error);
+            }
+            return fallback;
+        }
+
+        const setJSON = (key, value) => setRaw(key, JSON.stringify(value));
+
+        return Object.freeze({ getRaw, setRaw, remove, listKeys, getJSON, setJSON });
+    })();
+
+    /* =========================================================
+       4. APPLICATION STATE
+       ========================================================= */
+    /**
+     * @typedef {Object} DayEntry
+     * @property {boolean} noOT     - true = วันนี้ไม่มี OT (0 ชม.)
+     * @property {number} [1.5]     - ชั่วโมง OT 1.5x
+     * @property {number} [1.5l]    - ชั่วโมง OT 1.5x Lunch
+     * @property {number} [2.0]     - ชั่วโมง OT 2.0x
+     * @property {number} [3.0]     - ชั่วโมง OT 3.0x
+     * @property {string} [detail]  - รายละเอียดงาน OT (บันทึกช่วยจำ)
+     */
+
+    /** calendarData[tabId]['YYYY-MM-DD'] = DayEntry */
+    const calendarData = { 'my-ot': {}, 'forecast': {} };
+
+    /** fixCostData[tabId] = Array<{ name: string, amount: number }> */
+    const fixCostData = { 'my-ot': cloneDefaultFixCosts(), 'forecast': cloneDefaultFixCosts() };
+
+    /** วันที่กำลังแก้ไขใน Modal */
+    const modalState = { tabId: null, dateKey: null };
+
+    /* =========================================================
+       5. DOMAIN LOGIC — Day entries, holidays, meal allowance
+       ========================================================= */
+    function normalizeDayEntry(rawEntry) {
+        if (!isPlainObject(rawEntry)) return null;
+
+        const entry = { noOT: rawEntry.noOT === true };
+        if (!entry.noOT) {
+            OT_TYPES.forEach((type) => { entry[type.dataKey] = toNonNegativeNumber(rawEntry[type.dataKey]); });
+        }
+
+        const detail = typeof rawEntry.detail === 'string' ? rawEntry.detail.trim().slice(0, DETAIL_MAX_LENGTH) : '';
+        if (detail) entry.detail = detail;
+
+        return entry;
+    }
+
+    const getDayHours = (entry, dataKey) => (entry && !entry.noOT ? Number(entry[dataKey]) || 0 : 0);
+    const getDayTotalHours = (entry) => OT_TYPES.reduce((sum, type) => sum + getDayHours(entry, type.dataKey), 0);
+    const hasDayDetail = (entry) => Boolean(entry && typeof entry.detail === 'string' && entry.detail.trim());
+    const isDayEntryEmpty = (entry) => !entry.noOT && getDayTotalHours(entry) === 0 && !hasDayDetail(entry);
+
+    function getMealAllowanceCount(entry) {
+        if (!entry || entry.noOT) return 0;
+        const weekdayOtHours = getDayHours(entry, '1.5') + getDayHours(entry, '1.5l');
+        if (weekdayOtHours >= MEAL_RULE.minWeekdayOtHours) return 1;
+        if (getDayHours(entry, '2.0') >= MEAL_RULE.minHolidayOtHours || getDayHours(entry, '3.0') >= MEAL_RULE.minHolidayOtHours) return 1;
+        return 0;
+    }
+
+    function isCompanyHoliday(year, monthIndex, day) {
+        const holidaysInMonth = COMPANY_HOLIDAYS[year] && COMPANY_HOLIDAYS[year][monthIndex];
+        return Array.isArray(holidaysInMonth) && holidaysInMonth.includes(day);
+    }
+
+    /** สีวันหยุด: ถ้ามี OT 2.0x/3.0x → ถือเป็นวันหยุด, ถ้ามีแค่ 1.5x → ถือเป็นวันทำงาน */
+    function shouldHighlightAsHoliday(entry, isHoliday) {
+        if (!entry || entry.noOT) return isHoliday;
+        if (getDayHours(entry, '2.0') > 0 || getDayHours(entry, '3.0') > 0) return true;
+        if (getDayHours(entry, '1.5') > 0 || getDayHours(entry, '1.5l') > 0) return false;
+        return isHoliday;
+    }
+
+    function getSelectedPeriod(tabId) {
+        const monthName = getTabElement('month', tabId).value;
+        const monthIndex = Math.max(1, MONTH_NAMES.indexOf(monthName) + 1);
+        const year = parseInt(getTabElement('year', tabId).value, 10) || DEFAULT_YEAR;
+        return {
+            monthName,
+            monthIndex,
+            year,
+            daysInMonth: new Date(year, monthIndex, 0).getDate(),
+            startWeekday: new Date(year, monthIndex - 1, 1).getDay()
+        };
+    }
+
+    /** รวมชั่วโมง OT และค่าอาหารจากปฏิทินของเดือน/ปีที่เลือก */
+    function getCalendarTotals(tabId) {
+        const { year, monthIndex, daysInMonth } = getSelectedPeriod(tabId);
+        const hoursByType = Object.fromEntries(OT_TYPES.map((type) => [type.dataKey, 0]));
+        let mealCount = 0;
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const entry = calendarData[tabId][buildDateKey(year, monthIndex, day)];
+            if (!entry || entry.noOT) continue;
+            OT_TYPES.forEach((type) => { hoursByType[type.dataKey] += getDayHours(entry, type.dataKey); });
+            mealCount += getMealAllowanceCount(entry);
+        }
+
+        const totalHours = OT_TYPES.reduce((sum, type) => sum + hoursByType[type.dataKey], 0);
+        return { hoursByType, totalHours, mealCount, mealTotal: mealCount * MEAL_ALLOWANCE };
+    }
+
+    const getFixCostTotal = (tabId) =>
+        (fixCostData[tabId] || []).reduce((sum, item) => sum + toFiniteNumber(item.amount), 0);
+
+    /* =========================================================
+       6. PERSISTENCE
+       ========================================================= */
+    function loadCalendarData(tabId) {
+        const rawData = storage.getJSON(STORAGE_KEYS.calendarData(tabId), {}, isPlainObject);
+        const cleanData = {};
+        Object.entries(rawData).forEach(([dateKey, rawEntry]) => {
+            if (!DATE_KEY_PATTERN.test(dateKey)) return;
+            const entry = normalizeDayEntry(rawEntry);
+            if (entry) cleanData[dateKey] = entry;
+        });
+        return cleanData;
+    }
+
+    const saveCalendarData = (tabId) => storage.setJSON(STORAGE_KEYS.calendarData(tabId), calendarData[tabId]);
+
+    function loadFixCostData(tabId) {
+        const rawList = storage.getJSON(STORAGE_KEYS.fixCosts(tabId), null, Array.isArray);
+        if (!rawList) return cloneDefaultFixCosts();
+        return rawList
+            .filter(isPlainObject)
+            .map((item) => ({
+                name: typeof item.name === 'string' ? item.name : '',
+                amount: toFiniteNumber(item.amount)
+            }));
+    }
+
+    const saveFixCostData = (tabId) => storage.setJSON(STORAGE_KEYS.fixCosts(tabId), fixCostData[tabId]);
+
+    /** บันทึกค่าฟอร์มหลัก (เงินเดือน, เดือน, ปี, Slider) */
+    function saveData(tabId) {
+        storage.setRaw(STORAGE_KEYS.salary(tabId), getTabElement('salary', tabId).value);
+        storage.setRaw(STORAGE_KEYS.month(tabId), getTabElement('month', tabId).value);
+        storage.setRaw(STORAGE_KEYS.year(tabId), getTabElement('year', tabId).value);
+        OT_TYPES.forEach((type) => {
+            const slider = getSlider(tabId, type.id);
+            storage.setRaw(STORAGE_KEYS.sliderHours(tabId, type.id), slider.value);
+            storage.setRaw(STORAGE_KEYS.sliderCalTotal(tabId, type.id), slider.dataset.calTotal || '0');
+        });
+    }
+
+    /**
+     * โหลดค่าฟอร์มหลักจาก LocalStorage
+     * - เปิดครั้งแรก (ไม่มี key เงินเดือน) → ใช้ DEFAULT_SALARY = 50,000
+     * @returns {boolean} true ถ้ามีค่า Slider ที่เคยบันทึกไว้
+     */
+    function loadData(tabId) {
+        const savedSalary = storage.getRaw(STORAGE_KEYS.salary(tabId));
+        getTabElement('salary', tabId).value = savedSalary !== null ? savedSalary : DEFAULT_SALARY;
+
+        const savedMonth = storage.getRaw(STORAGE_KEYS.month(tabId));
+        if (MONTH_NAMES.includes(savedMonth)) getTabElement('month', tabId).value = savedMonth;
+
+        const savedYear = parseInt(storage.getRaw(STORAGE_KEYS.year(tabId)), 10);
+        if (Number.isInteger(savedYear)) getTabElement('year', tabId).value = savedYear;
+
+        let hasSavedSliderState = false;
+        OT_TYPES.forEach((type) => {
+            const savedHours = storage.getRaw(STORAGE_KEYS.sliderHours(tabId, type.id));
+            if (savedHours === null) return;
+            hasSavedSliderState = true;
+            getSlider(tabId, type.id).value = clamp(toFiniteNumber(savedHours), 0, SLIDER_MAX_HOURS);
+        });
+        return hasSavedSliderState;
+    }
+
+    /* =========================================================
+       7. RENDERING — Layout
+       ========================================================= */
+    function buildMonthOptionsMarkup() {
+        return MONTH_NAMES.map((name) => `<option>${name}</option>`).join('');
+    }
+
+    function buildSliderMarkup(tabId, type) {
+        return `
+            <div class="slider-container">
+                <div class="slider-header">
+                    <label for="sl_${type.id}_${tabId}">${type.label}</label>
+                    <span class="slider-hours" id="val_${type.id}_${tabId}">0 hrs</span>
+                </div>
+                <div class="slider-controls">
+                    <button type="button" class="adj-btn" data-action="adjust-slider" data-tab="${tabId}" data-type-id="${type.id}" data-delta="-${SLIDER_STEP_HOURS}" aria-label="ลด ${type.label}">-</button>
+                    <input type="range" id="sl_${type.id}_${tabId}" min="0" max="${SLIDER_MAX_HOURS}" step="${SLIDER_STEP_HOURS}" value="0"
+                           data-cal-total="0" data-action="recalculate" data-tab="${tabId}">
+                    <button type="button" class="adj-btn" data-action="adjust-slider" data-tab="${tabId}" data-type-id="${type.id}" data-delta="${SLIDER_STEP_HOURS}" aria-label="เพิ่ม ${type.label}">+</button>
+                </div>
+                <div class="money-display" id="mon_${type.id}_${tabId}">0.00 THB</div>
+            </div>`;
+    }
+
+    function buildTabMarkup(tabId) {
+        return `
+        <section id="${tabId}" class="content-area" role="tabpanel">
             <div class="card">
-                <button class="reset-btn" onclick="resetData('${tabId}')">Reset All</button>
-                <h2>${title}</h2>
-                <div class="form-group"><label>Salary (THB)</label><input type="number" id="salary_${tabId}" placeholder="Enter Salary (e.g. 70930)" oninput="calculate('${tabId}')"></div>
+                <button type="button" class="reset-btn" data-action="reset" data-tab="${tabId}">Reset All</button>
+                <h2>${TAB_TITLES[tabId]}</h2>
+                <div class="form-group">
+                    <label for="salary_${tabId}">Salary (THB)</label>
+                    <input type="number" id="salary_${tabId}" min="0" inputmode="decimal" placeholder="Enter Salary (e.g. ${DEFAULT_SALARY})"
+                           data-action="recalculate" data-tab="${tabId}">
+                </div>
                 <div class="date-row">
-                    <div class="form-group" style="flex:1">
-                        <label>Month</label>
-                        <select id="month_${tabId}" onchange="handleDateChange('${tabId}')">
-                            <option>January</option><option>February</option><option>March</option><option>April</option>
-                            <option>May</option><option>June</option><option>July</option><option>August</option>
-                            <option>September</option><option>October</option><option>November</option><option>December</option>
-                        </select>
+                    <div class="form-group form-group--grow">
+                        <label for="month_${tabId}">Month</label>
+                        <select id="month_${tabId}" data-action="change-period" data-tab="${tabId}">${buildMonthOptionsMarkup()}</select>
                     </div>
-                    <div class="form-group" style="flex:1"><label>Year</label><input type="number" id="year_${tabId}" min="2011" max="2050" value="2026" onchange="handleDateChange('${tabId}')"></div>
+                    <div class="form-group form-group--grow">
+                        <label for="year_${tabId}">Year</label>
+                        <input type="number" id="year_${tabId}" min="2011" max="2050" value="${DEFAULT_YEAR}" data-action="change-period" data-tab="${tabId}">
+                    </div>
                 </div>
             </div>
 
-            <div class="card" style="border-top: 4px solid var(--primary);">
+            <div class="card card--accent-primary">
                 <h3>OT Calendar Forecast</h3>
-                <p style="font-size:0.9rem; color:#6b7280;">(วันที่ของเดือนเปลี่ยนอัตโนมัติเมื่อเลือกเดือน/ปี)</p>
-                <div class="calendar-setup" style="display:none;">
-                    <input type="hidden" id="calStartDay_${tabId}" value="0">
-                    <input type="hidden" id="calTotalDays_${tabId}" value="31">
-                    <button class="btn-confirm" onclick="generateCalendar('${tabId}')">Confirm & Generate</button>
+                <p class="muted-text">(วันที่ของเดือนเปลี่ยนอัตโนมัติเมื่อเลือกเดือน/ปี · 📝 = มีบันทึกรายละเอียดงาน)</p>
+                <div class="calendar-grid calendar-grid--header">
+                    ${WEEKDAY_LABELS.map((label) => `<div class="cal-header">${label}</div>`).join('')}
                 </div>
-                <div class="calendar-grid" style="margin-bottom:0;">
-                    <div class="cal-header">Sun</div><div class="cal-header">Mon</div><div class="cal-header">Tue</div>
-                    <div class="cal-header">Wed</div><div class="cal-header">Thu</div><div class="cal-header">Fri</div><div class="cal-header">Sat</div>
-                </div>
-                <div id="calendarBody_${tabId}" class="calendar-grid" style="margin-top:0;"></div>
+                <div id="calendarBody_${tabId}" class="calendar-grid calendar-grid--body"></div>
                 <div class="cal-summary" id="calendarSummary_${tabId}"></div>
             </div>
 
-            <div id="sliders_${tabId}" class="card"></div>
+            <div id="sliders_${tabId}" class="card">
+                <div class="card-header-row">
+                    <h3>OT Hours Adjustment</h3>
+                    <button type="button" class="sync-btn" data-action="sync-sliders" data-tab="${tabId}">Sync with Calendar</button>
+                </div>
+                ${OT_TYPES.map((type) => buildSliderMarkup(tabId, type)).join('')}
+            </div>
 
-            <!-- การ์ดระบบ Fix Cost -->
-            <div class="card" style="border-top: 4px solid var(--secondary);">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <div class="card card--accent-secondary">
+                <div class="fix-cost-header">
                     <div>
-                        <h3 style="margin:0;">Fix Cost (รายจ่ายประจำ)</h3>
-                        <span style="font-size:0.8rem; color:#6b7280;">รายจ่ายคงที่ที่ต้องชำระทุกเดือน</span>
+                        <h3>Fix Cost (รายจ่ายประจำ)</h3>
+                        <span class="muted-caption">รายจ่ายคงที่ที่ต้องชำระทุกเดือน</span>
                     </div>
-                    <button class="btn-add-cost" onclick="addFixCostItem('${tabId}')">+ เพิ่มรายการ</button>
+                    <button type="button" class="btn-add-cost" data-action="add-fix-cost" data-tab="${tabId}">+ เพิ่มรายการ</button>
                 </div>
                 <div id="fixCostList_${tabId}"></div>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px; padding-top:10px; border-top: 1px dashed var(--border); font-weight:700;">
+                <div class="fix-cost-footer">
                     <span>รวมรายจ่ายประจำ:</span>
-                    <span id="fixCostTotalCard_${tabId}" style="color:var(--danger); font-size:1.05rem;">0 THB</span>
+                    <span id="fixCostTotalCard_${tabId}" class="fix-cost-total">0 THB</span>
                 </div>
             </div>
 
             <div class="card" id="exportArea_${tabId}">
                 <h3>Final Summary</h3>
                 <div class="results">
-                    <div class="result-row"><span>Total OT Hours:</span> <span id="totalHours_${tabId}">0 Hrs</span></div>
-                    <div class="result-row"><span>Total OT Pay:</span> <span id="totalMoney_${tabId}">0 THB</span></div>
-                    <div class="result-row"><span>Total Meal Allowance:</span> <span id="totalMeal_${tabId}">0 THB</span></div>
-                    <div class="result-row" style="border-top: 1px dashed #cbd5e1; padding-top: 8px;"><span>Fix: อาหารกลางวัน:</span> <span>${FIX_LUNCH_ALLOWANCE.toLocaleString('en-US')} THB</span></div>
-                    <div class="result-row"><span>Fix: สถานที่:</span> <span>${FIX_LOCATION_ALLOWANCE.toLocaleString('en-US')} THB</span></div>
-                    <div class="result-row" style="border-top: 1px dashed #cbd5e1; padding-top: 8px;"><span>Salary:</span> <span id="dispSalary_${tabId}">0 THB</span></div>
-                    
-                    <div class="result-row" style="border-top: 1px solid #cbd5e1; padding-top: 8px; font-weight:700;">
-                        <span>Total Gross Income (รายรับรวม):</span>
-                        <span id="totalIncome_${tabId}">0 THB</span>
-                    </div>
-                    <div class="result-row" style="color: var(--danger); font-weight:600;">
-                        <span>Total Fix Cost (หักรายจ่ายประจำ):</span>
-                        <span id="dispFixCost_${tabId}">-0 THB</span>
-                    </div>
-                    <div class="result-row total">
-                        <span>Net Income (เงินคงเหลือสุทธิ):</span>
-                        <span id="netIncome_${tabId}" style="color: var(--success);">0 THB</span>
-                    </div>
+                    <div class="result-row"><span>Total OT Hours:</span><span id="totalHours_${tabId}">0 Hrs</span></div>
+                    <div class="result-row"><span>Total OT Pay:</span><span id="totalMoney_${tabId}">0 THB</span></div>
+                    <div class="result-row"><span>Total Meal Allowance:</span><span id="totalMeal_${tabId}">0 THB</span></div>
+                    <div class="result-row result-row--dashed"><span>Fix: อาหารกลางวัน:</span><span>${FIX_LUNCH_ALLOWANCE.toLocaleString('en-US')} THB</span></div>
+                    <div class="result-row"><span>Fix: สถานที่:</span><span>${FIX_LOCATION_ALLOWANCE.toLocaleString('en-US')} THB</span></div>
+                    <div class="result-row result-row--dashed"><span>Salary:</span><span id="dispSalary_${tabId}">0 THB</span></div>
+                    <div class="result-row result-row--subtotal"><span>Total Gross Income (รายรับรวม):</span><span id="totalIncome_${tabId}">0 THB</span></div>
+                    <div class="result-row result-row--deduction"><span>Total Fix Cost (หักรายจ่ายประจำ):</span><span id="dispFixCost_${tabId}">-0 THB</span></div>
+                    <div class="result-row total"><span>Net Income (เงินคงเหลือสุทธิ):</span><span id="netIncome_${tabId}" class="net-income">0 THB</span></div>
                 </div>
-                <div style="margin-top:10px; font-size:0.85rem; color:#6b7280;"><strong>Rates per Hour:</strong><br><span id="rates_${tabId}"></span></div>
+                <div class="rates-note"><strong>Rates per Hour:</strong><br><span id="rates_${tabId}"></span></div>
             </div>
-            <button class="export-btn" onclick="exportToJPEG('${tabId}')">📸 Export Report A3</button>
-        </div>
-        `;
-        document.getElementById('app-content').innerHTML += html;
+
+            <button type="button" class="export-btn" data-action="export" data-tab="${tabId}">📸 Export Report A3</button>
+        </section>`;
     }
 
-    function setupTab(tabId) {
-        const container = document.getElementById(`sliders_${tabId}`);
-        container.innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                <h3 style="margin:0;">OT Hours Adjustment</h3>
-                <button class="sync-btn" onclick="syncSlidersToCalendar('${tabId}')">Sync with Calendar</button>
-            </div>
-        `;
-        
-        otTypes.forEach(type => {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'slider-container';
-            wrapper.innerHTML = `
-                <div class="slider-header"><label>${type.label}</label><span id="val_${type.id}_${tabId}" style="font-weight:800; transition: color 0.2s;">0 hrs</span></div>
-                <div class="slider-controls">
-                    <button class="adj-btn" onclick="adjustSlider('${type.id}', '${tabId}', -0.5)">-</button>
-                    <input type="range" id="sl_${type.id}_${tabId}" min="0" max="200" step="0.5" value="0" data-cal-total="0" oninput="calculate('${tabId}')">
-                    <button class="adj-btn" onclick="adjustSlider('${type.id}', '${tabId}', 0.5)">+</button>
-                </div>
-                <div class="money-display" id="mon_${type.id}_${tabId}">0.00 THB</div>
-            `;
-            container.appendChild(wrapper);
-        });
-        loadData(tabId);
-    }
+    /* =========================================================
+       8. RENDERING — Calendar
+       ========================================================= */
+    function createDayCell(tabId, day, dateKey, entry, isHoliday) {
+        const cell = document.createElement('div');
+        cell.className = 'cal-cell';
+        if (shouldHighlightAsHoliday(entry, isHoliday)) cell.classList.add('weekend');
+        cell.dataset.action = 'open-day';
+        cell.dataset.tab = tabId;
+        cell.dataset.dateKey = dateKey;
+        cell.tabIndex = 0;
+        cell.setAttribute('role', 'button');
+        cell.setAttribute('aria-label', `Edit ${dateKey}`);
 
-    /* --- ฟังก์ชันจัดการ Fix Cost --- */
-    function renderFixCostList(tabId) {
-        const listEl = document.getElementById(`fixCostList_${tabId}`);
-        if (!listEl) return;
-        listEl.innerHTML = '';
-        
-        const list = fixCostData[tabId] || [];
-        if (list.length === 0) {
-            listEl.innerHTML = `<div style="text-align:center; color:#9ca3af; font-size:0.9rem; padding:10px 0;">ไม่มีรายการรายจ่ายประจำ กดปุ่ม '+ เพิ่มรายการ' ด้านบนได้เลยครับ</div>`;
-            return;
+        cell.appendChild(createElementWithText('div', 'cal-day-number', String(day)));
+
+        if (hasDayDetail(entry)) {
+            const noteIcon = createElementWithText('span', 'cal-note-icon', '📝');
+            noteIcon.setAttribute('aria-hidden', 'true');
+            cell.appendChild(noteIcon);
+            cell.title = `📝 ${entry.detail}`;
+            cell.setAttribute('aria-label', `Edit ${dateKey} — Detail: ${entry.detail}`);
         }
 
-        list.forEach((item, index) => {
-            const row = document.createElement('div');
-            row.className = 'fix-cost-row';
-            row.innerHTML = `
-                <input type="text" placeholder="ชื่อรายการ" value="${escapeHtml(item.name)}" oninput="updateFixCostItem('${tabId}', ${index}, 'name', this.value)">
-                <input type="number" placeholder="จำนวน (THB)" min="0" step="any" value="${item.amount > 0 ? item.amount : ''}" oninput="updateFixCostItem('${tabId}', ${index}, 'amount', this.value)">
-                <button type="button" class="del-cost-btn" onclick="removeFixCostItem('${tabId}', ${index})" title="ลบรายการ">✕</button>
-            `;
-            listEl.appendChild(row);
+        if (!entry) return cell;
+
+        if (entry.noOT) {
+            cell.appendChild(createElementWithText('div', 'ot-indicator no-ot', 'No OT'));
+            return cell;
+        }
+
+        OT_TYPES.forEach((type) => {
+            const hours = getDayHours(entry, type.dataKey);
+            if (hours > 0) cell.appendChild(createElementWithText('div', 'ot-indicator breakdown', `${type.cellLabel}: ${hours}h`));
         });
+
+        const totalHours = getDayTotalHours(entry);
+        if (totalHours > 0) cell.appendChild(createElementWithText('div', 'ot-indicator sum', `Total: ${totalHours}h`));
+
+        if (getMealAllowanceCount(entry) > 0) cell.appendChild(createElementWithText('div', 'meal-badge', `🍚 ฿${MEAL_ALLOWANCE}`));
+
+        return cell;
     }
 
-    function escapeHtml(str) {
-        if (!str) return '';
-        return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#039;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    function renderCalendarGrid(tabId) {
+        const grid = getTabElement('calendarBody', tabId);
+        const { year, monthIndex, daysInMonth, startWeekday } = getSelectedPeriod(tabId);
+        const fragment = document.createDocumentFragment();
+
+        for (let i = 0; i < startWeekday; i++) {
+            const placeholder = document.createElement('div');
+            placeholder.className = 'cal-cell cal-cell--placeholder';
+            placeholder.setAttribute('aria-hidden', 'true');
+            fragment.appendChild(placeholder);
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dateKey = buildDateKey(year, monthIndex, day);
+            fragment.appendChild(createDayCell(tabId, day, dateKey, calendarData[tabId][dateKey], isCompanyHoliday(year, monthIndex, day)));
+        }
+
+        grid.innerHTML = '';
+        grid.appendChild(fragment);
     }
 
-    function updateFixCostItem(tabId, index, field, value) {
-        if (!fixCostData[tabId] || !fixCostData[tabId][index]) return;
-        if (field === 'amount') {
-            fixCostData[tabId][index].amount = parseFloat(value) || 0;
+    function updateCalendarSummary(tabId) {
+        const totals = getCalendarTotals(tabId);
+        const breakdown = OT_TYPES.map((type) => `${type.summaryLabel}: ${totals.hoursByType[type.dataKey]}h`).join(' | ');
+        getTabElement('calendarSummary', tabId).innerHTML = `
+            <strong>Total Forecast OT: ${totals.totalHours} hours</strong><br>
+            ${breakdown}<br>
+            <span class="cal-summary__meal">🍚 ได้รับค่าอาหาร OT: ${totals.mealCount} มื้อ (฿${totals.mealTotal.toLocaleString('en-US')})</span>`;
+    }
+
+    /**
+     * วาดปฏิทินใหม่ + อัปเดตสรุป แล้วคำนวณเงิน
+     * @param {boolean} syncSliders true = ตั้งค่า Slider ให้เท่ากับยอดในปฏิทิน
+     *                              false = คงค่า Slider ที่ผู้ใช้ปรับเอง แต่อัปเดตเส้นอ้างอิงสีแดง
+     */
+    function refreshCalendar(tabId, { syncSliders }) {
+        renderCalendarGrid(tabId);
+        updateCalendarSummary(tabId);
+        if (syncSliders) {
+            syncSlidersToCalendar(tabId);
         } else {
-            fixCostData[tabId][index].name = value;
+            updateSliderCalendarReferences(tabId);
+            calculate(tabId);
         }
-        saveFixCostData(tabId);
+    }
+
+    function handleDateChange(tabId) {
+        refreshCalendar(tabId, { syncSliders: true });
+    }
+
+    /* =========================================================
+       9. SLIDERS
+       ========================================================= */
+    const getSlider = (tabId, typeId) => getTabElement(`sl_${typeId}`, tabId);
+
+    function adjustSlider(tabId, typeId, deltaHours) {
+        const slider = getSlider(tabId, typeId);
+        if (!slider) return;
+        slider.value = clamp(toFiniteNumber(slider.value) + deltaHours, 0, SLIDER_MAX_HOURS);
         calculate(tabId);
     }
 
+    function updateSliderCalendarReferences(tabId) {
+        const { hoursByType } = getCalendarTotals(tabId);
+        OT_TYPES.forEach((type) => { getSlider(tabId, type.id).dataset.calTotal = hoursByType[type.dataKey]; });
+    }
+
+    function syncSlidersToCalendar(tabId) {
+        const { hoursByType } = getCalendarTotals(tabId);
+        OT_TYPES.forEach((type) => {
+            const slider = getSlider(tabId, type.id);
+            slider.value = hoursByType[type.dataKey];
+            slider.dataset.calTotal = hoursByType[type.dataKey];
+        });
+        calculate(tabId);
+    }
+
+    /** แถบสี: ฟ้า = ค่าปัจจุบัน, แดง = ส่วนที่ขาดจากยอดในปฏิทิน */
+    function updateSliderVisual(slider) {
+        const value = toFiniteNumber(slider.value);
+        const max = toFiniteNumber(slider.max, SLIDER_MAX_HOURS) || SLIDER_MAX_HOURS;
+        const calendarTotal = toFiniteNumber(slider.dataset.calTotal);
+        const valuePercent = (value / max) * 100;
+        const calendarPercent = (calendarTotal / max) * 100;
+        const fill = 'var(--secondary)', shortfall = 'var(--danger-track)', empty = 'var(--border)';
+
+        slider.style.background = value < calendarTotal
+            ? `linear-gradient(to right, ${fill} 0%, ${fill} ${valuePercent}%, ${shortfall} ${valuePercent}%, ${shortfall} ${calendarPercent}%, ${empty} ${calendarPercent}%, ${empty} 100%)`
+            : `linear-gradient(to right, ${fill} 0%, ${fill} ${valuePercent}%, ${empty} ${valuePercent}%, ${empty} 100%)`;
+    }
+
+    /* =========================================================
+       10. CALCULATION ENGINE
+       ========================================================= */
+    function calculate(tabId) {
+        const salary = toFiniteNumber(getTabElement('salary', tabId).value);
+        const hourlyRate = Math.round((salary * 3 / 500) * 10) / 10;
+
+        let totalOtHours = 0;
+        let totalOtPay = 0;
+        const rateLines = [];
+
+        OT_TYPES.forEach((type) => {
+            const slider = getSlider(tabId, type.id);
+            const hours = toFiniteNumber(slider.value);
+            const calendarHours = toFiniteNumber(slider.dataset.calTotal);
+            const ratePerHour = hourlyRate * type.multiplier;
+            const pay = ratePerHour * hours;
+
+            const hoursLabel = getTabElement(`val_${type.id}`, tabId);
+            hoursLabel.textContent = `${hours} hrs`;
+            hoursLabel.classList.toggle('is-diverged', hours !== calendarHours);
+            getTabElement(`mon_${type.id}`, tabId).textContent = `${formatFixed2(pay)} THB`;
+            updateSliderVisual(slider);
+
+            totalOtHours += hours;
+            totalOtPay += pay;
+            rateLines.push(`${type.label}: ${formatFixed2(ratePerHour)} THB/hr`);
+        });
+
+        const { mealTotal } = getCalendarTotals(tabId);
+        const grossIncome = salary + totalOtPay + mealTotal + FIX_LUNCH_ALLOWANCE + FIX_LOCATION_ALLOWANCE;
+        const totalFixCost = getFixCostTotal(tabId);
+        const netIncome = grossIncome - totalFixCost;
+
+        getTabElement('fixCostTotalCard', tabId).textContent = `${formatFixed2(totalFixCost)} THB`;
+        getTabElement('totalHours', tabId).textContent = `${totalOtHours} Hrs`;
+        getTabElement('totalMoney', tabId).textContent = `${formatUpTo2(totalOtPay)} THB`;
+        getTabElement('totalMeal', tabId).textContent = `${formatUpTo2(mealTotal)} THB`;
+        getTabElement('dispSalary', tabId).textContent = `${formatUpTo2(salary)} THB`;
+        getTabElement('totalIncome', tabId).textContent = `${formatUpTo2(grossIncome)} THB`;
+        getTabElement('dispFixCost', tabId).textContent = `- ${formatUpTo2(totalFixCost)} THB`;
+
+        const netIncomeElement = getTabElement('netIncome', tabId);
+        netIncomeElement.textContent = `${formatUpTo2(netIncome)} THB`;
+        netIncomeElement.classList.toggle('is-negative', netIncome < 0);
+
+        getTabElement('rates', tabId).innerHTML = rateLines.map(escapeHtml).join('<br>');
+
+        saveData(tabId);
+    }
+
+    /* =========================================================
+       11. FIX COST
+       ========================================================= */
+    function renderFixCostList(tabId) {
+        const listElement = getTabElement('fixCostList', tabId);
+        if (!listElement) return;
+
+        const items = fixCostData[tabId] || [];
+        if (items.length === 0) {
+            listElement.innerHTML = `<div class="empty-state">ไม่มีรายการรายจ่ายประจำ กดปุ่ม '+ เพิ่มรายการ' ด้านบนได้เลยครับ</div>`;
+            return;
+        }
+
+        listElement.innerHTML = items.map((item, index) => `
+            <div class="fix-cost-row">
+                <input type="text" placeholder="ชื่อรายการ" aria-label="ชื่อรายการ" value="${escapeHtml(item.name)}"
+                       data-action="fix-cost-name" data-tab="${tabId}" data-index="${index}">
+                <input type="number" placeholder="จำนวน (THB)" aria-label="จำนวนเงิน" min="0" step="any" inputmode="decimal"
+                       value="${item.amount > 0 ? item.amount : ''}" data-action="fix-cost-amount" data-tab="${tabId}" data-index="${index}">
+                <button type="button" class="del-cost-btn" title="ลบรายการ" aria-label="ลบรายการ"
+                        data-action="remove-fix-cost" data-tab="${tabId}" data-index="${index}">✕</button>
+            </div>`).join('');
+    }
+
+    function updateFixCostItem(tabId, index, field, value) {
+        const item = fixCostData[tabId] && fixCostData[tabId][index];
+        if (!item) return;
+        if (field === 'amount') item.amount = toFiniteNumber(value);
+        else item.name = value;
+        saveFixCostData(tabId);
+        calculate(tabId); // ไม่ re-render list เพื่อไม่ให้ focus หลุดระหว่างพิมพ์
+    }
+
     function addFixCostItem(tabId) {
-        if (!fixCostData[tabId]) fixCostData[tabId] = [];
         fixCostData[tabId].push({ name: '', amount: 0 });
         saveFixCostData(tabId);
         renderFixCostList(tabId);
@@ -702,421 +1284,274 @@
     }
 
     function removeFixCostItem(tabId, index) {
-        if (!fixCostData[tabId]) return;
+        const item = fixCostData[tabId] && fixCostData[tabId][index];
+        if (!item) return;
+        // (จากเวอร์ชัน Gemini) ยืนยันก่อนลบ กันกดพลาด — แต่ไม่ถามตอน "เพิ่ม" เพราะเพิ่มผิดก็ลบได้
+        const itemLabel = item.name.trim() || 'รายการที่ไม่มีชื่อ';
+        if (!window.confirm(`ยืนยันการลบ "${itemLabel}" ?`)) return;
         fixCostData[tabId].splice(index, 1);
         saveFixCostData(tabId);
         renderFixCostList(tabId);
         calculate(tabId);
     }
 
-    function getFixCostTotal(tabId) {
-        if (!fixCostData[tabId]) return 0;
-        return fixCostData[tabId].reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
-    }
+    /* =========================================================
+       12. DAY MODAL
+       ========================================================= */
+    const modalElements = {
+        get overlay() { return document.getElementById('dayModal'); },
+        get title() { return document.getElementById('modalTitle'); },
+        get noOtCheckbox() { return document.getElementById('modalNoOT'); },
+        get otFieldset() { return document.getElementById('modalInputs'); },
+        get detailInput() { return document.getElementById('in_detail'); }
+    };
 
-    function saveFixCostData(tabId) {
-        localStorage.setItem(`otPro_fix_cost_${tabId}`, JSON.stringify(fixCostData[tabId]));
-    }
+    function openDayModal(tabId, dateKey) {
+        modalState.tabId = tabId;
+        modalState.dateKey = dateKey;
 
-    function loadFixCostData(tabId) {
-        const saved = localStorage.getItem(`otPro_fix_cost_${tabId}`);
-        if (saved) {
-            try {
-                fixCostData[tabId] = JSON.parse(saved);
-            } catch(e) {
-                console.error("Could not parse fix cost data", e);
-            }
-        }
-    }
+        const entry = calendarData[tabId][dateKey] || { noOT: false };
 
-    function switchTab(tabId) {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.content-area').forEach(c => c.classList.remove('active'));
-        const index = tabId === 'my-ot' ? 0 : 1;
-        document.querySelectorAll('.tab')[index].classList.add('active');
-        document.getElementById(tabId).classList.add('active');
-    }
-
-    function getMonthIndex(monthStr) {
-        return ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].indexOf(monthStr) + 1;
-    }
-
-    function handleDateChange(tabId) {
-        saveData(tabId);
-        const monthStr = document.getElementById(`month_${tabId}`).value;
-        const yearVal = parseInt(document.getElementById(`year_${tabId}`).value) || 2026;
-        const monthIndex = getMonthIndex(monthStr); 
-        
-        if (monthIndex > 0) {
-            const daysInMonth = new Date(yearVal, monthIndex, 0).getDate();
-            const startDay = new Date(yearVal, monthIndex - 1, 1).getDay();
-            
-            document.getElementById(`calTotalDays_${tabId}`).value = daysInMonth;
-            document.getElementById(`calStartDay_${tabId}`).value = startDay;
-            
-            generateCalendar(tabId); 
-        }
-    }
-
-    function calculate(tabId) {
-        const salary = parseFloat(document.getElementById(`salary_${tabId}`).value) || 0;
-        const hourlyRate = Math.round((salary * 3 / 500) * 10) / 10;
-        
-        let totalHours = 0, totalMoney = 0, rateText = "";
-
-        otTypes.forEach(type => {
-            const slider = document.getElementById(`sl_${type.id}_${tabId}`);
-            const hrs = parseFloat(slider.value);
-            const money = hourlyRate * type.mult * hrs;
-            
-            document.getElementById(`val_${type.id}_${tabId}`).innerText = hrs + ' hrs';
-            document.getElementById(`mon_${type.id}_${tabId}`).innerText = money.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' THB';
-            
-            const valSpan = document.getElementById(`val_${type.id}_${tabId}`);
-            valSpan.style.color = (hrs !== parseFloat(slider.getAttribute('data-cal-total'))) ? 'var(--danger)' : 'var(--text)';
-            
-            updateSliderVisual(slider);
-            totalHours += hrs;
-            totalMoney += money;
-            rateText += `${type.label}: ${(hourlyRate * type.mult).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} THB/hr<br>`;
+        modalElements.title.textContent = `Forecast for ${dateKey}`;
+        OT_TYPES.forEach((type) => {
+            document.getElementById(type.modalInputId).value = getDayHours(entry, type.dataKey);
         });
-
-        const calendarTotals = getCalendarTotals(tabId);
-        const totalMealAllowance = calendarTotals.mealTotal;
-        const grossIncome = salary + totalMoney + totalMealAllowance + FIX_LUNCH_ALLOWANCE + FIX_LOCATION_ALLOWANCE;
-        
-        // คำนวณ Fix Cost และ Net Income
-        const totalFixCost = getFixCostTotal(tabId);
-        const netIncome = grossIncome - totalFixCost;
-
-        // อัปเดตแสดงผลในหน้าจอ
-        const fixCostCardDisp = document.getElementById(`fixCostTotalCard_${tabId}`);
-        if(fixCostCardDisp) fixCostCardDisp.innerText = totalFixCost.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' THB';
-
-        document.getElementById(`totalHours_${tabId}`).innerText = totalHours + ' Hrs';
-        document.getElementById(`totalMoney_${tabId}`).innerText = totalMoney.toLocaleString('en-US', {maximumFractionDigits:2}) + ' THB';
-        document.getElementById(`totalMeal_${tabId}`).innerText = totalMealAllowance.toLocaleString('en-US') + ' THB';
-        document.getElementById(`dispSalary_${tabId}`).innerText = salary.toLocaleString('en-US') + ' THB';
-        
-        document.getElementById(`totalIncome_${tabId}`).innerText = grossIncome.toLocaleString('en-US', {maximumFractionDigits:2}) + ' THB';
-        document.getElementById(`dispFixCost_${tabId}`).innerText = '- ' + totalFixCost.toLocaleString('en-US', {maximumFractionDigits:2}) + ' THB';
-        
-        const netIncomeEl = document.getElementById(`netIncome_${tabId}`);
-        netIncomeEl.innerText = netIncome.toLocaleString('en-US', {maximumFractionDigits:2}) + ' THB';
-        netIncomeEl.style.color = netIncome < 0 ? 'var(--danger)' : 'var(--success)';
-
-        document.getElementById(`rates_${tabId}`).innerHTML = rateText;
-
-        saveData(tabId);
-    }
-
-    function adjustSlider(typeId, tabId, amount) {
-        const slider = document.getElementById(`sl_${typeId}_${tabId}`);
-        let newVal = parseFloat(slider.value) + amount;
-        if(newVal < 0) newVal = 0;
-        if(newVal > 200) newVal = 200;
-        slider.value = newVal;
-        calculate(tabId);
-    }
-
-    function updateSliderVisual(slider) {
-        const val = parseFloat(slider.value) || 0, max = parseFloat(slider.max) || 200, calTotal = parseFloat(slider.getAttribute('data-cal-total')) || 0;
-        const pV = (val / max) * 100, pC = (calTotal / max) * 100, tF = 'var(--secondary)', tR = 'var(--danger-track)', tE = '#e5e7eb'; 
-        slider.style.background = val < calTotal 
-            ? `linear-gradient(to right, ${tF} 0%, ${tF} ${pV}%, ${tR} ${pV}%, ${tR} ${pC}%, ${tE} ${pC}%, ${tE} 100%)`
-            : `linear-gradient(to right, ${tF} 0%, ${tF} ${pV}%, ${tE} ${pV}%, ${tE} 100%)`;
-    }
-
-    function getCalendarTotals(tabId) {
-        let t15 = 0, t15l = 0, t20 = 0, t30 = 0, mealCountTotal = 0;
-        const totalDays = parseInt(document.getElementById(`calTotalDays_${tabId}`)?.value || 31);
-        
-        const yearVal = parseInt(document.getElementById(`year_${tabId}`).value) || 2026;
-        const monthIndex = getMonthIndex(document.getElementById(`month_${tabId}`).value);
-        const monthStr = monthIndex.toString().padStart(2, '0');
-
-        if(calendarData[tabId]) {
-            for(let d=1; d<=totalDays; d++) {
-                const dateKey = `${yearVal}-${monthStr}-${d.toString().padStart(2, '0')}`;
-                const dayData = calendarData[tabId][dateKey];
-                
-                if (dayData && !dayData.noOT) {
-                    t15 += dayData['1.5'] || 0; t15l += dayData['1.5l'] || 0;
-                    t20 += dayData['2.0'] || 0; t30 += dayData['3.0'] || 0;
-                    mealCountTotal += getMealAllowanceCount(dayData);
-                }
-            }
-        }
-        return { t15, t15l, t20, t30, mealCountTotal, mealTotal: mealCountTotal * MEAL_ALLOWANCE };
-    }
-
-    function getMealAllowanceCount(dayData) {
-        if(!dayData || dayData.noOT) return 0;
-        let v15 = (dayData['1.5'] || 0) + (dayData['1.5l'] || 0);
-        let v20 = dayData['2.0'] || 0;
-        let v30 = dayData['3.0'] || 0;
-        
-        if (v15 >= 1.0) return 1;
-        if (v20 >= 8.0 || v30 >= 8.0) return 1;
-        
-        return 0; 
-    }
-
-    function renderCalendarGrid(tabId, startDay, totalDays) {
-        const grid = document.getElementById(`calendarBody_${tabId}`);
-        grid.innerHTML = '';
-        const yearVal = parseInt(document.getElementById(`year_${tabId}`).value) || 2026;
-        const monthIndex = getMonthIndex(document.getElementById(`month_${tabId}`).value);
-        const monthStr = monthIndex.toString().padStart(2, '0');
-
-        for(let i=0; i<startDay; i++) {
-            const cell = document.createElement('div');
-            cell.className = 'cal-cell';
-            cell.style.background = '#f3f4f6'; cell.style.cursor = 'default';
-            grid.appendChild(cell);
-        }
-
-        for(let d=1; d<=totalDays; d++) {
-            const cell = document.createElement('div');
-            cell.className = 'cal-cell';
-            
-            const dateKey = `${yearVal}-${monthStr}-${d.toString().padStart(2, '0')}`;
-            
-            let isHolidayByImage = false;
-            if (yearVal === 2026 && holidays2026[monthIndex] && holidays2026[monthIndex].includes(d)) {
-                isHolidayByImage = true;
-            }
-
-            let forceWeekendColor = isHolidayByImage; 
-            if(calendarData[tabId] && calendarData[tabId][dateKey]) {
-                const data = calendarData[tabId][dateKey];
-                if(!data.noOT) {
-                    if ((data['2.0'] > 0) || (data['3.0'] > 0)) forceWeekendColor = true; 
-                    else if ((data['1.5'] > 0) || (data['1.5l'] > 0)) forceWeekendColor = false; 
-                }
-            }
-            
-            if(forceWeekendColor) cell.classList.add('weekend');
-            cell.onclick = () => openDayModal(tabId, d, dateKey);
-            
-            const num = document.createElement('div');
-            num.innerText = d; num.style.fontWeight = 'bold';
-            cell.appendChild(num);
-
-            if(calendarData[tabId] && calendarData[tabId][dateKey]) {
-                const data = calendarData[tabId][dateKey];
-                if(data.noOT) {
-                    cell.innerHTML += `<div class='ot-indicator no-ot'>No OT</div>`;
-                } else {
-                    let totalH = 0;
-                    otTypes.forEach(t => {
-                        if(data[t.dataKey] > 0) {
-                            totalH += data[t.dataKey];
-                            cell.innerHTML += `<div class='ot-indicator breakdown'>${t.id.replace('x','')}: ${data[t.dataKey]}h</div>`;
-                        }
-                    });
-                    if(totalH > 0) cell.innerHTML += `<div class='ot-indicator sum'>Total: ${totalH}h</div>`;
-                    
-                    const mealCount = getMealAllowanceCount(data);
-                    if (mealCount > 0) {
-                        cell.innerHTML += `<div class='meal-badge'>🍚 ฿${MEAL_ALLOWANCE}</div>`;
-                    }
-                }
-            }
-            grid.appendChild(cell);
-        }
-        updateCalendarSummary(tabId);
-    }
-
-    function exportToJPEG(tabId) {
-        const monthStr = document.getElementById(`month_${tabId}`).value;
-        const yearVal = document.getElementById(`year_${tabId}`).value;
-        const summaryCard = document.getElementById(`exportArea_${tabId}`);
-
-        const wrapper = document.createElement('div');
-        wrapper.style.position = 'absolute';
-        wrapper.style.left = '-9999px';
-        wrapper.style.width = '1123px';
-        wrapper.style.height = '1587px'; 
-        wrapper.style.backgroundColor = '#ffffff';
-        wrapper.style.padding = '80px';
-        wrapper.style.boxSizing = 'border-box';
-        wrapper.style.fontFamily = "'Kanit', sans-serif";
-        
-        const content = summaryCard.cloneNode(true);
-        content.style.boxShadow = 'none';
-        content.style.border = 'none';
-        content.style.padding = '0';
-        
-        wrapper.innerHTML = `
-            <h1 style="text-align:center; color: var(--primary-dark); font-size: 3.2rem; margin-bottom: 40px;">
-                สรุปผลตอบแทน & รายจ่าย (Income & Fix Cost)<br>ประจำเดือน ${monthStr} ${yearVal}
-            </h1>
-        `;
-        
-        const resultsDiv = content.querySelector('.results');
-        resultsDiv.style.fontSize = '2.2rem';
-        resultsDiv.style.border = '3px solid #e5e7eb';
-        resultsDiv.style.borderRadius = '16px';
-        resultsDiv.style.padding = '40px';
-        
-        const rows = resultsDiv.querySelectorAll('.result-row');
-        rows.forEach(r => {
-            r.style.marginBottom = '20px';
-            if (r.classList.contains('total')) {
-                r.style.fontSize = '2.8rem';
-                r.style.borderTop = '3px solid #cbd5e1';
-                r.style.paddingTop = '25px';
-                r.style.marginTop = '20px';
-            }
-        });
-
-        const rateDiv = content.querySelector('div[style*="font-size"]');
-        if (rateDiv) {
-            rateDiv.style.fontSize = '1.8rem';
-            rateDiv.style.marginTop = '40px';
-        }
-
-        wrapper.appendChild(content);
-        document.body.appendChild(wrapper);
-
-        html2canvas(wrapper, { scale: 1 }).then(canvas => {
-            const link = document.createElement('a');
-            link.download = `OT_Report_${monthStr}_${yearVal}.jpg`;
-            link.href = canvas.toDataURL('image/jpeg', 0.9);
-            link.click();
-            document.body.removeChild(wrapper);
-        });
-    }
-
-    function generateCalendar(tabId) {
-        const startDay = parseInt(document.getElementById(`calStartDay_${tabId}`).value);
-        const totalDays = parseInt(document.getElementById(`calTotalDays_${tabId}`).value);
-        localStorage.setItem(`otPro_cal_setup_${tabId}`, JSON.stringify({startDay, totalDays}));
-        renderCalendarGrid(tabId, startDay, totalDays);
-        syncSlidersToCalendar(tabId); 
-    }
-    
-    function restoreCalendar(tabId) {
-        const data = JSON.parse(localStorage.getItem(`otPro_cal_data_${tabId}`));
-        if(data) calendarData[tabId] = data;
-        handleDateChange(tabId);
-    }
-
-    function syncSlidersToCalendar(tabId) {
-        const totals = getCalendarTotals(tabId);
-        const mapped = { '1.5x': totals.t15, '1.5xl': totals.t15l, '2.0x': totals.t20, '3.0x': totals.t30 };
-        otTypes.forEach(type => {
-            const sl = document.getElementById(`sl_${type.id}_${tabId}`);
-            sl.value = mapped[type.id]; sl.setAttribute('data-cal-total', mapped[type.id]);
-        });
-        calculate(tabId);
-    }
-
-    function openDayModal(tabId, day, dateKey) {
-        currentEditTab = tabId; 
-        currentEditDay = dateKey;
-
-        document.getElementById('modalTitle').innerText = `Forecast for ${dateKey}`;
-        document.getElementById('dayModal').style.display = 'flex';
-        
-        const data = calendarData[tabId][dateKey] || { '1.5':0, '1.5l':0, '2.0':0, '3.0':0, noOT: false };
-        
-        document.getElementById('in_1_5').value = data['1.5'] || 0;
-        document.getElementById('in_1_5l').value = data['1.5l'] || 0;
-        document.getElementById('in_2_0').value = data['2.0'] || 0;
-        document.getElementById('in_3_0').value = data['3.0'] || 0;
-        document.getElementById('modalNoOT').checked = data.noOT;
+        modalElements.noOtCheckbox.checked = entry.noOT === true;
+        modalElements.detailInput.value = entry.detail || '';
         toggleNoOT();
-    }
-    
-    function toggleNoOT() {
-        const isChecked = document.getElementById('modalNoOT').checked;
-        const inputs = document.getElementById('modalInputs');
-        inputs.style.opacity = isChecked ? '0.3' : '1';
-        inputs.style.pointerEvents = isChecked ? 'none' : 'auto';
+
+        modalElements.overlay.classList.add('is-open');
+        modalElements.overlay.setAttribute('aria-hidden', 'false');
     }
 
-    function closeModal() { document.getElementById('dayModal').style.display = 'none'; }
+    function toggleNoOT() {
+        modalElements.otFieldset.disabled = modalElements.noOtCheckbox.checked;
+    }
+
+    function closeModal() {
+        modalElements.overlay.classList.remove('is-open');
+        modalElements.overlay.setAttribute('aria-hidden', 'true');
+        modalState.tabId = null;
+        modalState.dateKey = null;
+    }
+
+    const isModalOpen = () => modalElements.overlay.classList.contains('is-open');
+
+    /** อ่านค่าจากฟอร์มใน Modal แล้วสร้าง DayEntry */
+    function readDayEntryFromModal() {
+        const detail = modalElements.detailInput.value.trim().slice(0, DETAIL_MAX_LENGTH);
+        const entry = modalElements.noOtCheckbox.checked ? { noOT: true } : { noOT: false };
+
+        if (!entry.noOT) {
+            OT_TYPES.forEach((type) => {
+                entry[type.dataKey] = toNonNegativeNumber(document.getElementById(type.modalInputId).value);
+            });
+        }
+        if (detail) entry.detail = detail;
+        return entry;
+    }
 
     function saveDayData() {
-        const isNoOT = document.getElementById('modalNoOT').checked, tabId = currentEditTab;
-        if(!calendarData[tabId]) calendarData[tabId] = {};
-        
-        if(isNoOT) {
-            calendarData[tabId][currentEditDay] = { noOT: true };
-        } else {
-            calendarData[tabId][currentEditDay] = {
-                noOT: false,
-                '1.5': parseFloat(document.getElementById('in_1_5').value) || 0,
-                '1.5l': parseFloat(document.getElementById('in_1_5l').value) || 0,
-                '2.0': parseFloat(document.getElementById('in_2_0').value) || 0,
-                '3.0': parseFloat(document.getElementById('in_3_0').value) || 0
-            };
+        const { tabId, dateKey } = modalState;
+        if (!tabId || !dateKey) {
+            closeModal();
+            return;
         }
-        
-        localStorage.setItem(`otPro_cal_data_${tabId}`, JSON.stringify(calendarData[tabId]));
-        generateCalendar(tabId);
-        syncSlidersToCalendar(tabId);
+
+        const entry = readDayEntryFromModal();
+        if (isDayEntryEmpty(entry)) delete calendarData[tabId][dateKey];
+        else calendarData[tabId][dateKey] = entry;
+
+        saveCalendarData(tabId);
+        refreshCalendar(tabId, { syncSliders: true });
         closeModal();
     }
 
-    function updateCalendarSummary(tabId) {
-        const totals = getCalendarTotals(tabId);
-        const total = totals.t15 + totals.t15l + totals.t20 + totals.t30;
-        document.getElementById(`calendarSummary_${tabId}`).innerHTML = `
-            <strong>Total Forecast OT: ${total} hours</strong><br>
-            1.5x: ${totals.t15}h | 1.5x(Lunch): ${totals.t15l}h | 2.0x: ${totals.t20}h | 3.0x: ${totals.t30}h<br>
-            <span style="color: #92400e; font-weight: 600; font-size: 0.85rem;">🍚 ได้รับค่าอาหาร OT: ${totals.mealCountTotal} มื้อ (฿${totals.mealTotal.toLocaleString('en-US')})</span>
-        `;
-    }
-
-    function saveData(tabId) {
-        const prefix = `otPro_${tabId}_`;
-        localStorage.setItem(prefix + 'salary', document.getElementById(`salary_${tabId}`).value);
-        localStorage.setItem(prefix + 'month', document.getElementById(`month_${tabId}`).value);
-        localStorage.setItem(prefix + 'year', document.getElementById(`year_${tabId}`).value);
-        otTypes.forEach(type => {
-            const slider = document.getElementById(`sl_${type.id}_${tabId}`);
-            localStorage.setItem(prefix + 'hrs_' + type.id, slider.value);
-            localStorage.setItem(prefix + 'calTotal_' + type.id, slider.getAttribute('data-cal-total'));
-        });
-    }
-
-    function loadData(tabId) {
-        const prefix = `otPro_${tabId}_`;
-        if(localStorage.getItem(prefix + 'salary')) document.getElementById(`salary_${tabId}`).value = localStorage.getItem(prefix + 'salary');
-        if(localStorage.getItem(prefix + 'month')) document.getElementById(`month_${tabId}`).value = localStorage.getItem(prefix + 'month');
-        if(localStorage.getItem(prefix + 'year')) document.getElementById(`year_${tabId}`).value = localStorage.getItem(prefix + 'year');
-        otTypes.forEach(type => {
-            const val = localStorage.getItem(prefix + 'hrs_' + type.id), calTotal = localStorage.getItem(prefix + 'calTotal_' + type.id);
-            const slider = document.getElementById(`sl_${type.id}_${tabId}`);
-            if(calTotal !== null) slider.setAttribute('data-cal-total', calTotal);
-            if(val !== null) slider.value = val;
-        });
-        calculate(tabId); 
-    }
-
+    /* =========================================================
+       13. RESET
+       ========================================================= */
     function resetData(tabId) {
-        if(!confirm("Reset ALL data for this tab?")) return;
-        document.getElementById(`salary_${tabId}`).value = '';
-        otTypes.forEach(type => {
-            const sl = document.getElementById(`sl_${type.id}_${tabId}`);
-            sl.value = 0; sl.setAttribute('data-cal-total', 0);
-        });
-        Object.keys(localStorage).forEach(key => { if(key.includes(`_${tabId}`)) localStorage.removeItem(key); });
-        
+        if (!window.confirm('Reset ALL data for this tab?')) return;
+
+        storage.listKeys()
+            .filter((key) => key.startsWith(STORAGE_PREFIX) && key.includes(`_${tabId}`))
+            .forEach((key) => storage.remove(key));
+
         calendarData[tabId] = {};
-        
-        // คืนค่า Fix Cost เป็นค่าเริ่มต้น
-        fixCostData[tabId] = JSON.parse(JSON.stringify(defaultFixCosts));
-        localStorage.removeItem(`otPro_fix_cost_${tabId}`);
+        fixCostData[tabId] = cloneDefaultFixCosts();
+        getTabElement('salary', tabId).value = DEFAULT_SALARY;
+
+        renderFixCostList(tabId);
+        handleDateChange(tabId); // วาดปฏิทินใหม่ + sync slider เป็น 0 + คำนวณ + บันทึก
+    }
+
+    /* =========================================================
+       14. EXPORT (JPEG — A3)
+       ========================================================= */
+    function buildExportSheet(tabId, monthName, year) {
+        const sheet = document.createElement('div');
+        sheet.className = 'export-sheet';
+
+        const title = document.createElement('h1');
+        title.className = 'export-title';
+        title.innerHTML = `สรุปผลตอบแทน & รายจ่าย (Income & Fix Cost)<br>ประจำเดือน ${escapeHtml(monthName)} ${escapeHtml(year)}`;
+
+        const summaryClone = getTabElement('exportArea', tabId).cloneNode(true);
+        summaryClone.removeAttribute('id');
+        summaryClone.querySelectorAll('[id]').forEach((node) => node.removeAttribute('id')); // ป้องกัน id ซ้ำใน DOM
+        summaryClone.classList.add('export-card');
+
+        sheet.append(title, summaryClone);
+        return sheet;
+    }
+
+    function triggerDownload(dataUrl, fileName) {
+        const link = document.createElement('a');
+        link.download = fileName;
+        link.href = dataUrl;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    }
+
+    async function exportToJPEG(tabId, triggerButton) {
+        if (typeof window.html2canvas !== 'function') {
+            window.alert('ไม่สามารถโหลดเครื่องมือ Export ได้ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ตแล้วลองใหม่');
+            return;
+        }
+
+        const { monthName, year } = getSelectedPeriod(tabId);
+        const sheet = buildExportSheet(tabId, monthName, year);
+        const originalLabel = triggerButton ? triggerButton.textContent : '';
+
+        if (triggerButton) {
+            triggerButton.disabled = true;
+            triggerButton.textContent = '⏳ กำลังสร้างรายงาน...';
+        }
+        document.body.appendChild(sheet);
+
+        try {
+            if (document.fonts && document.fonts.ready) await document.fonts.ready;
+            const canvas = await window.html2canvas(sheet, { scale: 1, backgroundColor: '#ffffff' });
+            triggerDownload(canvas.toDataURL('image/jpeg', 0.9), `OT_Report_${monthName}_${year}.jpg`);
+        } catch (error) {
+            console.error('[export] Failed to export report', error);
+            window.alert('Export ไม่สำเร็จ กรุณาลองใหม่อีกครั้ง');
+        } finally {
+            sheet.remove();
+            if (triggerButton) {
+                triggerButton.disabled = false;
+                triggerButton.textContent = originalLabel;
+            }
+        }
+    }
+
+    /* =========================================================
+       15. TAB NAVIGATION
+       ========================================================= */
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab').forEach((tab) => {
+            const isActive = tab.dataset.tabTarget === tabId;
+            tab.classList.toggle('active', isActive);
+            tab.setAttribute('aria-selected', String(isActive));
+        });
+        document.querySelectorAll('.content-area').forEach((panel) => {
+            panel.classList.toggle('active', panel.id === tabId);
+        });
+    }
+
+    /* =========================================================
+       16. EVENT WIRING (Event Delegation — ไม่ใช้ inline onclick)
+       ========================================================= */
+    function handleAppClick(event) {
+        const target = event.target.closest('[data-action]');
+        if (!target) return;
+        const { action, tab: tabId } = target.dataset;
+
+        switch (action) {
+            case 'reset':           resetData(tabId); break;
+            case 'adjust-slider':   adjustSlider(tabId, target.dataset.typeId, toFiniteNumber(target.dataset.delta)); break;
+            case 'sync-sliders':    syncSlidersToCalendar(tabId); break;
+            case 'add-fix-cost':    addFixCostItem(tabId); break;
+            case 'remove-fix-cost': removeFixCostItem(tabId, Number(target.dataset.index)); break;
+            case 'open-day':        openDayModal(tabId, target.dataset.dateKey); break;
+            case 'export':          exportToJPEG(tabId, target); break;
+            default: break;
+        }
+    }
+
+    function handleAppInput(event) {
+        const target = event.target;
+        const { action, tab: tabId } = target.dataset;
+
+        switch (action) {
+            case 'recalculate':     calculate(tabId); break;
+            case 'fix-cost-name':   updateFixCostItem(tabId, Number(target.dataset.index), 'name', target.value); break;
+            case 'fix-cost-amount': updateFixCostItem(tabId, Number(target.dataset.index), 'amount', target.value); break;
+            default: break;
+        }
+    }
+
+    function handleAppChange(event) {
+        const { action, tab: tabId } = event.target.dataset;
+        if (action === 'change-period') handleDateChange(tabId);
+    }
+
+    function handleAppKeydown(event) {
+        const target = event.target;
+        if (target.dataset.action !== 'open-day') return;
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            openDayModal(target.dataset.tab, target.dataset.dateKey);
+        }
+    }
+
+    function wireEvents() {
+        const app = document.getElementById('app-content');
+        app.addEventListener('click', handleAppClick);
+        app.addEventListener('input', handleAppInput);
+        app.addEventListener('change', handleAppChange);
+        app.addEventListener('keydown', handleAppKeydown);
+
+        document.querySelector('.tab-container').addEventListener('click', (event) => {
+            const tab = event.target.closest('[data-tab-target]');
+            if (tab) switchTab(tab.dataset.tabTarget);
+        });
+
+        document.getElementById('dayModalForm').addEventListener('submit', (event) => {
+            event.preventDefault(); // กด Enter ในช่องไหนก็ได้ = Save
+            saveDayData();
+        });
+        document.getElementById('modalCancelBtn').addEventListener('click', closeModal);
+        modalElements.noOtCheckbox.addEventListener('change', toggleNoOT);
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && isModalOpen()) closeModal();
+        });
+    }
+
+    /* =========================================================
+       17. BOOTSTRAP
+       ========================================================= */
+    function initTab(tabId) {
+        calendarData[tabId] = loadCalendarData(tabId);
+        fixCostData[tabId] = loadFixCostData(tabId);
         renderFixCostList(tabId);
 
-        handleDateChange(tabId);
-        updateCalendarSummary(tabId);
-        calculate(tabId);
+        const hasSavedSliderState = loadData(tabId);
+        // ถ้ามีค่า Slider ที่ผู้ใช้ปรับไว้ → เก็บไว้ (ไม่ทับด้วยปฏิทิน), ถ้าเปิดครั้งแรก → sync กับปฏิทิน
+        refreshCalendar(tabId, { syncSliders: !hasSavedSliderState });
     }
+
+    function init() {
+        document.getElementById('app-content').innerHTML = TAB_IDS.map(buildTabMarkup).join('');
+        wireEvents();
+        TAB_IDS.forEach(initTab);
+        switchTab('my-ot');
+    }
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+})();
 </script>
 </body>
 </html>
