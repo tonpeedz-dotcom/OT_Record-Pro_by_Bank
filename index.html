@@ -213,6 +213,19 @@
         }
         .date-row { display: flex; gap: 10px; }
 
+        /* ส่วนของ Plant และจำนวนเงินในบรรทัดเดียวกัน */
+        .plant-cost-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .plant-cost-row select {
+            flex: 1.5;
+        }
+        .plant-cost-row input[type="number"] {
+            flex: 1;
+        }
+
         /* =========================================================
            7. SLIDERS
            ========================================================= */
@@ -520,14 +533,15 @@
         .btn-cancel { background: var(--border); }
 
         /* =========================================================
-           12. EXPORT SHEET (A3 @ 1123 x 1587 px, render off-screen)
+           12. EXPORT SHEET (A3 width @ 1123px, height auto-expandable)
            ========================================================= */
         .export-sheet {
             position: absolute;
             left: -9999px;
             top: 0;
             width: 1123px;
-            height: 1587px;
+            min-height: 1587px;
+            height: auto; /* ปรับให้ขยายตามตาราง Detail ด้านล่างได้ */
             background: #ffffff;
             padding: 80px;
             box-sizing: border-box;
@@ -554,6 +568,28 @@
             margin-top: 20px;
         }
         .export-sheet .rates-note { font-size: 1.8rem; margin-top: 40px; }
+        
+        /* สไตล์ตาราง Detail ในหน้า Export */
+        .export-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 40px;
+            font-size: 1.6rem;
+            color: #1f2937;
+        }
+        .export-table th, .export-table td {
+            border: 2px solid var(--border);
+            padding: 12px;
+            text-align: center;
+        }
+        .export-table th {
+            background-color: var(--primary);
+            color: var(--text);
+            font-weight: 700;
+        }
+        .export-table td.detail-col {
+            text-align: left;
+        }
     </style>
 </head>
 <body>
@@ -671,7 +707,8 @@
     const STORAGE_PREFIX = 'otPro_';
     const STORAGE_KEYS = Object.freeze({
         salary:         (tabId) => `${STORAGE_PREFIX}${tabId}_salary`,
-        plant:          (tabId) => `${STORAGE_PREFIX}${tabId}_plant`,
+        plantName:      (tabId) => `${STORAGE_PREFIX}${tabId}_plantName`,
+        plantAmount:    (tabId) => `${STORAGE_PREFIX}${tabId}_plantAmount`,
         month:          (tabId) => `${STORAGE_PREFIX}${tabId}_month`,
         year:           (tabId) => `${STORAGE_PREFIX}${tabId}_year`,
         sliderHours:    (tabId, typeId) => `${STORAGE_PREFIX}${tabId}_hrs_${typeId}`,
@@ -920,10 +957,11 @@
 
     const saveFixCostData = (tabId) => storage.setJSON(STORAGE_KEYS.fixCosts(tabId), fixCostData[tabId]);
 
-    /** บันทึกค่าฟอร์มหลัก (เงินเดือน, โรงงาน, เดือน, ปี, Slider) */
+    /** บันทึกค่าฟอร์มหลัก (เงินเดือน, โรงงาน, จำนวนเงินโรงงาน, เดือน, ปี, Slider) */
     function saveData(tabId) {
         storage.setRaw(STORAGE_KEYS.salary(tabId), getTabElement('salary', tabId).value);
-        storage.setRaw(STORAGE_KEYS.plant(tabId), getTabElement('plant', tabId).value);
+        storage.setRaw(STORAGE_KEYS.plantName(tabId), getTabElement('plantName', tabId).value);
+        storage.setRaw(STORAGE_KEYS.plantAmount(tabId), getTabElement('plantAmount', tabId).value);
         storage.setRaw(STORAGE_KEYS.month(tabId), getTabElement('month', tabId).value);
         storage.setRaw(STORAGE_KEYS.year(tabId), getTabElement('year', tabId).value);
         OT_TYPES.forEach((type) => {
@@ -935,15 +973,17 @@
 
     /**
      * โหลดค่าฟอร์มหลักจาก LocalStorage
-     * - เปิดครั้งแรก (ไม่มี key เงินเดือน) → ใช้ DEFAULT_SALARY = 50,000
      * @returns {boolean} true ถ้ามีค่า Slider ที่เคยบันทึกไว้
      */
     function loadData(tabId) {
         const savedSalary = storage.getRaw(STORAGE_KEYS.salary(tabId));
         getTabElement('salary', tabId).value = savedSalary !== null ? savedSalary : DEFAULT_SALARY;
 
-        const savedPlant = storage.getRaw(STORAGE_KEYS.plant(tabId));
-        if (savedPlant === "1300" || savedPlant === "1700") getTabElement('plant', tabId).value = savedPlant;
+        const savedPlantName = storage.getRaw(STORAGE_KEYS.plantName(tabId));
+        if (savedPlantName) getTabElement('plantName', tabId).value = savedPlantName;
+
+        const savedPlantAmount = storage.getRaw(STORAGE_KEYS.plantAmount(tabId));
+        getTabElement('plantAmount', tabId).value = savedPlantAmount !== null ? savedPlantAmount : 1300;
 
         const savedMonth = storage.getRaw(STORAGE_KEYS.month(tabId));
         if (MONTH_NAMES.includes(savedMonth)) getTabElement('month', tabId).value = savedMonth;
@@ -991,20 +1031,25 @@
             <div class="card">
                 <button type="button" class="reset-btn" data-action="reset" data-tab="${tabId}">Reset All</button>
                 <h2>${TAB_TITLES[tabId]}</h2>
-                <div class="date-row">
-                    <div class="form-group form-group--grow">
-                        <label for="salary_${tabId}">Salary (THB)</label>
-                        <input type="number" id="salary_${tabId}" min="0" inputmode="decimal" placeholder="Enter Salary"
+                
+                <div class="form-group">
+                    <label for="salary_${tabId}">Salary (THB)</label>
+                    <input type="number" id="salary_${tabId}" min="0" inputmode="decimal" placeholder="Enter Salary"
+                           data-action="recalculate" data-tab="${tabId}">
+                </div>
+                
+                <div class="form-group">
+                    <label>Plant & Fix Location Allowance (THB)</label>
+                    <div class="plant-cost-row">
+                        <select id="plantName_${tabId}" data-action="recalculate" data-tab="${tabId}">
+                            <option value="BANPHO PLANT">BANPHO PLANT</option>
+                            <option value="GATEWAY PLANT">GATEWAY PLANT</option>
+                        </select>
+                        <input type="number" id="plantAmount_${tabId}" min="0" inputmode="decimal" placeholder="ระบุจำนวนเงิน" value="1300"
                                data-action="recalculate" data-tab="${tabId}">
                     </div>
-                    <div class="form-group form-group--grow">
-                        <label for="plant_${tabId}">Plant</label>
-                        <select id="plant_${tabId}" data-action="recalculate" data-tab="${tabId}">
-                            <option value="1300">BANPHO PLANT</option>
-                            <option value="1700">GATEWAY PLANT</option>
-                        </select>
-                    </div>
                 </div>
+
                 <div class="date-row">
                     <div class="form-group form-group--grow">
                         <label for="month_${tabId}">Month</label>
@@ -1210,7 +1255,8 @@
        ========================================================= */
     function calculate(tabId) {
         const salary = toFiniteNumber(getTabElement('salary', tabId).value);
-        const fixLocationAllowance = toFiniteNumber(getTabElement('plant', tabId).value);
+        // อ่านค่าสถานที่ที่กรอกแบบ Manual
+        const fixLocationAllowance = toFiniteNumber(getTabElement('plantAmount', tabId).value);
         const hourlyRate = Math.round((salary * 3 / 500) * 10) / 10;
 
         let totalOtHours = 0;
@@ -1301,7 +1347,7 @@
     function removeFixCostItem(tabId, index) {
         const item = fixCostData[tabId] && fixCostData[tabId][index];
         if (!item) return;
-        // (จากเวอร์ชัน Gemini) ยืนยันก่อนลบ กันกดพลาด — แต่ไม่ถามตอน "เพิ่ม" เพราะเพิ่มผิดก็ลบได้
+        // ยืนยันก่อนลบ กันกดพลาด
         const itemLabel = item.name.trim() || 'รายการที่ไม่มีชื่อ';
         if (!window.confirm(`ยืนยันการลบ "${itemLabel}" ?`)) return;
         fixCostData[tabId].splice(index, 1);
@@ -1395,29 +1441,89 @@
         calendarData[tabId] = {};
         fixCostData[tabId] = cloneDefaultFixCosts();
         getTabElement('salary', tabId).value = DEFAULT_SALARY;
-        getTabElement('plant', tabId).value = "1300"; // Reset โรงงานกลับเป็น 1300
+        
+        // Reset โรงงานกลับเป็นค่าเริ่มต้น
+        getTabElement('plantName', tabId).value = "BANPHO PLANT";
+        getTabElement('plantAmount', tabId).value = "1300";
 
         renderFixCostList(tabId);
         handleDateChange(tabId); // วาดปฏิทินใหม่ + sync slider เป็น 0 + คำนวณ + บันทึก
     }
 
     /* =========================================================
-       14. EXPORT (JPEG — A3)
+       14. EXPORT (JPEG — A3 + Daily Detail Table)
        ========================================================= */
     function buildExportSheet(tabId, monthName, year) {
         const sheet = document.createElement('div');
         sheet.className = 'export-sheet';
 
+        // 1. หัวข้อรายงาน
         const title = document.createElement('h1');
         title.className = 'export-title';
         title.innerHTML = `สรุปผลตอบแทน & รายจ่าย (Income & Fix Cost)<br>ประจำเดือน ${escapeHtml(monthName)} ${escapeHtml(year)}`;
 
+        // 2. กล่องสรุป Final Summary
         const summaryClone = getTabElement('exportArea', tabId).cloneNode(true);
         summaryClone.removeAttribute('id');
-        summaryClone.querySelectorAll('[id]').forEach((node) => node.removeAttribute('id')); // ป้องกัน id ซ้ำใน DOM
+        summaryClone.querySelectorAll('[id]').forEach((node) => node.removeAttribute('id'));
         summaryClone.classList.add('export-card');
 
-        sheet.append(title, summaryClone);
+        // 3. ตารางแจกแจงรายวัน (Daily Log)
+        const table = document.createElement('table');
+        table.className = 'export-table';
+        table.innerHTML = `
+            <thead>
+                <tr>
+                    <th style="width: 12%;">วันที่</th>
+                    <th style="width: 10%;">1.5x</th>
+                    <th style="width: 12%;">1.5x(L)</th>
+                    <th style="width: 10%;">2.0x</th>
+                    <th style="width: 10%;">3.0x</th>
+                    <th style="width: 46%;">รายละเอียดงาน (Detail)</th>
+                </tr>
+            </thead>
+            <tbody>
+        `;
+
+        const { monthIndex, daysInMonth } = getSelectedPeriod(tabId);
+        let hasData = false;
+        let tbodyHtml = '';
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dateKey = buildDateKey(year, monthIndex, day);
+            const entry = calendarData[tabId][dateKey];
+
+            if (entry) {
+                const h15 = getDayHours(entry, '1.5');
+                const h15l = getDayHours(entry, '1.5l');
+                const h20 = getDayHours(entry, '2.0');
+                const h30 = getDayHours(entry, '3.0');
+                const detailStr = entry.detail ? escapeHtml(entry.detail) : '';
+
+                // ถ้ามีการกรอกชั่วโมง หรือกรอก detail ให้แสดงข้อมูลในตาราง
+                if (h15 > 0 || h15l > 0 || h20 > 0 || h30 > 0 || detailStr !== '') {
+                    hasData = true;
+                    tbodyHtml += `
+                        <tr>
+                            <td>${day} ${monthName.substring(0,3)}</td>
+                            <td>${h15 > 0 ? h15 : '-'}</td>
+                            <td>${h15l > 0 ? h15l : '-'}</td>
+                            <td>${h20 > 0 ? h20 : '-'}</td>
+                            <td>${h30 > 0 ? h30 : '-'}</td>
+                            <td class="detail-col">${detailStr || '-'}</td>
+                        </tr>
+                    `;
+                }
+            }
+        }
+
+        if (hasData) {
+            table.innerHTML += tbodyHtml + '</tbody>';
+        } else {
+            table.innerHTML += `<tr><td colspan="6" style="padding: 30px; color: #9ca3af;">ไม่มีบันทึก OT หรือรายละเอียดงานในเดือนนี้</td></tr></tbody>`;
+        }
+
+        sheet.append(title, summaryClone, table);
         return sheet;
     }
 
