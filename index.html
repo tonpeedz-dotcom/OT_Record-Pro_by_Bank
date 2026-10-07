@@ -213,21 +213,50 @@
         }
         .date-row { display: flex; gap: 10px; }
 
-        /* ส่วนของ Plant และจำนวนเงินในบรรทัดเดียวกัน */
         .plant-cost-row {
             display: flex;
             gap: 8px;
             align-items: center;
         }
         .plant-cost-row select {
-            flex: 1.5;
-        }
-        .plant-cost-row input[type="number"] {
             flex: 1;
         }
 
         /* =========================================================
-           7. SLIDERS
+           7. GAUGE METER (แถบวัดพลังเงินเดือน)
+           ========================================================= */
+        .gauge-container {
+            margin-top: 20px;
+            padding-top: 18px;
+            border-top: 1px dashed var(--divider);
+        }
+        .gauge-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.05rem; /* ขยายตัวอักษรให้เข้ากับหลอดพลังที่ใหญ่ขึ้น */
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--primary-dark);
+        }
+        .gauge-track {
+            background: #e2e8f0; /* ปรับสีพื้นหลังหลอดให้ดูเป็นร่องลึกขึ้น */
+            height: 28px; /* หลอดพลังใหญ่ขึ้นแบบ Big Size */
+            border-radius: 14px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.15); /* เพิ่มเงาด้านในให้ดูมีมิติ */
+        }
+        .gauge-fill {
+            height: 100%;
+            width: 0%;
+            background-color: var(--success);
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s;
+            border-radius: 14px;
+        }
+
+        /* =========================================================
+           8. SLIDERS
            ========================================================= */
         .slider-container {
             margin-bottom: 25px;
@@ -296,7 +325,7 @@
         }
 
         /* =========================================================
-           8. FIX COST
+           9. FIX COST
            ========================================================= */
         .fix-cost-header {
             display: flex;
@@ -352,7 +381,7 @@
         }
 
         /* =========================================================
-           9. RESULTS / FINAL SUMMARY
+           10. RESULTS / FINAL SUMMARY
            ========================================================= */
         .results {
             background: #fdfdfd;
@@ -382,7 +411,7 @@
         .rates-note { margin-top: 10px; font-size: 0.85rem; color: var(--text-muted); }
 
         /* =========================================================
-           10. CALENDAR
+           11. CALENDAR
            ========================================================= */
         .calendar-grid {
             display: grid;
@@ -472,7 +501,7 @@
         .cal-summary__meal { color: var(--meal-text); font-weight: 600; font-size: 0.85rem; }
 
         /* =========================================================
-           11. MODAL
+           12. MODAL
            ========================================================= */
         .modal-overlay {
             display: none;
@@ -533,7 +562,7 @@
         .btn-cancel { background: var(--border); }
 
         /* =========================================================
-           12. EXPORT SHEET (A3 width @ 1123px, height auto-expandable)
+           13. EXPORT SHEET (A3 width @ 1123px, height auto-expandable)
            ========================================================= */
         .export-sheet {
             position: absolute;
@@ -541,7 +570,7 @@
             top: 0;
             width: 1123px;
             min-height: 1587px;
-            height: auto; /* ปรับให้ขยายตามตาราง Detail ด้านล่างได้ */
+            height: auto;
             background: #ffffff;
             padding: 80px;
             box-sizing: border-box;
@@ -569,7 +598,6 @@
         }
         .export-sheet .rates-note { font-size: 1.8rem; margin-top: 40px; }
         
-        /* สไตล์ตาราง Detail ในหน้า Export */
         .export-table {
             width: 100%;
             border-collapse: collapse;
@@ -644,12 +672,6 @@
     const TAB_IDS = Object.freeze(['my-ot', 'forecast']);
     const TAB_TITLES = Object.freeze({ 'my-ot': 'My Calculations', 'forecast': 'Forecast / Others' });
 
-    /**
-     * ประเภท OT ทั้งหมด — เป็น Single Source of Truth ของทั้งแอป
-     * dataKey      : key ที่ใช้เก็บใน calendarData (ห้ามเปลี่ยน เพื่อให้เข้ากันกับข้อมูลเดิม)
-     * id           : ใช้ประกอบ element id และ localStorage key ของ slider (ห้ามเปลี่ยน)
-     * modalInputId : id ของ input ใน #dayModal
-     */
     const OT_TYPES = Object.freeze([
         { id: '1.5x',  dataKey: '1.5',  label: '1.5x Overtime', cellLabel: '1.5',  summaryLabel: '1.5x',        modalInputId: 'in_1_5',  multiplier: 1.5 },
         { id: '1.5xl', dataKey: '1.5l', label: '1.5x Lunch',    cellLabel: '1.5l', summaryLabel: '1.5x(Lunch)', modalInputId: 'in_1_5l', multiplier: 1.5 },
@@ -665,16 +687,36 @@
 
     const MEAL_ALLOWANCE = 83;
     const FIX_LUNCH_ALLOWANCE = 1700;
+    
+    // ตั้งค่าตารางเงินช่วยเหลือตามสถานที่ทำงาน (Plant & Grade)
+    const WORKPLACE_ALLOWANCE = Object.freeze({
+        'BANPHO PLANT': {
+            'G1': 500, 'G2': 700, 'G3': 900, 'G4': 1000, 'G5': 1300, 'G6': 1500
+        },
+        'GATEWAY PLANT': {
+            'G1': 800, 'G2': 1000, 'G3': 1500, 'G4': 1700, 'G5': 2300, 'G6': 2500
+        }
+    });
+
+    // ตั้งค่ากระบอกเงินเดือน (Salary Bands)
+    const SALARY_BANDS = Object.freeze({
+        'G1': { min: 12145, max: 22650 },
+        'G2': { min: 12145, max: 27545 },
+        'G3': { min: 15210, max: 37120 },
+        'G4': { min: 20700, max: 61400 },
+        'G5': { min: 34000, max: 87600 },
+        'G6': { min: 62755, max: 123000 }
+    });
+
     const DEFAULT_SALARY = 50000;
     const DEFAULT_YEAR = 2026;
     const SLIDER_MAX_HOURS = 200;
     const SLIDER_STEP_HOURS = 0.5;
     const DETAIL_MAX_LENGTH = 200;
 
-    /** เงื่อนไขค่าอาหาร OT: 1.5x (รวม Lunch) >= 1 ชม. หรือ 2.0x / 3.0x >= 8 ชม. */
-    const MEAL_RULE = Object.freeze({ minWeekdayOtHours: 1.0, minHolidayOtHours: 8.0 });
+    /** เงื่อนไขค่าอาหาร OT: 1.5x (รวม Lunch) >= 1 ชม. หรือ 2.0x >= 5 ชม. หรือ 3.0x >= 1 ชม. */
+    const MEAL_RULE = Object.freeze({ min1_5: 1.0, min2_0: 5.0, min3_0: 1.0 });
 
-    /** วันหยุดบริษัท แยกตามปี → เดือน (1-12) → วันที่ */
     const COMPANY_HOLIDAYS = Object.freeze({
         2026: {
             1:  [1, 2, 3, 4, 10, 11, 18, 24, 25, 31],
@@ -692,7 +734,6 @@
         }
     });
 
-    /** รายการ Fix Cost เริ่มต้น */
     const DEFAULT_FIX_COSTS = Object.freeze([
         { name: 'เงินกู้สหกรณ์ออมทรัพย์', amount: 11633.00 },
         { name: 'กองทุนสำรองเลี้ยงชีพ (15%)', amount: 10639.50 },
@@ -703,12 +744,11 @@
         { name: 'ค่าฌาปนกิจ บริษัท (Max)', amount: 170.00 }
     ]);
 
-    /** LocalStorage keys — คงรูปแบบเดิมไว้ทั้งหมด เพื่อไม่ให้ข้อมูลเก่าของผู้ใช้หาย */
     const STORAGE_PREFIX = 'otPro_';
     const STORAGE_KEYS = Object.freeze({
         salary:         (tabId) => `${STORAGE_PREFIX}${tabId}_salary`,
-        plantName:      (tabId) => `${STORAGE_PREFIX}${tabId}_plantName`,
-        plantAmount:    (tabId) => `${STORAGE_PREFIX}${tabId}_plantAmount`,
+        plant:          (tabId) => `${STORAGE_PREFIX}${tabId}_plant`,
+        grade:          (tabId) => `${STORAGE_PREFIX}${tabId}_grade`,
         month:          (tabId) => `${STORAGE_PREFIX}${tabId}_month`,
         year:           (tabId) => `${STORAGE_PREFIX}${tabId}_year`,
         sliderHours:    (tabId, typeId) => `${STORAGE_PREFIX}${tabId}_hrs_${typeId}`,
@@ -736,7 +776,6 @@
     const buildDateKey = (year, monthIndex, day) => `${year}-${padTwoDigits(monthIndex)}-${padTwoDigits(day)}`;
     const DATE_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
-    /** ดึง element ที่ id รูปแบบ `${prefix}_${tabId}` */
     const getTabElement = (prefix, tabId) => document.getElementById(`${prefix}_${tabId}`);
 
     function escapeHtml(value) {
@@ -761,18 +800,14 @@
     }
 
     /* =========================================================
-       3. SAFE STORAGE LAYER (กัน LocalStorage พัง / ข้อมูลเสีย / พื้นที่เต็ม)
+       3. SAFE STORAGE LAYER
        ========================================================= */
     const storage = (() => {
         let hasWarnedUserAboutWriteFailure = false;
 
         function getRaw(key) {
-            try {
-                return window.localStorage.getItem(key);
-            } catch (error) {
-                console.warn(`[storage] Cannot read "${key}"`, error);
-                return null;
-            }
+            try { return window.localStorage.getItem(key); } 
+            catch (error) { return null; }
         }
 
         function setRaw(key, value) {
@@ -780,48 +815,30 @@
                 window.localStorage.setItem(key, String(value));
                 return true;
             } catch (error) {
-                console.error(`[storage] Cannot write "${key}"`, error);
                 if (!hasWarnedUserAboutWriteFailure) {
                     hasWarnedUserAboutWriteFailure = true;
-                    window.alert('⚠️ ไม่สามารถบันทึกข้อมูลลงเครื่องได้ (พื้นที่เต็ม หรือเปิดโหมดไม่ระบุตัวตน)\nข้อมูลอาจหายเมื่อปิดหน้าเว็บ');
+                    window.alert('⚠️ ไม่สามารถบันทึกข้อมูลลงเครื่องได้ (พื้นที่เต็ม หรือเปิดโหมดไม่ระบุตัวตน)');
                 }
                 return false;
             }
         }
 
         function remove(key) {
-            try {
-                window.localStorage.removeItem(key);
-            } catch (error) {
-                console.warn(`[storage] Cannot remove "${key}"`, error);
-            }
+            try { window.localStorage.removeItem(key); } catch (error) {}
         }
 
         function listKeys() {
-            try {
-                return Object.keys(window.localStorage);
-            } catch (error) {
-                console.warn('[storage] Cannot list keys', error);
-                return [];
-            }
+            try { return Object.keys(window.localStorage); } 
+            catch (error) { return []; }
         }
 
-        /**
-         * อ่าน JSON อย่างปลอดภัย: ถ้าไม่มี key / JSON เสีย / โครงสร้างผิด → คืนค่า fallback
-         * @param {string} key
-         * @param {*} fallback
-         * @param {(parsed:any)=>boolean} isValidShape
-         */
         function getJSON(key, fallback, isValidShape = () => true) {
             const raw = getRaw(key);
             if (raw === null) return fallback;
             try {
                 const parsed = JSON.parse(raw);
                 if (isValidShape(parsed)) return parsed;
-                console.warn(`[storage] Unexpected data shape in "${key}" — using fallback.`);
-            } catch (error) {
-                console.warn(`[storage] Corrupted JSON in "${key}" — using fallback.`, error);
-            }
+            } catch (error) {}
             return fallback;
         }
 
@@ -833,39 +850,21 @@
     /* =========================================================
        4. APPLICATION STATE
        ========================================================= */
-    /**
-     * @typedef {Object} DayEntry
-     * @property {boolean} noOT     - true = วันนี้ไม่มี OT (0 ชม.)
-     * @property {number} [1.5]     - ชั่วโมง OT 1.5x
-     * @property {number} [1.5l]    - ชั่วโมง OT 1.5x Lunch
-     * @property {number} [2.0]     - ชั่วโมง OT 2.0x
-     * @property {number} [3.0]     - ชั่วโมง OT 3.0x
-     * @property {string} [detail]  - รายละเอียดงาน OT (บันทึกช่วยจำ)
-     */
-
-    /** calendarData[tabId]['YYYY-MM-DD'] = DayEntry */
     const calendarData = { 'my-ot': {}, 'forecast': {} };
-
-    /** fixCostData[tabId] = Array<{ name: string, amount: number }> */
     const fixCostData = { 'my-ot': cloneDefaultFixCosts(), 'forecast': cloneDefaultFixCosts() };
-
-    /** วันที่กำลังแก้ไขใน Modal */
     const modalState = { tabId: null, dateKey: null };
 
     /* =========================================================
-       5. DOMAIN LOGIC — Day entries, holidays, meal allowance
+       5. DOMAIN LOGIC
        ========================================================= */
     function normalizeDayEntry(rawEntry) {
         if (!isPlainObject(rawEntry)) return null;
-
         const entry = { noOT: rawEntry.noOT === true };
         if (!entry.noOT) {
             OT_TYPES.forEach((type) => { entry[type.dataKey] = toNonNegativeNumber(rawEntry[type.dataKey]); });
         }
-
         const detail = typeof rawEntry.detail === 'string' ? rawEntry.detail.trim().slice(0, DETAIL_MAX_LENGTH) : '';
         if (detail) entry.detail = detail;
-
         return entry;
     }
 
@@ -876,9 +875,13 @@
 
     function getMealAllowanceCount(entry) {
         if (!entry || entry.noOT) return 0;
-        const weekdayOtHours = getDayHours(entry, '1.5') + getDayHours(entry, '1.5l');
-        if (weekdayOtHours >= MEAL_RULE.minWeekdayOtHours) return 1;
-        if (getDayHours(entry, '2.0') >= MEAL_RULE.minHolidayOtHours || getDayHours(entry, '3.0') >= MEAL_RULE.minHolidayOtHours) return 1;
+        const h15 = getDayHours(entry, '1.5') + getDayHours(entry, '1.5l');
+        const h20 = getDayHours(entry, '2.0');
+        const h30 = getDayHours(entry, '3.0');
+
+        if (h15 >= MEAL_RULE.min1_5) return 1;
+        if (h30 >= MEAL_RULE.min3_0) return 1;
+        if (h20 >= MEAL_RULE.min2_0) return 1;
         return 0;
     }
 
@@ -887,7 +890,6 @@
         return Array.isArray(holidaysInMonth) && holidaysInMonth.includes(day);
     }
 
-    /** สีวันหยุด: ถ้ามี OT 2.0x/3.0x → ถือเป็นวันหยุด, ถ้ามีแค่ 1.5x → ถือเป็นวันทำงาน */
     function shouldHighlightAsHoliday(entry, isHoliday) {
         if (!entry || entry.noOT) return isHoliday;
         if (getDayHours(entry, '2.0') > 0 || getDayHours(entry, '3.0') > 0) return true;
@@ -908,7 +910,6 @@
         };
     }
 
-    /** รวมชั่วโมง OT และค่าอาหารจากปฏิทินของเดือน/ปีที่เลือก */
     function getCalendarTotals(tabId) {
         const { year, monthIndex, daysInMonth } = getSelectedPeriod(tabId);
         const hoursByType = Object.fromEntries(OT_TYPES.map((type) => [type.dataKey, 0]));
@@ -957,11 +958,10 @@
 
     const saveFixCostData = (tabId) => storage.setJSON(STORAGE_KEYS.fixCosts(tabId), fixCostData[tabId]);
 
-    /** บันทึกค่าฟอร์มหลัก (เงินเดือน, โรงงาน, จำนวนเงินโรงงาน, เดือน, ปี, Slider) */
     function saveData(tabId) {
         storage.setRaw(STORAGE_KEYS.salary(tabId), getTabElement('salary', tabId).value);
-        storage.setRaw(STORAGE_KEYS.plantName(tabId), getTabElement('plantName', tabId).value);
-        storage.setRaw(STORAGE_KEYS.plantAmount(tabId), getTabElement('plantAmount', tabId).value);
+        storage.setRaw(STORAGE_KEYS.plant(tabId), getTabElement('plant', tabId).value);
+        storage.setRaw(STORAGE_KEYS.grade(tabId), getTabElement('grade', tabId).value);
         storage.setRaw(STORAGE_KEYS.month(tabId), getTabElement('month', tabId).value);
         storage.setRaw(STORAGE_KEYS.year(tabId), getTabElement('year', tabId).value);
         OT_TYPES.forEach((type) => {
@@ -971,19 +971,17 @@
         });
     }
 
-    /**
-     * โหลดค่าฟอร์มหลักจาก LocalStorage
-     * @returns {boolean} true ถ้ามีค่า Slider ที่เคยบันทึกไว้
-     */
     function loadData(tabId) {
         const savedSalary = storage.getRaw(STORAGE_KEYS.salary(tabId));
         getTabElement('salary', tabId).value = savedSalary !== null ? savedSalary : DEFAULT_SALARY;
 
-        const savedPlantName = storage.getRaw(STORAGE_KEYS.plantName(tabId));
-        if (savedPlantName) getTabElement('plantName', tabId).value = savedPlantName;
+        const savedPlant = storage.getRaw(STORAGE_KEYS.plant(tabId));
+        if (savedPlant) getTabElement('plant', tabId).value = savedPlant;
+        else getTabElement('plant', tabId).value = "BANPHO PLANT";
 
-        const savedPlantAmount = storage.getRaw(STORAGE_KEYS.plantAmount(tabId));
-        getTabElement('plantAmount', tabId).value = savedPlantAmount !== null ? savedPlantAmount : 1300;
+        const savedGrade = storage.getRaw(STORAGE_KEYS.grade(tabId));
+        if (savedGrade) getTabElement('grade', tabId).value = savedGrade;
+        else getTabElement('grade', tabId).value = "G5";
 
         const savedMonth = storage.getRaw(STORAGE_KEYS.month(tabId));
         if (MONTH_NAMES.includes(savedMonth)) getTabElement('month', tabId).value = savedMonth;
@@ -1039,14 +1037,20 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>Plant & Fix Location Allowance (THB)</label>
+                    <label>เงินช่วยเหลือตามสถานที่ทำงาน (Plant & Grade)</label>
                     <div class="plant-cost-row">
-                        <select id="plantName_${tabId}" data-action="recalculate" data-tab="${tabId}">
+                        <select id="plant_${tabId}" data-action="recalculate" data-tab="${tabId}">
                             <option value="BANPHO PLANT">BANPHO PLANT</option>
                             <option value="GATEWAY PLANT">GATEWAY PLANT</option>
                         </select>
-                        <input type="number" id="plantAmount_${tabId}" min="0" inputmode="decimal" placeholder="ระบุจำนวนเงิน" value="1300"
-                               data-action="recalculate" data-tab="${tabId}">
+                        <select id="grade_${tabId}" data-action="recalculate" data-tab="${tabId}">
+                            <option value="G1">G1</option>
+                            <option value="G2">G2</option>
+                            <option value="G3">G3</option>
+                            <option value="G4">G4</option>
+                            <option value="G5">G5</option>
+                            <option value="G6">G6</option>
+                        </select>
                     </div>
                 </div>
 
@@ -1058,6 +1062,16 @@
                     <div class="form-group form-group--grow">
                         <label for="year_${tabId}">Year</label>
                         <input type="number" id="year_${tabId}" min="2011" max="2050" value="${DEFAULT_YEAR}" data-action="change-period" data-tab="${tabId}">
+                    </div>
+                </div>
+
+                <div class="gauge-container" id="gaugeContainer_${tabId}">
+                    <div class="gauge-header">
+                        <span>⚡ ระดับพลังเงินเดือน</span>
+                        <span id="gaugePercent_${tabId}">0%</span>
+                    </div>
+                    <div class="gauge-track">
+                        <div class="gauge-fill" id="gaugeFill_${tabId}"></div>
                     </div>
                 </div>
             </div>
@@ -1101,8 +1115,8 @@
                     <div class="result-row"><span>Total OT Hours:</span><span id="totalHours_${tabId}">0 Hrs</span></div>
                     <div class="result-row"><span>Total OT Pay:</span><span id="totalMoney_${tabId}">0 THB</span></div>
                     <div class="result-row"><span>Total Meal Allowance:</span><span id="totalMeal_${tabId}">0 THB</span></div>
-                    <div class="result-row result-row--dashed"><span>Fix: อาหารกลางวัน:</span><span>${FIX_LUNCH_ALLOWANCE.toLocaleString('en-US')} THB</span></div>
-                    <div class="result-row"><span>Fix: สถานที่:</span><span id="dispFixLocation_${tabId}">1,300 THB</span></div>
+                    <div class="result-row result-row--dashed"><span>Fix: อาหารกลางวัน:</span><span id="dispFixLunch_${tabId}">0 THB</span></div>
+                    <div class="result-row"><span>เงินช่วยเหลือตามสถานที่ทำงาน:</span><span id="dispFixLocation_${tabId}">0 THB</span></div>
                     <div class="result-row result-row--dashed"><span>Salary:</span><span id="dispSalary_${tabId}">0 THB</span></div>
                     <div class="result-row result-row--subtotal"><span>Total Gross Income (รายรับรวม):</span><span id="totalIncome_${tabId}">0 THB</span></div>
                     <div class="result-row result-row--deduction"><span>Total Fix Cost (หักรายจ่ายประจำ):</span><span id="dispFixCost_${tabId}">-0 THB</span></div>
@@ -1189,11 +1203,6 @@
             <span class="cal-summary__meal">🍚 ได้รับค่าอาหาร OT: ${totals.mealCount} มื้อ (฿${totals.mealTotal.toLocaleString('en-US')})</span>`;
     }
 
-    /**
-     * วาดปฏิทินใหม่ + อัปเดตสรุป แล้วคำนวณเงิน
-     * @param {boolean} syncSliders true = ตั้งค่า Slider ให้เท่ากับยอดในปฏิทิน
-     *                              false = คงค่า Slider ที่ผู้ใช้ปรับเอง แต่อัปเดตเส้นอ้างอิงสีแดง
-     */
     function refreshCalendar(tabId, { syncSliders }) {
         renderCalendarGrid(tabId);
         updateCalendarSummary(tabId);
@@ -1236,7 +1245,6 @@
         calculate(tabId);
     }
 
-    /** แถบสี: ฟ้า = ค่าปัจจุบัน, แดง = ส่วนที่ขาดจากยอดในปฏิทิน */
     function updateSliderVisual(slider) {
         const value = toFiniteNumber(slider.value);
         const max = toFiniteNumber(slider.max, SLIDER_MAX_HOURS) || SLIDER_MAX_HOURS;
@@ -1255,8 +1263,34 @@
        ========================================================= */
     function calculate(tabId) {
         const salary = toFiniteNumber(getTabElement('salary', tabId).value);
-        // อ่านค่าสถานที่ที่กรอกแบบ Manual
-        const fixLocationAllowance = toFiniteNumber(getTabElement('plantAmount', tabId).value);
+        const plant = getTabElement('plant', tabId).value;
+        const grade = getTabElement('grade', tabId).value;
+        
+        // --- อัปเดต Gauge วัดพลังเงินเดือน ---
+        const band = SALARY_BANDS[grade];
+        let percent = 0;
+        if (band && salary > 0) {
+            percent = (salary / band.max) * 100;
+        }
+        const visualPercent = clamp(percent, 0, 100);
+        
+        const gaugeFill = getTabElement('gaugeFill', tabId);
+        if(gaugeFill) {
+            gaugeFill.style.width = `${visualPercent}%`;
+            if (percent < 60) gaugeFill.style.backgroundColor = 'var(--success)';
+            else if (percent < 85) gaugeFill.style.backgroundColor = '#f59e0b';
+            else gaugeFill.style.backgroundColor = 'var(--danger)';
+            
+            getTabElement('gaugePercent', tabId).textContent = `${percent.toFixed(1)}%`;
+        }
+        // -----------------------------------
+
+        let fixLocationAllowance = 0;
+        if (WORKPLACE_ALLOWANCE[plant] && WORKPLACE_ALLOWANCE[plant][grade]) {
+            fixLocationAllowance = WORKPLACE_ALLOWANCE[plant][grade];
+        }
+
+        const actualFixLunchAllowance = (grade === 'G6') ? 0 : FIX_LUNCH_ALLOWANCE;
         const hourlyRate = Math.round((salary * 3 / 500) * 10) / 10;
 
         let totalOtHours = 0;
@@ -1282,7 +1316,7 @@
         });
 
         const { mealTotal } = getCalendarTotals(tabId);
-        const grossIncome = salary + totalOtPay + mealTotal + FIX_LUNCH_ALLOWANCE + fixLocationAllowance;
+        const grossIncome = salary + totalOtPay + mealTotal + actualFixLunchAllowance + fixLocationAllowance;
         const totalFixCost = getFixCostTotal(tabId);
         const netIncome = grossIncome - totalFixCost;
 
@@ -1291,6 +1325,7 @@
         getTabElement('totalMoney', tabId).textContent = `${formatUpTo2(totalOtPay)} THB`;
         getTabElement('totalMeal', tabId).textContent = `${formatUpTo2(mealTotal)} THB`;
         getTabElement('dispSalary', tabId).textContent = `${formatUpTo2(salary)} THB`;
+        getTabElement('dispFixLunch', tabId).textContent = `${formatUpTo2(actualFixLunchAllowance)} THB`;
         getTabElement('dispFixLocation', tabId).textContent = `${formatUpTo2(fixLocationAllowance)} THB`;
         getTabElement('totalIncome', tabId).textContent = `${formatUpTo2(grossIncome)} THB`;
         getTabElement('dispFixCost', tabId).textContent = `- ${formatUpTo2(totalFixCost)} THB`;
@@ -1334,7 +1369,7 @@
         if (field === 'amount') item.amount = toFiniteNumber(value);
         else item.name = value;
         saveFixCostData(tabId);
-        calculate(tabId); // ไม่ re-render list เพื่อไม่ให้ focus หลุดระหว่างพิมพ์
+        calculate(tabId);
     }
 
     function addFixCostItem(tabId) {
@@ -1347,7 +1382,6 @@
     function removeFixCostItem(tabId, index) {
         const item = fixCostData[tabId] && fixCostData[tabId][index];
         if (!item) return;
-        // ยืนยันก่อนลบ กันกดพลาด
         const itemLabel = item.name.trim() || 'รายการที่ไม่มีชื่อ';
         if (!window.confirm(`ยืนยันการลบ "${itemLabel}" ?`)) return;
         fixCostData[tabId].splice(index, 1);
@@ -1398,7 +1432,6 @@
 
     const isModalOpen = () => modalElements.overlay.classList.contains('is-open');
 
-    /** อ่านค่าจากฟอร์มใน Modal แล้วสร้าง DayEntry */
     function readDayEntryFromModal() {
         const detail = modalElements.detailInput.value.trim().slice(0, DETAIL_MAX_LENGTH);
         const entry = modalElements.noOtCheckbox.checked ? { noOT: true } : { noOT: false };
@@ -1441,34 +1474,29 @@
         calendarData[tabId] = {};
         fixCostData[tabId] = cloneDefaultFixCosts();
         getTabElement('salary', tabId).value = DEFAULT_SALARY;
-        
-        // Reset โรงงานกลับเป็นค่าเริ่มต้น
-        getTabElement('plantName', tabId).value = "BANPHO PLANT";
-        getTabElement('plantAmount', tabId).value = "1300";
+        getTabElement('plant', tabId).value = "BANPHO PLANT";
+        getTabElement('grade', tabId).value = "G5";
 
         renderFixCostList(tabId);
-        handleDateChange(tabId); // วาดปฏิทินใหม่ + sync slider เป็น 0 + คำนวณ + บันทึก
+        handleDateChange(tabId); 
     }
 
     /* =========================================================
-       14. EXPORT (JPEG — A3 + Daily Detail Table)
+       14. EXPORT
        ========================================================= */
     function buildExportSheet(tabId, monthName, year) {
         const sheet = document.createElement('div');
         sheet.className = 'export-sheet';
 
-        // 1. หัวข้อรายงาน
         const title = document.createElement('h1');
         title.className = 'export-title';
         title.innerHTML = `สรุปผลตอบแทน & รายจ่าย (Income & Fix Cost)<br>ประจำเดือน ${escapeHtml(monthName)} ${escapeHtml(year)}`;
 
-        // 2. กล่องสรุป Final Summary
         const summaryClone = getTabElement('exportArea', tabId).cloneNode(true);
         summaryClone.removeAttribute('id');
         summaryClone.querySelectorAll('[id]').forEach((node) => node.removeAttribute('id'));
         summaryClone.classList.add('export-card');
 
-        // 3. ตารางแจกแจงรายวัน (Daily Log)
         const table = document.createElement('table');
         table.className = 'export-table';
         table.innerHTML = `
@@ -1500,7 +1528,6 @@
                 const h30 = getDayHours(entry, '3.0');
                 const detailStr = entry.detail ? escapeHtml(entry.detail) : '';
 
-                // ถ้ามีการกรอกชั่วโมง หรือกรอก detail ให้แสดงข้อมูลในตาราง
                 if (h15 > 0 || h15l > 0 || h20 > 0 || h30 > 0 || detailStr !== '') {
                     hasData = true;
                     tbodyHtml += `
@@ -1583,7 +1610,7 @@
     }
 
     /* =========================================================
-       16. EVENT WIRING (Event Delegation — ไม่ใช้ inline onclick)
+       16. EVENT WIRING
        ========================================================= */
     function handleAppClick(event) {
         const target = event.target.closest('[data-action]');
@@ -1642,7 +1669,7 @@
         });
 
         document.getElementById('dayModalForm').addEventListener('submit', (event) => {
-            event.preventDefault(); // กด Enter ในช่องไหนก็ได้ = Save
+            event.preventDefault(); 
             saveDayData();
         });
         document.getElementById('modalCancelBtn').addEventListener('click', closeModal);
@@ -1661,7 +1688,6 @@
         renderFixCostList(tabId);
 
         const hasSavedSliderState = loadData(tabId);
-        // ถ้ามีค่า Slider ที่ผู้ใช้ปรับไว้ → เก็บไว้ (ไม่ทับด้วยปฏิทิน), ถ้าเปิดครั้งแรก → sync กับปฏิทิน
         refreshCalendar(tabId, { syncSliders: !hasSavedSliderState });
     }
 
