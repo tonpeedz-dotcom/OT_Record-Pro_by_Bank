@@ -223,7 +223,7 @@
         }
 
         /* =========================================================
-           7. GAUGE METER (แถบวัดพลังเงินเดือน)
+           7. GAUGE METER (แถบวัดพลังเงินเดือน & ปีที่เหลือ)
            ========================================================= */
         .gauge-container {
             margin-top: 20px;
@@ -234,18 +234,18 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 1.05rem; /* ขยายตัวอักษรให้เข้ากับหลอดพลังที่ใหญ่ขึ้น */
+            font-size: 1.05rem;
             font-weight: 700;
             margin-bottom: 10px;
             color: var(--primary-dark);
         }
         .gauge-track {
-            background: #e2e8f0; /* ปรับสีพื้นหลังหลอดให้ดูเป็นร่องลึกขึ้น */
-            height: 28px; /* หลอดพลังใหญ่ขึ้นแบบ Big Size */
+            background: #e2e8f0;
+            height: 28px;
             border-radius: 14px;
             overflow: hidden;
             position: relative;
-            box-shadow: inset 0 2px 6px rgba(0,0,0,0.15); /* เพิ่มเงาด้านในให้ดูมีมิติ */
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.15);
         }
         .gauge-fill {
             height: 100%;
@@ -253,6 +253,25 @@
             background-color: var(--success);
             transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s;
             border-radius: 14px;
+        }
+        
+        /* สไตล์สำหรับบอกจำนวนปีที่เหลือจนกว่าเงินเดือนตัน */
+        .time-to-max {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 15px;
+            color: var(--text);
+            background: #f1f5f9;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px dashed #cbd5e1;
+        }
+        .time-to-max span {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--danger);
+            margin: 0 4px;
         }
 
         /* =========================================================
@@ -708,6 +727,16 @@
         'G6': { min: 62755, max: 123000 }
     });
 
+    // ฐานเงินเดือนสำหรับใช้คำนวณการปรับขึ้น 4.5% ต่อปี
+    const SALARY_BASE_FOR_INCREASE = Object.freeze({
+        'G1': 16200,
+        'G2': 20200,
+        'G3': 26900,
+        'G4': 40400,
+        'G5': 60700,
+        'G6': 93000
+    });
+
     const DEFAULT_SALARY = 50000;
     const DEFAULT_YEAR = 2026;
     const SLIDER_MAX_HOURS = 200;
@@ -1073,6 +1102,7 @@
                     <div class="gauge-track">
                         <div class="gauge-fill" id="gaugeFill_${tabId}"></div>
                     </div>
+                    <div class="time-to-max" id="timeToMax_${tabId}"></div>
                 </div>
             </div>
 
@@ -1105,7 +1135,7 @@
                 <div id="fixCostList_${tabId}"></div>
                 <div class="fix-cost-footer">
                     <span>รวมรายจ่ายประจำ:</span>
-                    <span id="fixCostTotalCard_${tabId}" class="fix-cost-total">0 THB</span>
+                    <span id="fixCostTotalCard_${tabId}" class="fixCost-total">0 THB</span>
                 </div>
             </div>
 
@@ -1266,7 +1296,7 @@
         const plant = getTabElement('plant', tabId).value;
         const grade = getTabElement('grade', tabId).value;
         
-        // --- อัปเดต Gauge วัดพลังเงินเดือน ---
+        // --- อัปเดต Gauge วัดพลังเงินเดือน และ ปีที่เหลือ ---
         const band = SALARY_BANDS[grade];
         let percent = 0;
         if (band && salary > 0) {
@@ -1275,15 +1305,34 @@
         const visualPercent = clamp(percent, 0, 100);
         
         const gaugeFill = getTabElement('gaugeFill', tabId);
-        if(gaugeFill) {
+        const timeToMaxEl = getTabElement('timeToMax', tabId);
+
+        if(gaugeFill && timeToMaxEl) {
             gaugeFill.style.width = `${visualPercent}%`;
             if (percent < 60) gaugeFill.style.backgroundColor = 'var(--success)';
             else if (percent < 85) gaugeFill.style.backgroundColor = '#f59e0b';
             else gaugeFill.style.backgroundColor = 'var(--danger)';
             
             getTabElement('gaugePercent', tabId).textContent = `${percent.toFixed(1)}%`;
+
+            // คำนวณ ปีที่เหลือ (Years to Max) โดยใช้ 4.5%
+            const baseSalaryForUp = SALARY_BASE_FOR_INCREASE[grade];
+            const yearlyUp = baseSalaryForUp * 0.045; // เงินเดือนขึ้น 4.5% ต่อปีจากค่ากลาง
+
+            if (salary >= band.max) {
+                timeToMaxEl.innerHTML = `🚀 เงินเดือนของคุณตันหลอดแล้ว!`;
+                timeToMaxEl.style.color = 'var(--success)';
+                timeToMaxEl.style.borderColor = 'var(--success)';
+            } else if (yearlyUp > 0) {
+                const yearsRemain = (band.max - salary) / yearlyUp;
+                timeToMaxEl.innerHTML = `เหลืออีก <span>${yearsRemain.toFixed(2)}</span> ปี เงินเดือนตัน (คิดที่ 4.5%)`;
+                timeToMaxEl.style.color = 'var(--text)';
+                timeToMaxEl.style.borderColor = '#cbd5e1';
+            } else {
+                timeToMaxEl.innerHTML = `ไม่สามารถคำนวณฐานเงินเดือนขึ้นได้`;
+            }
         }
-        // -----------------------------------
+        // --------------------------------------------------
 
         let fixLocationAllowance = 0;
         if (WORKPLACE_ALLOWANCE[plant] && WORKPLACE_ALLOWANCE[plant][grade]) {
