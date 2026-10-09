@@ -55,8 +55,12 @@
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
-            padding: 0 0 40px;
+            padding: 0;
             overscroll-behavior-y: none;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
         }
 
         h2, h3 { margin-top: 0; color: var(--text); }
@@ -74,22 +78,47 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .header h3 { margin: 0; }
+        
+        .toggle-sidebar-btn {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.3);
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .toggle-sidebar-btn:hover {
+            background: rgba(255,255,255,0.5);
+        }
 
         .tab-container {
             display: flex;
             background: white;
             border-bottom: 1px solid var(--border);
+            z-index: 100;
         }
         .tab {
             flex: 1;
-            padding: 15px;
+            padding: 12px;
             text-align: center;
             cursor: pointer;
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.95rem;
             transition: all 0.2s;
             background: transparent;
             border: none;
@@ -103,42 +132,78 @@
         }
 
         /* =========================================================
-           4. LAYOUT & CARDS (2 COLUMNS FIT SCALE)
+           4. LAYOUT & CARDS (Sidebar + Main Content)
            ========================================================= */
-        .content-area {
-            display: none;
-            padding: 15px;
-            max-width: 1440px; /* ขยายความกว้างเต็มจอมากขึ้น */
-            width: 98%;
-            margin: 0 auto;
-        }
-        .content-area.active { display: block; }
-
-        .dashboard-layout {
+        .app-layout {
             display: flex;
-            flex-direction: column;
-            gap: 20px;
+            flex: 1;
+            position: relative;
+            overflow: hidden; /* ป้องกัน scroll bar ซ้อนทับกัน */
         }
 
-        /* Desktop Layout */
+        /* Sidebar Container */
+        .sidebar-container {
+            width: 350px;
+            background: #ffffff;
+            border-right: 1px solid var(--border);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.03);
+            overflow-y: auto;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 150;
+            transform: translateX(-100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        /* เมื่อเปิด Sidebar */
+        .sidebar-container.open {
+            transform: translateX(0);
+        }
+
+        /* Main Content Container */
+        .main-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--bg);
+        }
+
+        /* Desktop Behavior */
         @media (min-width: 900px) {
-            .dashboard-layout {
-                flex-direction: row;
-                align-items: flex-start;
+            .sidebar-container {
+                position: static;
+                transform: translateX(0); /* โชว์เป็นค่าเริ่มต้นบน Desktop */
+                margin-left: -350px;      /* ใช้เทคนิค margin ลบเพื่อซ่อน */
             }
-            .sidebar-col {
-                width: 350px; /* ปรับ sidebar ให้กว้างขึ้นตาม scale */
-                flex-shrink: 0;
-            }
-            .main-col {
-                flex: 1;
-                min-width: 0;
-                display: flex;
-                flex-direction: column;
-                gap: 15px;
+            .sidebar-container.open {
+                margin-left: 0;
             }
         }
+        
+        /* Mobile Overlay */
+        .sidebar-overlay {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 140;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .sidebar-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+        @media (min-width: 900px) {
+            .sidebar-overlay { display: none !important; }
+        }
 
+        /* Card Styles */
         .card {
             background: var(--card);
             border-radius: 12px;
@@ -147,25 +212,6 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
             border: 1px solid rgba(0, 0, 0, 0.02);
         }
-        @media (min-width: 900px) {
-            .main-col .card { margin-bottom: 0; }
-        }
-
-        .card--compact {
-            padding: 15px;
-        }
-        .card--compact .form-group {
-            margin-bottom: 12px;
-        }
-        .card--compact label {
-            font-size: 0.85rem;
-            margin-bottom: 4px;
-        }
-        .card--compact input[type="number"], .card--compact select {
-            padding: 8px 10px;
-            font-size: 0.95rem;
-        }
-
         .card--accent-primary { border-top: 4px solid var(--primary); }
         .card--accent-secondary { border-top: 4px solid var(--secondary); }
 
@@ -175,10 +221,22 @@
             align-items: center;
             margin-bottom: 15px;
         }
-        .card-header-row h3 { margin: 0; }
+        .card-header-row h3 { margin: 0; font-size: 1.1rem;}
 
         .muted-text { font-size: 0.9rem; color: var(--text-muted); }
         .muted-caption { font-size: 0.8rem; color: var(--text-muted); }
+
+        /* Sidebar Section Blocks */
+        .sidebar-section {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed var(--divider);
+        }
+        .sidebar-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
 
         /* =========================================================
            5. BUTTONS
@@ -205,6 +263,9 @@
             cursor: pointer;
             transition: transform 0.1s, filter 0.2s;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            margin-top: 10px;
+            margin-bottom: 10px;
         }
         .btn-add-cost {
             background: var(--pastel-sky-blue);
@@ -253,15 +314,15 @@
            ========================================================= */
         .form-group { margin-bottom: 15px; }
         .form-group--grow { flex: 1; }
-        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9rem; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.85rem; color: #4b5563;}
 
         input[type="number"], input[type="text"], select {
             width: 100%;
-            padding: 12px;
+            padding: 10px 12px;
             border: 1px solid var(--border);
             border-radius: 8px;
             box-sizing: border-box;
-            font-size: 1rem;
+            font-size: 0.95rem;
             background: #fdfdfd;
             color: var(--text);
             font-family: 'Kanit', sans-serif;
@@ -331,8 +392,6 @@
            ========================================================= */
         .slider-container {
             margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--border);
         }
         .slider-header {
             display: flex;
@@ -398,29 +457,21 @@
         /* =========================================================
            9. FIX COST
            ========================================================= */
-        .fix-cost-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0px;
-        }
-        .fix-cost-header h3 { margin: 0; }
-
         .fix-cost-row {
             display: flex;
             gap: 8px;
             align-items: center;
             margin-bottom: 10px;
         }
-        .fix-cost-row input[type="text"] { flex: 2; padding: 9px 12px; font-size: 0.95rem; }
-        .fix-cost-row input[type="number"] { flex: 1.3; padding: 9px 12px; font-size: 0.95rem; }
+        .fix-cost-row input[type="text"] { flex: 2; padding: 8px 10px; font-size: 0.9rem; }
+        .fix-cost-row input[type="number"] { flex: 1.3; padding: 8px 10px; font-size: 0.9rem; }
 
         .del-cost-btn {
             background: #fee2e2;
             color: var(--danger);
             border: none;
             width: 34px;
-            height: 38px;
+            height: 36px;
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
@@ -441,13 +492,14 @@
             padding-top: 10px;
             border-top: 1px dashed var(--border);
             font-weight: 700;
+            font-size: 0.9rem;
         }
-        .fix-cost-total { color: var(--danger); font-size: 1.05rem; }
+        .fix-cost-total { color: var(--danger); font-size: 1rem; }
 
         .empty-state {
             text-align: center;
             color: var(--text-subtle);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             padding: 10px 0;
         }
 
@@ -693,6 +745,7 @@
 <body>
 
 <header class="header">
+    <button type="button" class="toggle-sidebar-btn" id="sidebarToggleBtn" aria-label="Toggle Menu">☰</button>
     <h3>OT Calculator ProMax by 😎AJ'Bank & AJ'Nerd😎 </h3>
 </header>
 
@@ -701,7 +754,20 @@
     <button type="button" class="tab" role="tab" data-tab-target="forecast">Forecast / Other</button>
 </nav>
 
-<main id="app-content"></main>
+<div class="app-layout">
+    <!-- Overlay for mobile sidebar -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar Container -->
+    <aside class="sidebar-container open" id="appSidebar">
+        <!-- Content will be injected here per tab -->
+    </aside>
+
+    <!-- Main Content Container -->
+    <main class="main-container" id="appMainContent">
+        <!-- Content will be injected here per tab -->
+    </main>
+</div>
 
 <!-- ===================== Day Edit Modal ===================== -->
 <div id="dayModal" class="modal-overlay" aria-hidden="true">
@@ -731,6 +797,9 @@
         </div>
     </form>
 </div>
+
+<!-- Hidden area for Off-screen elements (Exporting) -->
+<div id="offscreen-area" style="display:none;"></div>
 
 <script>
 (() => {
@@ -784,7 +853,7 @@
 
     const MEAL_RULE = Object.freeze({ min1_5: 1.0, min2_0: 5.0, min3_0: 1.0 });
 
-    /* แยกวันหยุดของแต่ละ Plant ตามที่กำหนด */
+    /* วันหยุดบริษัท */
     const COMPANY_HOLIDAYS = Object.freeze({
         'BANPHO': {
             2026: {
@@ -797,7 +866,7 @@
                 7:  [4, 5, 11, 12, 18, 19, 25, 26, 27, 28, 29],
                 8:  [1, 2, 8, 9, 12, 15, 16, 22, 23, 29, 30],
                 9:  [5, 6, 12, 13, 19, 20, 26, 27],
-                10: [3, 4, 10, 11, 13, 18, 19, 23, 25, 31], /* 10, 31 หยุด / 17, 24 ทำงาน (เอา 12 ออก) */
+                10: [3, 4, 10, 11, 18, 19, 23, 25, 31], /* 10, 31 หยุด / 17, 24 ทำงาน */
                 11: [1, 8, 15, 22, 28, 29], /* 7, 14, 21 ทำงาน */
                 12: [5, 6, 7, 10, 12, 13, 20, 26, 27, 28, 29, 30, 31] /* 12 หยุด / 19 ทำงาน */
             }
@@ -813,7 +882,7 @@
                 7:  [4, 5, 11, 12, 18, 19, 25, 26, 27, 28, 29],
                 8:  [1, 2, 8, 9, 12, 15, 16, 22, 23, 29, 30],
                 9:  [5, 6, 12, 13, 19, 20, 26, 27],
-                10: [3, 4, 11, 13, 18, 19, 23, 25], /* 10, 17, 24, 31 ทำงาน (เอา 12 ออก) */
+                10: [3, 4, 11, 18, 19, 23, 25], /* 10, 17, 24, 31 ทำงาน */
                 11: [1, 7, 8, 14, 15, 22, 28, 29], /* 7, 14 หยุด / 21 ทำงาน */
                 12: [5, 6, 7, 10, 13, 20, 26, 27, 28, 29, 30, 31] /* 12, 19 ทำงาน */
             }
@@ -911,6 +980,9 @@
     const calendarData = { 'my-ot': {}, 'forecast': {} };
     const fixCostData = { 'my-ot': cloneDefaultFixCosts(), 'forecast': cloneDefaultFixCosts() };
     const modalState = { tabId: null, dateKey: null };
+
+    // เก็บสถานะ Tab ที่กำลังถูกเลือก
+    let currentTabId = 'my-ot';
 
     /* =========================================================
        5. DOMAIN LOGIC
@@ -1077,134 +1149,136 @@
             </div>`;
     }
 
-    function buildTabMarkup(tabId) {
+    function buildSidebarMarkup(tabId) {
         return `
-        <section id="${tabId}" class="content-area" role="tabpanel">
-            <div class="dashboard-layout">
+        <div id="sidebar_${tabId}" style="display: ${tabId === 'my-ot' ? 'block' : 'none'}; height: 100%;">
+            
+            <!-- Section 1: Calculations Config -->
+            <div class="sidebar-section">
+                <div class="card-header-row" style="margin-bottom:15px;">
+                    <h2 style="font-size:1.15rem; margin:0;">${TAB_TITLES[tabId]}</h2>
+                    <button type="button" class="reset-btn" style="padding:4px 10px; font-size:0.8rem;" data-action="reset" data-tab="${tabId}">Reset All</button>
+                </div>
                 
-                <!-- Left Sidebar: Compact Form -->
-                <aside class="sidebar-col">
-                    <div class="card card--compact">
-                        <div class="card-header-row" style="margin-bottom:10px;">
-                            <h2 style="font-size:1.15rem; margin:0;">${TAB_TITLES[tabId]}</h2>
-                            <button type="button" class="reset-btn" style="padding:4px 10px; font-size:0.8rem;" data-action="reset" data-tab="${tabId}">Reset All</button>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="salary_${tabId}">Salary (THB)</label>
-                            <input type="number" id="salary_${tabId}" min="0" inputmode="decimal" placeholder="Enter Salary"
-                                   data-action="recalculate" data-tab="${tabId}">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>สถานที่ทำงาน (Plant & Grade)</label>
-                            <div class="plant-cost-row">
-                                <select id="plant_${tabId}" data-action="change-plant" data-tab="${tabId}">
-                                    <option value="BANPHO PLANT">BANPHO PLANT</option>
-                                    <option value="GATEWAY PLANT">GATEWAY PLANT</option>
-                                </select>
-                                <select id="grade_${tabId}" data-action="recalculate" data-tab="${tabId}">
-                                    <option value="G1">G1</option>
-                                    <option value="G2">G2</option>
-                                    <option value="G3">G3</option>
-                                    <option value="G4">G4</option>
-                                    <option value="G5">G5</option>
-                                    <option value="G6">G6</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="date-row">
-                            <div class="form-group form-group--grow">
-                                <label for="month_${tabId}">Month</label>
-                                <select id="month_${tabId}" data-action="change-period" data-tab="${tabId}">${buildMonthOptionsMarkup()}</select>
-                            </div>
-                            <div class="form-group form-group--grow">
-                                <label for="year_${tabId}">Year</label>
-                                <input type="number" id="year_${tabId}" min="2011" max="2050" value="${DEFAULT_YEAR}" data-action="change-period" data-tab="${tabId}">
-                            </div>
-                        </div>
-
-                        <div class="gauge-container" id="gaugeContainer_${tabId}">
-                            <div class="gauge-header">
-                                <span>⚡ ระดับพลังเงินเดือน</span>
-                                <span id="gaugePercent_${tabId}">0%</span>
-                            </div>
-                            <div class="gauge-track">
-                                <div class="gauge-fill" id="gaugeFill_${tabId}"></div>
-                            </div>
-                            <div class="time-to-max" id="timeToMax_${tabId}"></div>
-                        </div>
+                <div class="form-group">
+                    <label for="salary_${tabId}">Salary (THB)</label>
+                    <input type="number" id="salary_${tabId}" min="0" inputmode="decimal" placeholder="Enter Salary"
+                           data-action="recalculate" data-tab="${tabId}">
+                </div>
+                
+                <div class="form-group">
+                    <label>สถานที่ทำงาน (Plant & Grade)</label>
+                    <div class="plant-cost-row">
+                        <select id="plant_${tabId}" data-action="change-plant" data-tab="${tabId}">
+                            <option value="BANPHO PLANT">BANPHO</option>
+                            <option value="GATEWAY PLANT">GATEWAY</option>
+                        </select>
+                        <select id="grade_${tabId}" data-action="recalculate" data-tab="${tabId}">
+                            <option value="G1">G1</option>
+                            <option value="G2">G2</option>
+                            <option value="G3">G3</option>
+                            <option value="G4">G4</option>
+                            <option value="G5">G5</option>
+                            <option value="G6">G6</option>
+                        </select>
                     </div>
-                </aside>
+                </div>
 
-                <!-- Right Main Content: Calendar, Sliders, Summary -->
-                <main class="main-col">
-                    <div class="card card--accent-primary">
-                        <div class="card-header-row" style="margin-bottom:5px;">
-                            <h3 style="margin:0;">OT Calendar Forecast</h3>
-                        </div>
-                        <p class="muted-text" style="margin-top:0; font-size:0.85rem;">(อัปเดตวันหยุดตาม Plant อัตโนมัติ · 📝 = มี Note)</p>
-                        <div class="calendar-grid calendar-grid--header">
-                            ${WEEKDAY_LABELS.map((label) => `<div class="cal-header">${label}</div>`).join('')}
-                        </div>
-                        <div id="calendarBody_${tabId}" class="calendar-grid calendar-grid--body"></div>
-                        <div class="cal-summary" id="calendarSummary_${tabId}"></div>
+                <div class="date-row">
+                    <div class="form-group form-group--grow">
+                        <label for="month_${tabId}">Month</label>
+                        <select id="month_${tabId}" data-action="change-period" data-tab="${tabId}">${buildMonthOptionsMarkup()}</select>
                     </div>
-
-                    <div id="sliders_${tabId}" class="card">
-                        <div class="card-header-row">
-                            <h3 style="margin:0;">OT Hours Adjustment</h3>
-                            <div style="display:flex; gap: 8px;">
-                                <button type="button" class="sync-btn" data-action="sync-sliders" data-tab="${tabId}">Sync กับข้อมูลที่กรอกในปฏิทิน</button>
-                                <button type="button" class="toggle-btn" data-action="toggle-section" data-target="sliders-content_${tabId}">Hide</button>
-                            </div>
-                        </div>
-                        <div id="sliders-content_${tabId}">
-                            ${OT_TYPES.map((type) => buildSliderMarkup(tabId, type)).join('')}
-                        </div>
+                    <div class="form-group form-group--grow">
+                        <label for="year_${tabId}">Year</label>
+                        <input type="number" id="year_${tabId}" min="2011" max="2050" value="${DEFAULT_YEAR}" data-action="change-period" data-tab="${tabId}">
                     </div>
+                </div>
 
-                    <div class="card card--accent-secondary">
-                        <div class="fix-cost-header" style="margin-bottom: 0;">
-                            <div>
-                                <h3 style="margin:0;">Fix Cost (รายจ่ายประจำ)</h3>
-                            </div>
-                            <div style="display:flex; gap: 8px; align-items: center;">
-                                <button type="button" class="btn-add-cost" data-action="add-fix-cost" data-tab="${tabId}">+ เพิ่มรายการ</button>
-                                <button type="button" class="toggle-btn" data-action="toggle-section" data-target="fix-cost-content_${tabId}">Hide</button>
-                            </div>
-                        </div>
-                        <div id="fix-cost-content_${tabId}" style="margin-top: 12px;">
-                            <div id="fixCostList_${tabId}"></div>
-                            <div class="fix-cost-footer">
-                                <span>รวมรายจ่ายประจำ:</span>
-                                <span id="fixCostTotalCard_${tabId}" class="fix-cost-total">0 THB</span>
-                            </div>
-                        </div>
+                <div class="gauge-container" id="gaugeContainer_${tabId}">
+                    <div class="gauge-header">
+                        <span>⚡ ระดับพลังเงินเดือน</span>
+                        <span id="gaugePercent_${tabId}">0%</span>
                     </div>
-
-                    <div class="card" id="exportArea_${tabId}">
-                        <h3>Final Summary</h3>
-                        <div class="results">
-                            <div class="result-row"><span>Total OT Hours:</span><span id="totalHours_${tabId}">0 Hrs</span></div>
-                            <div class="result-row"><span>Total OT Pay:</span><span id="totalMoney_${tabId}">0 THB</span></div>
-                            <div class="result-row"><span>Total Meal Allowance:</span><span id="totalMeal_${tabId}">0 THB</span></div>
-                            <div class="result-row result-row--dashed"><span>Fix: อาหารกลางวัน:</span><span id="dispFixLunch_${tabId}">0 THB</span></div>
-                            <div class="result-row"><span>เงินช่วยเหลือตามสถานที่ทำงาน:</span><span id="dispFixLocation_${tabId}">0 THB</span></div>
-                            <div class="result-row result-row--dashed"><span>Salary:</span><span id="dispSalary_${tabId}">0 THB</span></div>
-                            <div class="result-row result-row--subtotal"><span>Total Gross Income (รายรับรวม):</span><span id="totalIncome_${tabId}">0 THB</span></div>
-                            <div class="result-row result-row--deduction"><span>Total Fix Cost (หักรายจ่ายประจำ):</span><span id="dispFixCost_${tabId}">-0 THB</span></div>
-                            <div class="result-row total"><span>Net Income (เงินคงเหลือสุทธิ):</span><span id="netIncome_${tabId}" class="net-income">0 THB</span></div>
-                        </div>
-                        <div class="rates-note"><strong>Rates per Hour:</strong><br><span id="rates_${tabId}"></span></div>
+                    <div class="gauge-track">
+                        <div class="gauge-fill" id="gaugeFill_${tabId}"></div>
                     </div>
-
-                    <button type="button" class="export-btn" data-action="export" data-tab="${tabId}">📸 Export Report A3</button>
-                </main>
-
+                    <div class="time-to-max" id="timeToMax_${tabId}"></div>
+                </div>
             </div>
-        </section>`;
+
+            <!-- Section 2: OT Hours Adjustment -->
+            <div class="sidebar-section">
+                <div class="card-header-row">
+                    <h3 style="margin:0; font-size:1rem;">OT Hours Adjustment</h3>
+                    <div style="display:flex; gap: 8px;">
+                        <button type="button" class="toggle-btn" data-action="toggle-section" data-target="sliders-content_${tabId}">Hide</button>
+                    </div>
+                </div>
+                <div id="sliders-content_${tabId}">
+                    <button type="button" class="sync-btn" data-action="sync-sliders" data-tab="${tabId}">Sync กับข้อมูลที่กรอกในปฏิทิน</button>
+                    ${OT_TYPES.map((type) => buildSliderMarkup(tabId, type)).join('')}
+                </div>
+            </div>
+
+            <!-- Section 3: Fix Cost -->
+            <div class="sidebar-section" style="border-bottom:none;">
+                <div class="fix-cost-header" style="margin-bottom: 0;">
+                    <div>
+                        <h3 style="margin:0; font-size:1rem;">Fix Cost (รายจ่ายประจำ)</h3>
+                    </div>
+                    <div style="display:flex; gap: 8px; align-items: center;">
+                        <button type="button" class="toggle-btn" data-action="toggle-section" data-target="fix-cost-content_${tabId}">Hide</button>
+                    </div>
+                </div>
+                <div id="fix-cost-content_${tabId}" style="margin-top: 12px;">
+                    <button type="button" class="btn-add-cost" style="width:100%; margin-bottom:10px;" data-action="add-fix-cost" data-tab="${tabId}">+ เพิ่มรายการ</button>
+                    <div id="fixCostList_${tabId}"></div>
+                    <div class="fix-cost-footer">
+                        <span>รวมรายจ่ายประจำ:</span>
+                        <span id="fixCostTotalCard_${tabId}" class="fix-cost-total">0 THB</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>`;
+    }
+
+    function buildMainContentMarkup(tabId) {
+        return `
+        <div id="mainContent_${tabId}" style="display: ${tabId === 'my-ot' ? 'block' : 'none'};">
+            <div class="content-area active">
+                <div class="card card--accent-primary">
+                    <div class="card-header-row" style="margin-bottom:5px;">
+                        <h3 style="margin:0;">OT Calendar Forecast</h3>
+                    </div>
+                    <p class="muted-text" style="margin-top:0; font-size:0.85rem;">(อัปเดตวันหยุดตาม Plant อัตโนมัติ · 📝 = มี Note)</p>
+                    <div class="calendar-grid calendar-grid--header">
+                        ${WEEKDAY_LABELS.map((label) => `<div class="cal-header">${label}</div>`).join('')}
+                    </div>
+                    <div id="calendarBody_${tabId}" class="calendar-grid calendar-grid--body"></div>
+                    <div class="cal-summary" id="calendarSummary_${tabId}"></div>
+                </div>
+
+                <div class="card" id="exportArea_${tabId}">
+                    <h3>Final Summary</h3>
+                    <div class="results">
+                        <div class="result-row"><span>Total OT Hours:</span><span id="totalHours_${tabId}">0 Hrs</span></div>
+                        <div class="result-row"><span>Total OT Pay:</span><span id="totalMoney_${tabId}">0 THB</span></div>
+                        <div class="result-row"><span>Total Meal Allowance:</span><span id="totalMeal_${tabId}">0 THB</span></div>
+                        <div class="result-row result-row--dashed"><span>Fix: อาหารกลางวัน:</span><span id="dispFixLunch_${tabId}">0 THB</span></div>
+                        <div class="result-row"><span>เงินช่วยเหลือตามสถานที่ทำงาน:</span><span id="dispFixLocation_${tabId}">0 THB</span></div>
+                        <div class="result-row result-row--dashed"><span>Salary:</span><span id="dispSalary_${tabId}">0 THB</span></div>
+                        <div class="result-row result-row--subtotal"><span>Total Gross Income (รายรับรวม):</span><span id="totalIncome_${tabId}">0 THB</span></div>
+                        <div class="result-row result-row--deduction"><span>Total Fix Cost (หักรายจ่ายประจำ):</span><span id="dispFixCost_${tabId}">-0 THB</span></div>
+                        <div class="result-row total"><span>Net Income (เงินคงเหลือสุทธิ):</span><span id="netIncome_${tabId}" class="net-income">0 THB</span></div>
+                    </div>
+                    <div class="rates-note"><strong>Rates per Hour:</strong><br><span id="rates_${tabId}"></span></div>
+                </div>
+
+                <button type="button" class="export-btn" data-action="export" data-tab="${tabId}">📸 Export Report A3</button>
+            </div>
+        </div>`;
     }
 
     /* =========================================================
@@ -1672,7 +1746,9 @@
             triggerButton.disabled = true;
             triggerButton.textContent = '⏳ กำลังสร้างรายงาน...';
         }
-        document.body.appendChild(sheet);
+        
+        // แนบ sheet ไปที่ offscreen area
+        document.getElementById('offscreen-area').appendChild(sheet);
 
         try {
             if (document.fonts && document.fonts.ready) await document.fonts.ready;
@@ -1691,17 +1767,53 @@
     }
 
     /* =========================================================
-       15. TAB NAVIGATION
+       15. TAB NAVIGATION & SIDEBAR LOGIC
        ========================================================= */
     function switchTab(tabId) {
+        currentTabId = tabId;
+        
+        // จัดการหน้าตาปุ่ม Tab
         document.querySelectorAll('.tab').forEach((tab) => {
             const isActive = tab.dataset.tabTarget === tabId;
             tab.classList.toggle('active', isActive);
             tab.setAttribute('aria-selected', String(isActive));
         });
-        document.querySelectorAll('.content-area').forEach((panel) => {
-            panel.classList.toggle('active', panel.id === tabId);
+        
+        // สลับ Sidebar Content
+        document.querySelectorAll('[id^="sidebar_"]').forEach((el) => {
+            el.style.display = el.id === `sidebar_${tabId}` ? 'block' : 'none';
         });
+
+        // สลับ Main Content
+        document.querySelectorAll('[id^="mainContent_"]').forEach((el) => {
+            el.style.display = el.id === `mainContent_${tabId}` ? 'block' : 'none';
+        });
+        
+        // ปิด Sidebar หากอยู่บนมือถือหลังกดเปลี่ยน Tab
+        if (window.innerWidth < 900) {
+            closeSidebar();
+        }
+    }
+
+    function toggleSidebar() {
+        const sidebar = document.getElementById('appSidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        
+        if (sidebar.classList.contains('open')) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    }
+
+    function openSidebar() {
+        document.getElementById('appSidebar').classList.add('open');
+        document.getElementById('sidebarOverlay').classList.add('active');
+    }
+
+    function closeSidebar() {
+        document.getElementById('appSidebar').classList.remove('open');
+        document.getElementById('sidebarOverlay').classList.remove('active');
     }
 
     /* =========================================================
@@ -1713,27 +1825,13 @@
         const { action, tab: tabId } = target.dataset;
 
         switch (action) {
-            case 'reset':           
-                resetData(tabId); 
-                break;
-            case 'adjust-slider':   
-                adjustSlider(tabId, target.dataset.typeId, toFiniteNumber(target.dataset.delta)); 
-                break;
-            case 'sync-sliders':    
-                syncSlidersToCalendar(tabId); 
-                break;
-            case 'add-fix-cost':    
-                addFixCostItem(tabId); 
-                break;
-            case 'remove-fix-cost': 
-                removeFixCostItem(tabId, Number(target.dataset.index)); 
-                break;
-            case 'open-day':        
-                openDayModal(tabId, target.dataset.dateKey); 
-                break;
-            case 'export':          
-                exportToJPEG(tabId, target); 
-                break;
+            case 'reset':           resetData(tabId); break;
+            case 'adjust-slider':   adjustSlider(tabId, target.dataset.typeId, toFiniteNumber(target.dataset.delta)); break;
+            case 'sync-sliders':    syncSlidersToCalendar(tabId); break;
+            case 'add-fix-cost':    addFixCostItem(tabId); break;
+            case 'remove-fix-cost': removeFixCostItem(tabId, Number(target.dataset.index)); break;
+            case 'open-day':        openDayModal(tabId, target.dataset.dateKey); break;
+            case 'export':          exportToJPEG(tabId, target); break;
             case 'toggle-section': {
                 const targetEl = document.getElementById(target.dataset.target);
                 if (!targetEl) break;
@@ -1782,17 +1880,28 @@
     }
 
     function wireEvents() {
-        const app = document.getElementById('app-content');
-        app.addEventListener('click', handleAppClick);
-        app.addEventListener('input', handleAppInput);
-        app.addEventListener('change', handleAppChange);
-        app.addEventListener('keydown', handleAppKeydown);
+        // จัดการเปิด/ปิด Sidebar
+        document.getElementById('sidebarToggleBtn').addEventListener('click', toggleSidebar);
+        document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar);
 
+        // จัดการคลิกบน Tab
         document.querySelector('.tab-container').addEventListener('click', (event) => {
             const tab = event.target.closest('[data-tab-target]');
             if (tab) switchTab(tab.dataset.tabTarget);
         });
 
+        // Event Listener สำหรับ Component หลัก
+        const appSidebar = document.getElementById('appSidebar');
+        const appMainContent = document.getElementById('appMainContent');
+        
+        [appSidebar, appMainContent].forEach(el => {
+            el.addEventListener('click', handleAppClick);
+            el.addEventListener('input', handleAppInput);
+            el.addEventListener('change', handleAppChange);
+            el.addEventListener('keydown', handleAppKeydown);
+        });
+
+        // Modal Events
         document.getElementById('dayModalForm').addEventListener('submit', (event) => {
             event.preventDefault(); 
             saveDayData();
@@ -1810,6 +1919,13 @@
     function initTab(tabId) {
         calendarData[tabId] = loadCalendarData(tabId);
         fixCostData[tabId] = loadFixCostData(tabId);
+        
+        const sidebarContainer = document.getElementById('appSidebar');
+        const mainContentContainer = document.getElementById('appMainContent');
+        
+        sidebarContainer.insertAdjacentHTML('beforeend', buildSidebarMarkup(tabId));
+        mainContentContainer.insertAdjacentHTML('beforeend', buildMainContentMarkup(tabId));
+
         renderFixCostList(tabId);
 
         const hasSavedSliderState = loadData(tabId);
@@ -1817,9 +1933,8 @@
     }
 
     function init() {
-        document.getElementById('app-content').innerHTML = TAB_IDS.map(buildTabMarkup).join('');
-        wireEvents();
         TAB_IDS.forEach(initTab);
+        wireEvents();
         switchTab('my-ot');
     }
 
