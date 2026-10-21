@@ -799,7 +799,7 @@
 </div>
 
 <!-- Hidden area for Off-screen elements (Exporting) -->
-<div id="offscreen-area" style="display:none;"></div>
+<div id="offscreen-area" style="position: absolute; top: 0; left: -9999px; z-index: -1;"></div>
 
 <script>
 (() => {
@@ -1653,6 +1653,34 @@
     /* =========================================================
        14. EXPORT
        ========================================================= */
+    // ฟังก์ชันสำหรับคำนวณและสร้างข้อความเวลา OT
+    function getOtTimeText(hours, type) {
+        if (!hours || hours <= 0) return '-';
+        
+        let timeStr = '';
+        if (type === '1.5l') {
+            timeStr = '11:30-12:30';
+        } else if (type === '1.5') {
+            if (hours === 1.0) {
+                timeStr = '16:40-17:40';
+            } else if (hours > 1.0) {
+                const startMins = 16 * 60 + 50; // เริ่ม 16:50
+                const endMins = startMins + (hours * 60);
+                const eh = Math.floor(endMins / 60) % 24;
+                const em = Math.floor(endMins % 60);
+                timeStr = `16:50-${String(eh).padStart(2,'0')}:${String(em).padStart(2,'0')}`;
+            }
+        } else if (type === '2.0' || type === '3.0') {
+            if (hours === 8.0) timeStr = '07:30-16:30';
+            else if (hours === 4.0) timeStr = '12:30-16:30';
+        }
+
+        if (timeStr) {
+            return `${hours} <br><span style="font-size: 0.7em; color: #4b5563;">(${timeStr})</span>`;
+        }
+        return `${hours}`;
+    }
+
     function buildExportSheet(tabId, monthName, year) {
         const sheet = document.createElement('div');
         sheet.className = 'export-sheet';
@@ -1702,10 +1730,10 @@
                     tbodyHtml += `
                         <tr>
                             <td>${day} ${monthName.substring(0,3)}</td>
-                            <td>${h15 > 0 ? h15 : '-'}</td>
-                            <td>${h15l > 0 ? h15l : '-'}</td>
-                            <td>${h20 > 0 ? h20 : '-'}</td>
-                            <td>${h30 > 0 ? h30 : '-'}</td>
+                            <td>${getOtTimeText(h15, '1.5')}</td>
+                            <td>${getOtTimeText(h15l, '1.5l')}</td>
+                            <td>${getOtTimeText(h20, '2.0')}</td>
+                            <td>${getOtTimeText(h30, '3.0')}</td>
                             <td class="detail-col">${detailStr || '-'}</td>
                         </tr>
                     `;
