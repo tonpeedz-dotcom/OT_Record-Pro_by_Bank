@@ -7,6 +7,13 @@
     <meta name="theme-color" content="#CDB4DB">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="application-name" content="OT Manager">
+    
+    <!-- PWA Meta Tags (Added) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="OT ProMax">
+    <link rel="apple-touch-icon" href="./icon.png">
+    <link rel="manifest" href="./manifest.json">
 
     <!-- Font: Kanit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -740,6 +747,25 @@
         .export-table td.detail-col {
             text-align: left;
         }
+
+        /* =========================================================
+           14. PWA UI Styles (Added)
+           ========================================================= */
+        .install-pwa-btn {
+            position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
+            background: var(--accent); color: var(--text); border: none;
+            padding: 6px 12px; border-radius: 20px; font-size: 0.8rem;
+            font-weight: 700; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: none; animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 175, 204, 0.7); }
+            70% { box-shadow: 0 0 0 8px rgba(255, 175, 204, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 175, 204, 0); }
+        }
+        .pwa-modal-header { font-size: 1.2rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 15px; text-align: center; }
+        .pwa-instruction { margin-bottom: 20px; font-size: 0.95rem; line-height: 1.5; color: var(--text); }
+        .pwa-btn-primary { width: 100%; background: var(--primary); color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -747,6 +773,8 @@
 <header class="header">
     <button type="button" class="toggle-sidebar-btn" id="sidebarToggleBtn" aria-label="Toggle Menu">☰</button>
     <h3>OT Calculator ProMax by 😎AJ'Bank & AJ'Nerd😎 </h3>
+    <!-- PWA Install Button (Added) -->
+    <button id="installPwaBtn" class="install-pwa-btn">📲 ติดตั้งแอป</button>
 </header>
 
 <nav class="tab-container" role="tablist">
@@ -796,6 +824,30 @@
             <button type="submit" class="btn-save">Save</button>
         </div>
     </form>
+</div>
+
+<!-- ===================== PWA iOS Guide Modal (Added) ===================== -->
+<div id="pwaIosModal" class="modal-overlay" aria-hidden="true">
+    <div class="modal" role="dialog">
+        <div class="pwa-modal-header">📱 วิธีติดตั้งแอปบน iOS</div>
+        <div class="pwa-instruction">
+            1. แตะไอคอน <b>แชร์</b> ⎋ (ด้านล่างจอ Safari)<br><br>
+            2. เลื่อนลงมาและเลือก <b>เพิ่มไปยังหน้าจอโฮม</b> ➕<br><br>
+            3. แตะ <b>เพิ่ม</b> (Add) ที่มุมขวาบน
+        </div>
+        <button type="button" class="pwa-btn-primary" onclick="document.getElementById('pwaIosModal').classList.remove('is-open')">เข้าใจแล้ว</button>
+    </div>
+</div>
+
+<!-- ===================== PWA LINE Guide Modal (Added) ===================== -->
+<div id="pwaLineModal" class="modal-overlay" aria-hidden="true">
+    <div class="modal" role="dialog">
+        <div class="pwa-modal-header">⚠️ เปิดผ่าน LINE อยู่ใช่ไหม?</div>
+        <div class="pwa-instruction">
+            เพื่อให้ติดตั้งแอปได้และข้อมูลไม่หาย รบกวนแตะเมนู <b>3 จุด (⋮)</b> ที่มุมขวาบน แล้วเลือก <b>"เปิดด้วยเบราว์เซอร์อื่น"</b> หรือ <b>"Open in Browser"</b> นะครับ
+        </div>
+        <button type="button" class="pwa-btn-primary" onclick="document.getElementById('pwaLineModal').classList.remove('is-open')">ปิดหน้าต่างนี้</button>
+    </div>
 </div>
 
 <!-- Hidden area for Off-screen elements (Exporting) -->
@@ -1968,6 +2020,58 @@
 
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
     else init();
+})();
+</script>
+
+<!-- ===================== PWA Installation Script (Added) ===================== -->
+<script>
+(() => {
+    // 1. ลงทะเบียน Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW error:', err));
+        });
+    }
+
+    // 2. ตัวแปรและ Elements สำหรับ PWA
+    let deferredPrompt;
+    const installBtn = document.getElementById('installPwaBtn');
+    const iosModal = document.getElementById('pwaIosModal');
+    const lineModal = document.getElementById('pwaLineModal');
+
+    // ตรวจจับ OS และ Browser
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const isLine = navigator.userAgent.includes('Line');
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+    if (isStandalone) {
+        installBtn.style.display = 'none'; 
+        return;
+    }
+
+    if (isLine) {
+        installBtn.style.display = 'block';
+        installBtn.addEventListener('click', () => lineModal.classList.add('is-open'));
+    } else if (isIOS) {
+        installBtn.style.display = 'block';
+        installBtn.addEventListener('click', () => iosModal.classList.add('is-open'));
+    } else {
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault(); 
+            deferredPrompt = e; 
+            installBtn.style.display = 'block';
+        });
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') installBtn.style.display = 'none';
+                deferredPrompt = null;
+            } else {
+                alert("กรุณากดเมนู 3 จุดมุมขวาบน (⋮) แล้วเลือก 'เพิ่มลงในหน้าจอหลัก' (Add to Home screen)");
+            }
+        });
+    }
 })();
 </script>
 <script src="tutorial-ot.js"></script>
