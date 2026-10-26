@@ -738,11 +738,20 @@
             border: 1px solid #1e293b;
         }
         .ot-indicator.no-ot {
-            background: #f1f5f9;
-            color: #64748b;
-            font-size: 0.54rem;
-            border: 1px solid #cbd5e1;
-        }
+    background: #000000 !important;   /* พื้นหลังสีดำสนิท */
+    color: #ffffff !important;        /* ตัวอักษรสีขาว */
+    font-weight: 800 !important;      /* ตัวอักษรหนาพิเศษ */
+    font-size: 0.72rem !important;    /* ปรับขนาดให้อ่านง่าย */
+    border: none !important;
+    width: 96%;
+    flex: 1;                          /* สั่งให้กรอบยืดลงมาคลุมเต็มพื้นที่ช่อง */
+    display: flex;
+    align-items: center;              /* จัดตัวหนังสือให้อยู่กึ่งกลาง */
+    justify-content: center;
+    margin-top: 4px;
+    margin-bottom: 2px;
+    border-radius: 4px;
+}
 
         /* 🍚 ป้ายค่าอาหาร OT (สีเหลืองทอง) */
         .meal-badge {
@@ -1890,9 +1899,9 @@
 
         // ปรับเป็น 'ไม่ทำ' สั้นกระชับ ไม่โดนตัดเป็น 'ไม่ทำ ...'
         if (entry.noOT) {
-            cell.appendChild(createElementWithText('div', 'ot-indicator no-ot', 'ไม่ทำ'));
-            return cell;
-        }
+    cell.appendChild(createElementWithText('div', 'ot-indicator no-ot', 'ไม่ทำ'));
+    return cell;
+}
 
         // คัดกรองประเภท OT ที่มีชั่วโมงในวันนั้น
         const activeTypes = OT_TYPES.filter((type) => getDayHours(entry, type.dataKey) > 0);
