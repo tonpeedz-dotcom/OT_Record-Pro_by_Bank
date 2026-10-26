@@ -97,12 +97,12 @@
         button, input, select { font-family: 'Kanit', sans-serif; }
 
         /* =========================================================
-           3. HEADER & TABS
+           3. HEADER & TABS (แก้ปัญหาปุ่มทับข้อความ)
            ========================================================= */
         .header {
             background: var(--primary);
             color: var(--text);
-            padding: 12px 15px;
+            padding: 12px 75px; /* เว้นซ้าย-ขวาไม่ให้ปุ่มชนข้อความ */
             padding-top: calc(12px + env(safe-area-inset-top));
             text-align: center;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -112,25 +112,29 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            min-height: 50px;
         }
         .header h3 {
             margin: 0;
-            font-size: 1.05rem;
+            font-size: 0.95rem;
             font-weight: 700;
             letter-spacing: -0.3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .toggle-sidebar-btn {
             position: absolute;
-            left: 12px;
+            left: 10px;
             top: 50%;
             transform: translateY(-50%);
             background: rgba(255,255,255,0.45);
             border: none;
             color: var(--text);
-            font-size: 1.3rem;
+            font-size: 0.85rem;
             cursor: pointer;
-            padding: 6px 12px;
+            padding: 6px 10px;
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -198,7 +202,7 @@
 
         .main-container {
             flex: 1;
-            padding: 15px;
+            padding: 12px 8px;
             overflow-y: auto;
             transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             background: var(--bg);
@@ -211,6 +215,7 @@
                 margin-left: -360px;
             }
             .sidebar-container.open { margin-left: 0; }
+            .main-container { padding: 16px; }
         }
         
         .sidebar-overlay {
@@ -228,9 +233,9 @@
         /* Card Styles */
         .card {
             background: var(--card);
-            border-radius: 14px;
-            padding: 16px;
-            margin-bottom: 15px;
+            border-radius: 12px;
+            padding: 12px 8px;
+            margin-bottom: 12px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
             border: 1px solid rgba(0, 0, 0, 0.04);
         }
@@ -241,12 +246,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
         .card-header-row h3 { margin: 0; font-size: 1.05rem; }
 
-        .muted-text { font-size: 0.85rem; color: var(--text-muted); }
-        .muted-caption { font-size: 0.78rem; color: var(--text-muted); }
+        .muted-text { font-size: 0.82rem; color: var(--text-muted); }
+        .muted-caption { font-size: 0.76rem; color: var(--text-muted); }
 
         .sidebar-section {
             margin-bottom: 20px;
@@ -624,33 +629,33 @@
         .rates-note { margin-top: 10px; font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; }
 
         /* =========================================================
-           11. CALENDAR & DISTINCT BADGES
+           11. CALENDAR & DISTINCT BADGES (ปรับ Font กระชับ ไม่ล้นช่อง)
            ========================================================= */
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 4px;
+            gap: 2.5px; /* ลดช่องว่างระหว่างเซลล์ลงเล็กน้อย */
         }
-        .calendar-grid--header { margin-top: 10px; margin-bottom: 4px; }
+        .calendar-grid--header { margin-top: 8px; margin-bottom: 4px; }
         .calendar-grid--body { margin-top: 0; }
 
         .cal-header {
             text-align: center;
             font-weight: bold;
-            font-size: 0.8rem;
-            padding: 4px 0;
+            font-size: 0.78rem;
+            padding: 3px 0;
             color: var(--text-muted);
         }
 
         .cal-cell {
-            min-height: 80px;
+            min-height: 76px;
             border: 1px solid var(--border);
-            border-radius: 8px;
+            border-radius: 6px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            padding: 4px 2px;
+            padding: 3px 1px;
             font-size: 0.85rem;
             cursor: pointer;
             background: white;
@@ -671,33 +676,35 @@
         }
         .cal-cell--placeholder:active { transform: none; }
 
-        .cal-day-number { font-weight: 700; font-size: 0.95rem; }
+        .cal-day-number { font-weight: 700; font-size: 0.9rem; line-height: 1.1; margin-bottom: 2px; }
 
         .cal-note-icon {
             position: absolute;
             top: 2px;
             right: 2px;
-            font-size: 0.72rem;
+            font-size: 0.65rem;
             line-height: 1;
             pointer-events: none;
         }
 
-        /* ป้ายแสดงผลแยกสีตามประเภท OT ชัดเจน */
+        /* ป้ายแสดงผล ปรับ Font ให้กระชับ ไม่โดนตัด ... */
         .meal-badge, .ot-indicator {
-            font-size: 0.6rem;
-            border-radius: 4px;
-            padding: 1px 3px;
+            font-size: 0.55rem;          /* ขนาดฟอนต์พอดีกับตารางมือถือ */
+            letter-spacing: -0.35px;     /* ลดระยะห่างตัวอักษรเพื่อไม่ให้ล้นขอบ */
+            border-radius: 3px;
+            padding: 1px 1px;
             margin-top: 2px;
-            width: 94%;
+            width: 96%;
             text-align: center;
             white-space: nowrap;
             font-weight: 700;
             overflow: hidden;
             text-overflow: ellipsis;
             box-sizing: border-box;
+            line-height: 1.25;
         }
 
-        /* 🌙 OT เย็น 1.5x (สีฟ้า) */
+        /* 🌙 OT เย็น 1.5x (สีฟ้าสดใส) */
         .ot-indicator.ot-15 {
             background-color: var(--ot-15-bg);
             color: var(--ot-15-text);
@@ -715,25 +722,25 @@
             color: var(--ot-20-text);
             border: 1px solid var(--ot-20-border);
         }
-        /* 🌟 OT วันหยุดพิเศษ 3.0x (สีชมพู) */
+        /* 🌟 OT วันหยุดพิเศษ 3.0x (สีชมพูกุหลาบ) */
         .ot-indicator.ot-30 {
             background-color: var(--ot-30-bg);
             color: var(--ot-30-text);
             border: 1px solid var(--ot-30-border);
         }
 
-        /* ยอดรวมชั่วโมง */
+        /* ยอดรวมชั่วโมงกรณีทำหลายกะในวันเดียว (สีเข้ม Slate ไม่ตีกับสีม่วงของวันหยุด) */
         .ot-indicator.sum {
-            background-color: #8b5cf6;
+            background-color: #334155;
             color: #ffffff;
             font-weight: 800;
-            margin-top: 3px;
-            font-size: 0.65rem;
+            margin-top: 2px;
+            border: 1px solid #1e293b;
         }
         .ot-indicator.no-ot {
-            background: #e2e8f0;
+            background: #f1f5f9;
             color: #64748b;
-            font-size: 0.58rem;
+            font-size: 0.54rem;
             border: 1px solid #cbd5e1;
         }
 
@@ -745,15 +752,15 @@
         }
 
         .cal-summary {
-            margin-top: 12px;
+            margin-top: 10px;
             padding: 10px 12px;
             background: #ffffff;
             border: 1px solid var(--pastel-petal);
             border-radius: 8px;
-            font-size: 0.88rem;
+            font-size: 0.85rem;
             line-height: 1.45;
         }
-        .cal-summary__meal { color: var(--meal-text); font-weight: 700; font-size: 0.85rem; }
+        .cal-summary__meal { color: var(--meal-text); font-weight: 700; font-size: 0.82rem; }
 
         /* =========================================================
            12. MODAL & QUICK PRESETS (สุดยอดการกดง่าย)
@@ -1023,9 +1030,9 @@
            15. PWA UI Styles
            ========================================================= */
         .install-pwa-btn {
-            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+            position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
             background: var(--accent); color: var(--text); border: none;
-            padding: 6px 12px; border-radius: 20px; font-size: 0.8rem;
+            padding: 5px 10px; border-radius: 20px; font-size: 0.75rem;
             font-weight: 700; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             display: none; animation: pulse 2s infinite;
         }
@@ -1303,9 +1310,9 @@
     });
 
     const DEFAULT_FIX_COSTS = Object.freeze([
-        { name: 'เงินกู้สหกรณ์ออมทรัพย์', amount: 11633.00 },
-        { name: 'กองทุนสำรองเลี้ยงชีพ (15%)', amount: 10639.50 },
-        { name: 'เงินเช่าซื้อรถยนต์ (รวม VAT)', amount: 6079.74 },
+        { name: 'เงินกู้สหกรณ์ออมทรัพย์', amount: 10000 },
+        { name: 'กองทุนสำรองเลี้ยงชีพ (15%)', amount: 5000 },
+        { name: 'เงินเช่าซื้อรถยนต์ (รวม VAT)', amount: 6000 },
         { name: 'ค่าหุ้นสหกรณ์ออมทรัพย์', amount: 3000.00 },
         { name: 'ประกันสังคม', amount: 875.00 },
         { name: 'ค่าฌาปนกิจ สหภาพ (Max)', amount: 380.00 },
@@ -1857,7 +1864,7 @@
     }
 
     /* =========================================================
-       8. RENDERING — Calendar With Distinct Badges
+       8. RENDERING — Calendar With Smart Badges (ไม่มีล้น & สีตรงประเภท)
        ========================================================= */
     function createDayCell(tabId, day, dateKey, entry, isHoliday) {
         const cell = document.createElement('div');
@@ -1881,21 +1888,27 @@
 
         if (!entry) return cell;
 
+        // ปรับเป็น 'ไม่ทำ' สั้นกระชับ ไม่โดนตัดเป็น 'ไม่ทำ ...'
         if (entry.noOT) {
-            cell.appendChild(createElementWithText('div', 'ot-indicator no-ot', 'ไม่ทำ OT'));
+            cell.appendChild(createElementWithText('div', 'ot-indicator no-ot', 'ไม่ทำ'));
             return cell;
         }
 
-        // ★ แสดง Badge แยกสีตามประเภท OT แต่ละตัวอย่างชัดเจน
-        OT_TYPES.forEach((type) => {
-            const hours = getDayHours(entry, type.dataKey);
-            if (hours > 0) {
-                cell.appendChild(createElementWithText('div', `ot-indicator ${type.badgeClass || 'breakdown'}`, `${type.cellLabel}: ${hours}h`));
-            }
-        });
-
+        // คัดกรองประเภท OT ที่มีชั่วโมงในวันนั้น
+        const activeTypes = OT_TYPES.filter((type) => getDayHours(entry, type.dataKey) > 0);
         const totalHours = getDayTotalHours(entry);
-        if (totalHours > 0) cell.appendChild(createElementWithText('div', 'ot-indicator sum', `รวม ${totalHours}h`));
+
+        if (activeTypes.length === 1) {
+            // ★ กรณีมี OT กะเดียว: แสดงป้ายเดียว ใช้สีตามประเภทนั้นทันที (เช่น กะเย็น = สีฟ้า) ไม่โชว์แถบสีม่วงมาหลอกตา
+            const single = activeTypes[0];
+            cell.appendChild(createElementWithText('div', `ot-indicator ${single.badgeClass}`, `${single.cellLabel}: ${totalHours}h`));
+        } else if (activeTypes.length > 1) {
+            // ★ กรณีมีหลายกะในวันเดียว: แสดงแจกแจงแยกสี แล้วสรุปยอดรวมด้านล่าง
+            activeTypes.forEach((type) => {
+                cell.appendChild(createElementWithText('div', `ot-indicator ${type.badgeClass}`, `${type.cellLabel}: ${getDayHours(entry, type.dataKey)}h`));
+            });
+            cell.appendChild(createElementWithText('div', 'ot-indicator sum', `รวม ${totalHours}h`));
+        }
 
         // แสดง Badge ค่าอาหารเฉพาะวันที่ได้จริง (OT เที่ยงจะไม่มีป้ายนี้ขึ้น)
         if (getMealAllowanceCount(entry) > 0) {
@@ -2226,7 +2239,6 @@
                 in15.value = 3.0; in20.value = 0; in30.value = 0;
                 break;
             case 'lunch':
-                // กดสลับ เที่ยง 1 ชม. (0 -> 1.0 หรือ 1.0 -> 0) โดยคงชั่วโมงกะเย็นไว้
                 in15l.value = (parseFloat(in15l.value) === 1.0) ? 0 : 1.0;
                 in20.value = 0; in30.value = 0;
                 break;
@@ -2251,7 +2263,6 @@
         const h15 = parseFloat(document.getElementById('in_1_5').value) || 0;
         const h15l = parseFloat(document.getElementById('in_1_5l').value) || 0;
         const h20 = parseFloat(document.getElementById('in_2_0').value) || 0;
-        const isNoOt = modalElements.noOtCheckbox.checked;
 
         document.querySelectorAll('.preset-chip').forEach(chip => {
             const p = chip.dataset.preset;
