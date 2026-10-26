@@ -2011,13 +2011,30 @@
             : `linear-gradient(to right, ${fill} 0%, ${fill} ${valuePercent}%, ${empty} ${valuePercent}%, ${empty} 100%)`;
     }
 
-    /* =========================================================
+   /* =========================================================
        10. CALCULATION ENGINE
        ========================================================= */
     function calculate(tabId) {
         const salary = toFiniteNumber(getTabElement('salary', tabId).value);
         const plant = getTabElement('plant', tabId).value;
         const grade = getTabElement('grade', tabId).value;
+
+        // 🌟 เพิ่มท่อนนี้: คำนวณกองทุนสำรองเลี้ยงชีพ 15% จากเงินเดือนอัตโนมัติ
+        let pvdUpdated = false;
+        (fixCostData[tabId] || []).forEach((item) => {
+            if (item.name.includes('กองทุนสำรองเลี้ยงชีพ')) {
+                const autoPvd = Math.round(salary * 0.15 * 100) / 100; // คิด 15% ของเงินเดือน
+                if (item.amount !== autoPvd) {
+                    item.amount = autoPvd;
+                    pvdUpdated = true;
+                }
+            }
+        });
+        if (pvdUpdated) {
+            saveFixCostData(tabId);
+            renderFixCostList(tabId);
+        }
+        // 🌟 สิ้นสุดท่อนที่เพิ่ม
         
         const band = SALARY_BANDS[grade];
         let percent = 0;
