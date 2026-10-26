@@ -53,8 +53,27 @@
             --danger-track: #ff6b6b;
             --success: #10b981;
             --success-bg: #d1fae5;
+            
+            /* แยกสี Badge OT แต่ละประเภทอย่างชัดเจน */
+            --ot-15-bg: #dbeafe;
+            --ot-15-text: #1e40af;
+            --ot-15-border: #bfdbfe;
+
+            --ot-15l-bg: #ffedd5;
+            --ot-15l-text: #9a3412;
+            --ot-15l-border: #fed7aa;
+
+            --ot-20-bg: #ede9fe;
+            --ot-20-text: #5b21b6;
+            --ot-20-border: #ddd6fe;
+
+            --ot-30-bg: #fce7f3;
+            --ot-30-text: #9d174d;
+            --ot-30-border: #fbcfe8;
+
             --meal-bg: #fef08a;
             --meal-text: #854d0e;
+            --meal-border: #fde047;
         }
 
         /* =========================================================
@@ -605,7 +624,7 @@
         .rates-note { margin-top: 10px; font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; }
 
         /* =========================================================
-           11. CALENDAR
+           11. CALENDAR & DISTINCT BADGES
            ========================================================= */
         .calendar-grid {
             display: grid;
@@ -624,7 +643,7 @@
         }
 
         .cal-cell {
-            min-height: 78px;
+            min-height: 80px;
             border: 1px solid var(--border);
             border-radius: 8px;
             display: flex;
@@ -663,6 +682,7 @@
             pointer-events: none;
         }
 
+        /* ป้ายแสดงผลแยกสีตามประเภท OT ชัดเจน */
         .meal-badge, .ot-indicator {
             font-size: 0.6rem;
             border-radius: 4px;
@@ -674,12 +694,55 @@
             font-weight: 700;
             overflow: hidden;
             text-overflow: ellipsis;
+            box-sizing: border-box;
         }
-        .meal-badge { background: var(--meal-bg); color: var(--meal-text); }
-        .ot-indicator { color: var(--text); }
-        .ot-indicator.breakdown { background: var(--secondary); font-size: 0.58rem; }
-        .ot-indicator.sum { background: var(--primary); font-weight: 800; margin-top: 3px; font-size: 0.65rem; }
-        .ot-indicator.no-ot { background: #e2e8f0; color: #64748b; font-size: 0.58rem; }
+
+        /* 🌙 OT เย็น 1.5x (สีฟ้า) */
+        .ot-indicator.ot-15 {
+            background-color: var(--ot-15-bg);
+            color: var(--ot-15-text);
+            border: 1px solid var(--ot-15-border);
+        }
+        /* 🍱 OT เที่ยง 1.5x L (สีส้มพีช) */
+        .ot-indicator.ot-15l {
+            background-color: var(--ot-15l-bg);
+            color: var(--ot-15l-text);
+            border: 1px solid var(--ot-15l-border);
+        }
+        /* ☀️ OT วันหยุด 2.0x (สีม่วงลาเวนเดอร์) */
+        .ot-indicator.ot-20 {
+            background-color: var(--ot-20-bg);
+            color: var(--ot-20-text);
+            border: 1px solid var(--ot-20-border);
+        }
+        /* 🌟 OT วันหยุดพิเศษ 3.0x (สีชมพู) */
+        .ot-indicator.ot-30 {
+            background-color: var(--ot-30-bg);
+            color: var(--ot-30-text);
+            border: 1px solid var(--ot-30-border);
+        }
+
+        /* ยอดรวมชั่วโมง */
+        .ot-indicator.sum {
+            background-color: #8b5cf6;
+            color: #ffffff;
+            font-weight: 800;
+            margin-top: 3px;
+            font-size: 0.65rem;
+        }
+        .ot-indicator.no-ot {
+            background: #e2e8f0;
+            color: #64748b;
+            font-size: 0.58rem;
+            border: 1px solid #cbd5e1;
+        }
+
+        /* 🍚 ป้ายค่าอาหาร OT (สีเหลืองทอง) */
+        .meal-badge {
+            background-color: var(--meal-bg);
+            color: var(--meal-text);
+            border: 1px solid var(--meal-border);
+        }
 
         .cal-summary {
             margin-top: 12px;
@@ -783,16 +846,25 @@
             background: #e0f2fe;
             box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2);
         }
-        .preset-chip--holiday {
-            border-color: #fbcfe8;
-            background: #fff5f8;
+        .preset-chip--lunch {
+            border-color: #fed7aa;
+            background: #fffaf5;
         }
-        .preset-chip--holiday:hover { border-color: #f472b6; background: #fdf2f8; }
-        .preset-chip--holiday:active { background: #fce7f3; }
+        .preset-chip--lunch:hover { border-color: #f97316; background: #fff7ed; }
+        .preset-chip--lunch.active-preset {
+            border-color: #ea580c;
+            background: #ffedd5;
+            box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.2);
+        }
+        .preset-chip--holiday {
+            border-color: #ddd6fe;
+            background: #faf5ff;
+        }
+        .preset-chip--holiday:hover { border-color: #a855f7; background: #f3e8ff; }
         .preset-chip--holiday.active-preset {
-            border-color: #db2777;
-            background: #fce7f3;
-            box-shadow: 0 0 0 2px rgba(219, 39, 119, 0.2);
+            border-color: #7c3aed;
+            background: #ede9fe;
+            box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2);
         }
 
         .chip-main { font-weight: 700; font-size: 0.85rem; color: #1e293b; }
@@ -875,7 +947,7 @@
         .btn-cancel:active { background: #cbd5e1; }
 
         /* =========================================================
-           13. CUSTOM ALERT / CONFIRM DIALOG MODAL (NO BROWSER ALERT)
+           13. CUSTOM ALERT / CONFIRM DIALOG MODAL
            ========================================================= */
         #customDialogModal { z-index: 1200; }
         .dialog-box {
@@ -972,7 +1044,6 @@
 <header class="header">
     <button type="button" class="toggle-sidebar-btn" id="sidebarToggleBtn" aria-label="Toggle Menu">☰ ตั้งค่า</button>
     <h3>OT Calculator by 😎AJ'Bank & AJ'Nerd😎</h3>
-    <!-- PWA Install Button (คงเดิมสำหรับ Service Worker/PWA) -->
     <button id="installPwaBtn" class="install-pwa-btn">📲 ติดตั้งแอป</button>
 </header>
 
@@ -982,21 +1053,18 @@
 </nav>
 
 <div class="app-layout">
-    <!-- Overlay for mobile sidebar -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- Sidebar Container -->
     <aside class="sidebar-container open" id="appSidebar">
-        <!-- Content will be injected here per tab -->
+        <!-- Content injected dynamically -->
     </aside>
 
-    <!-- Main Content Container -->
     <main class="main-container" id="appMainContent">
-        <!-- Content will be injected here per tab -->
+        <!-- Content injected dynamically -->
     </main>
 </div>
 
-<!-- ===================== Day Edit Modal (ฉบับอัปเกรด ชิปด่วน กดง่าย) ===================== -->
+<!-- ===================== Day Edit Modal ===================== -->
 <div id="dayModal" class="modal-overlay" aria-hidden="true">
     <form id="dayModalForm" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" novalidate>
         <div class="modal-header-tag">
@@ -1004,9 +1072,9 @@
             <button type="button" class="modal-close-x" id="modalCloseXBtn" aria-label="Close">✕</button>
         </div>
 
-        <!-- ⚡ ปุ่มลัด (Quick Chips) แตะครั้งเดียวจบ ไม่ต้องพิมพ์ตัวเลข -->
+        <!-- ⚡ ปุ่มลัด (Quick Chips) แตะเลือกด่วน ไม่ต้องพิมพ์ตัวเลข -->
         <div class="quick-preset-container">
-            <div class="quick-preset-title">⚡ แตะเลือกเวลา OT ด่วน (กดง่ายสุดๆ)</div>
+            <div class="quick-preset-title">⚡ แตะเลือกรอบ OT ด่วน (คลิกเลือกได้เลย)</div>
             <div class="preset-grid">
                 <button type="button" class="preset-chip" data-preset="1.0-evening">
                     <span class="chip-main">🌙 เย็น 1.0 ชม.</span>
@@ -1028,9 +1096,9 @@
                     <span class="chip-main">🌙 เย็น 3.0 ชม.</span>
                     <span class="chip-sub">16:50 - 19:50 (1.5x)</span>
                 </button>
-                <button type="button" class="preset-chip" data-preset="lunch">
+                <button type="button" class="preset-chip preset-chip--lunch" data-preset="lunch">
                     <span class="chip-main">🍱 เที่ยง 1.0 ชม.</span>
-                    <span class="chip-sub">11:30 - 12:30 (1.5x L)</span>
+                    <span class="chip-sub">11:30 - 12:30 (ไม่คิดข้าว)</span>
                 </button>
                 <button type="button" class="preset-chip preset-chip--holiday" data-preset="holiday-full">
                     <span class="chip-main">☀️ หยุดเต็มวัน 8h</span>
@@ -1046,7 +1114,7 @@
             </button>
         </div>
 
-        <!-- ตัวเลือกกรอกตัวเลขละเอียด (พับ/กางได้ สำหรับคนที่ชั่วโมงไม่ตรง Preset) -->
+        <!-- ตัวเลือกกรอกตัวเลขละเอียด -->
         <button type="button" class="manual-toggle-btn" id="toggleManualInputsBtn">
             ✏️ ปรับกรอกชั่วโมงละเอียดเอง (คลิกเพื่อแก้ไข) ▾
         </button>
@@ -1130,10 +1198,10 @@
     });
 
     const OT_TYPES = Object.freeze([
-        { id: '1.5x',  dataKey: '1.5',  label: '1.5x OT ปกติกะเย็น', cellLabel: '1.5',  summaryLabel: '1.5x',        modalInputId: 'in_1_5',  multiplier: 1.5 },
-        { id: '1.5xl', dataKey: '1.5l', label: '1.5x OT พักเที่ยง',   cellLabel: '1.5l', summaryLabel: '1.5x(Lunch)', modalInputId: 'in_1_5l', multiplier: 1.5 },
-        { id: '2.0x',  dataKey: '2.0',  label: '2.0x OT วันหยุด',     cellLabel: '2.0',  summaryLabel: '2.0x',        modalInputId: 'in_2_0',  multiplier: 2.0 },
-        { id: '3.0x',  dataKey: '3.0',  label: '3.0x OT วันหยุดพิเศษ', cellLabel: '3.0', summaryLabel: '3.0x',        modalInputId: 'in_3_0',  multiplier: 3.0 }
+        { id: '1.5x',  dataKey: '1.5',  label: '1.5x OT ปกติกะเย็น', cellLabel: '1.5',  summaryLabel: '1.5x',        modalInputId: 'in_1_5',  multiplier: 1.5, badgeClass: 'ot-15' },
+        { id: '1.5xl', dataKey: '1.5l', label: '1.5x OT พักเที่ยง',   cellLabel: '1.5l', summaryLabel: '1.5x(Lunch)', modalInputId: 'in_1_5l', multiplier: 1.5, badgeClass: 'ot-15l' },
+        { id: '2.0x',  dataKey: '2.0',  label: '2.0x OT วันหยุด',     cellLabel: '2.0',  summaryLabel: '2.0x',        modalInputId: 'in_2_0',  multiplier: 2.0, badgeClass: 'ot-20' },
+        { id: '3.0x',  dataKey: '3.0',  label: '3.0x OT วันหยุดพิเศษ', cellLabel: '3.0', summaryLabel: '3.0x',        modalInputId: 'in_3_0',  multiplier: 3.0, badgeClass: 'ot-30' }
     ]);
 
     const MONTH_NAMES = Object.freeze([
@@ -1288,7 +1356,7 @@
 
     function cloneDefaultFixCosts() { return DEFAULT_FIX_COSTS.map((item) => ({ ...item })); }
 
-    /* Custom Message Box System (แทนที่ alert & confirm) */
+    /* Custom Message Box System (แทนที่ alert & confirm เดิม) */
     let dialogCallback = null;
     function showCustomDialog({ title = 'แจ้งเตือน', message = '', icon = 'ℹ️', isConfirm = false, onConfirm = null }) {
         const modal = document.getElementById('customDialogModal');
@@ -1375,11 +1443,15 @@
     const hasDayDetail = (entry) => Boolean(entry && typeof entry.detail === 'string' && entry.detail.trim());
     const isDayEntryEmpty = (entry) => !entry.noOT && getDayTotalHours(entry) === 0 && !hasDayDetail(entry);
 
+    /* 
+       ★ จุดแก้ไขสำคัญ: OT เที่ยง (1.5l) ต้องไม่ได้ค่าอาหาร
+       ตัด getDayHours(entry, '1.5l') ออก เพื่อไม่ให้นับเป็นมื้ออาหาร
+    */
     function getMealAllowanceCount(entry) {
         if (!entry || entry.noOT) return 0;
-        const h15 = getDayHours(entry, '1.5') + getDayHours(entry, '1.5l');
-        const h20 = getDayHours(entry, '2.0');
-        const h30 = getDayHours(entry, '3.0');
+        const h15 = getDayHours(entry, '1.5'); // คิดเฉพาะกะเย็น
+        const h20 = getDayHours(entry, '2.0'); // วันหยุด
+        const h30 = getDayHours(entry, '3.0'); // วันหยุดพิเศษ
 
         if (h15 >= MEAL_RULE.min1_5) return 1;
         if (h30 >= MEAL_RULE.min3_0) return 1;
@@ -1598,7 +1670,7 @@
 
                 showCustomDialog({
                     title: 'กู้คืนข้อมูลสำเร็จ!',
-                    message: 'ข้อมูลชั่วโมง OT, เงินเดือน, และรายจ่ายประจำกลับมาครบ 100% แล้วครับ 🎉',
+                    message: 'ข้อมูลชั่วโมง OT, เงินเดือน, และรายการหักเงินเดือนกลับมาครบ 100% แล้วครับ 🎉',
                     icon: '🎉'
                 });
             } catch (err) {
@@ -1785,7 +1857,7 @@
     }
 
     /* =========================================================
-       8. RENDERING — Calendar
+       8. RENDERING — Calendar With Distinct Badges
        ========================================================= */
     function createDayCell(tabId, day, dateKey, entry, isHoliday) {
         const cell = document.createElement('div');
@@ -1814,15 +1886,21 @@
             return cell;
         }
 
+        // ★ แสดง Badge แยกสีตามประเภท OT แต่ละตัวอย่างชัดเจน
         OT_TYPES.forEach((type) => {
             const hours = getDayHours(entry, type.dataKey);
-            if (hours > 0) cell.appendChild(createElementWithText('div', 'ot-indicator breakdown', `${type.cellLabel}: ${hours}h`));
+            if (hours > 0) {
+                cell.appendChild(createElementWithText('div', `ot-indicator ${type.badgeClass || 'breakdown'}`, `${type.cellLabel}: ${hours}h`));
+            }
         });
 
         const totalHours = getDayTotalHours(entry);
         if (totalHours > 0) cell.appendChild(createElementWithText('div', 'ot-indicator sum', `รวม ${totalHours}h`));
 
-        if (getMealAllowanceCount(entry) > 0) cell.appendChild(createElementWithText('div', 'meal-badge', `🍚 ฿${MEAL_ALLOWANCE}`));
+        // แสดง Badge ค่าอาหารเฉพาะวันที่ได้จริง (OT เที่ยงจะไม่มีป้ายนี้ขึ้น)
+        if (getMealAllowanceCount(entry) > 0) {
+            cell.appendChild(createElementWithText('div', 'meal-badge', `🍚 ฿${MEAL_ALLOWANCE}`));
+        }
 
         return cell;
     }
@@ -2088,7 +2166,6 @@
         const entry = calendarData[tabId][dateKey] || { noOT: false };
 
         const parts = dateKey.split('-');
-        const dObj = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
         const dayNum = parts[2];
         const mTh = MONTH_THAI_NAMES[Number(parts[1]) - 1];
         modalElements.title.textContent = `ลงเวลา OT วันที่ ${dayNum} ${mTh} (${parts[0]})`;
@@ -2100,7 +2177,6 @@
         modalElements.detailInput.value = entry.detail || '';
         toggleNoOT();
 
-        // Highlight preset if matching
         updateActivePresetVisual();
 
         modalElements.overlay.classList.add('is-open');
@@ -2120,55 +2196,75 @@
 
     const isModalOpen = () => modalElements.overlay.classList.contains('is-open');
 
+    /* 
+       ★ การทำงานของปุ่มลัด (Preset): 
+       สามารถกดเลือก "เที่ยง" ควบคู่กับ "กะเย็น" ในวันเดียวกันได้ โดยไม่ล้างค่ากันเอง
+    */
     function applyPreset(presetType) {
         modalElements.noOtCheckbox.checked = false;
         toggleNoOT();
 
-        // Reset all inputs first
-        document.getElementById('in_1_5').value = 0;
-        document.getElementById('in_1_5l').value = 0;
-        document.getElementById('in_2_0').value = 0;
-        document.getElementById('in_3_0').value = 0;
+        const in15 = document.getElementById('in_1_5');
+        const in15l = document.getElementById('in_1_5l');
+        const in20 = document.getElementById('in_2_0');
+        const in30 = document.getElementById('in_3_0');
 
         switch (presetType) {
             case '1.0-evening':
-                document.getElementById('in_1_5').value = 1.0;
+                in15.value = 1.0; in20.value = 0; in30.value = 0;
                 break;
             case '1.5-evening':
-                document.getElementById('in_1_5').value = 1.5;
+                in15.value = 1.5; in20.value = 0; in30.value = 0;
                 break;
             case '2.0-evening':
-                document.getElementById('in_1_5').value = 2.0;
+                in15.value = 2.0; in20.value = 0; in30.value = 0;
                 break;
             case '2.5-evening':
-                document.getElementById('in_1_5').value = 2.5;
+                in15.value = 2.5; in20.value = 0; in30.value = 0;
                 break;
             case '3.0-evening':
-                document.getElementById('in_1_5').value = 3.0;
+                in15.value = 3.0; in20.value = 0; in30.value = 0;
                 break;
             case 'lunch':
-                document.getElementById('in_1_5l').value = 1.0;
+                // กดสลับ เที่ยง 1 ชม. (0 -> 1.0 หรือ 1.0 -> 0) โดยคงชั่วโมงกะเย็นไว้
+                in15l.value = (parseFloat(in15l.value) === 1.0) ? 0 : 1.0;
+                in20.value = 0; in30.value = 0;
                 break;
             case 'holiday-full':
-                document.getElementById('in_2_0').value = 8.0;
+                in20.value = 8.0; in15.value = 0; in15l.value = 0; in30.value = 0;
                 break;
             case 'holiday-half':
-                document.getElementById('in_2_0').value = 4.0;
+                in20.value = 4.0; in15.value = 0; in15l.value = 0; in30.value = 0;
                 break;
             case 'no-ot':
+                in15.value = 0; in15l.value = 0; in20.value = 0; in30.value = 0;
                 modalElements.noOtCheckbox.checked = true;
                 toggleNoOT();
                 break;
             default: break;
         }
 
-        updateActivePresetVisual(presetType);
+        updateActivePresetVisual();
     }
 
-    function updateActivePresetVisual(selectedPreset = null) {
+    function updateActivePresetVisual() {
+        const h15 = parseFloat(document.getElementById('in_1_5').value) || 0;
+        const h15l = parseFloat(document.getElementById('in_1_5l').value) || 0;
+        const h20 = parseFloat(document.getElementById('in_2_0').value) || 0;
+        const isNoOt = modalElements.noOtCheckbox.checked;
+
         document.querySelectorAll('.preset-chip').forEach(chip => {
-            const isMatch = selectedPreset && chip.dataset.preset === selectedPreset;
-            chip.classList.toggle('active-preset', Boolean(isMatch));
+            const p = chip.dataset.preset;
+            let active = false;
+            if (p === '1.0-evening' && h15 === 1.0) active = true;
+            else if (p === '1.5-evening' && h15 === 1.5) active = true;
+            else if (p === '2.0-evening' && h15 === 2.0) active = true;
+            else if (p === '2.5-evening' && h15 === 2.5) active = true;
+            else if (p === '3.0-evening' && h15 === 3.0) active = true;
+            else if (p === 'lunch' && h15l === 1.0) active = true;
+            else if (p === 'holiday-full' && h20 === 8.0) active = true;
+            else if (p === 'holiday-half' && h20 === 4.0) active = true;
+            chip.classList.toggle('active-preset', active);
         });
     }
 
@@ -2484,7 +2580,7 @@
         else if (action === 'backup-file-selected') {
             if (target.files && target.files[0]) {
                 importBackupFile(target.files[0]);
-                target.value = ''; // Reset input
+                target.value = '';
             }
         }
     }
@@ -2537,7 +2633,6 @@
                 toggleManualBtn.textContent = '✏️ ปรับกรอกชั่วโมงละเอียดเอง (คลิกเพื่อแก้ไข) ▾';
             }
         });
-        // Default hide manual box on small screens for maximum cleanliness
         manualInputsBox.style.display = 'none';
 
         // Modal Events
