@@ -6,23 +6,19 @@
     <title>OT Calculator ProMax</title>
     <meta name="theme-color" content="#CDB4DB">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="OT Manager">
-    
+    <meta name="application-name" content="OT Manager">    
     <!-- PWA Meta Tags (คงเดิม ไม่กระทบกับระบบเดิม) -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="OT ProMax">
     <link rel="apple-touch-icon" href="./icon.png">
     <link rel="manifest" href="./manifest.json">
-
     <!-- Font: Kanit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
     <!-- html2canvas: สำหรับ Export Report เป็น JPEG -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
     <style>
         /* =========================================================
            1. DESIGN TOKENS — Pastel Dreamland Adventure Palette
@@ -33,7 +29,6 @@
             --pastel-blush-pop: #FFAFCC;
             --pastel-icy-blue: #BDE0FE;
             --pastel-sky-blue: #A2D2FF;
-
             --primary: var(--pastel-pink-orchid);
             --primary-dark: #a27cb8;
             --secondary: var(--pastel-sky-blue);
@@ -52,30 +47,24 @@
             --danger-bg: #fee2e2;
             --danger-track: #ff6b6b;
             --success: #10b981;
-            --success-bg: #d1fae5;
-            
+            --success-bg: #d1fae5;            
             /* แยกสี Badge OT แต่ละประเภทอย่างชัดเจน */
             --ot-15-bg: #dbeafe;
             --ot-15-text: #1e40af;
             --ot-15-border: #bfdbfe;
-
             --ot-15l-bg: #ffedd5;
             --ot-15l-text: #9a3412;
             --ot-15l-border: #fed7aa;
-
             --ot-20-bg: #ede9fe;
             --ot-20-text: #5b21b6;
             --ot-20-border: #ddd6fe;
-
             --ot-30-bg: #fce7f3;
             --ot-30-text: #9d174d;
             --ot-30-border: #fbcfe8;
-
             --meal-bg: #fef08a;
             --meal-text: #854d0e;
             --meal-border: #fde047;
         }
-
         /* =========================================================
            2. BASE & RESET
            ========================================================= */
@@ -92,10 +81,8 @@
             flex-direction: column;
             height: 100vh;
         }
-
         h2, h3, h4 { margin-top: 0; color: var(--text); }
         button, input, select { font-family: 'Kanit', sans-serif; }
-
         /* =========================================================
            3. HEADER & TABS (แก้ปัญหาปุ่มทับข้อความ)
            ========================================================= */
@@ -122,8 +109,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-        }
-        
+        }        
         .toggle-sidebar-btn {
             position: absolute;
             left: 10px;
@@ -144,7 +130,6 @@
         }
         .toggle-sidebar-btn:hover { background: rgba(255,255,255,0.7); }
         .toggle-sidebar-btn:active { transform: translateY(-50%) scale(0.95); }
-
         .tab-container {
             display: flex;
             background: white;
@@ -170,7 +155,6 @@
             background: #f0f7ff;
             font-weight: 700;
         }
-
         /* =========================================================
            4. LAYOUT (SIDEBAR & MAIN)
            ========================================================= */
@@ -180,7 +164,6 @@
             position: relative;
             overflow: hidden;
         }
-
         .sidebar-container {
             width: 360px;
             background: #ffffff;
@@ -196,10 +179,8 @@
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             padding: 18px;
             box-sizing: border-box;
-        }
-        
+        }        
         .sidebar-container.open { transform: translateX(0); }
-
         .main-container {
             flex: 1;
             padding: 12px 8px;
@@ -207,7 +188,6 @@
             transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             background: var(--bg);
         }
-
         @media (min-width: 900px) {
             .sidebar-container {
                 position: static;
@@ -216,8 +196,7 @@
             }
             .sidebar-container.open { margin-left: 0; }
             .main-container { padding: 16px; }
-        }
-        
+        }        
         .sidebar-overlay {
             display: none;
             position: absolute;
@@ -229,7 +208,6 @@
         }
         .sidebar-overlay.active { display: block; opacity: 1; }
         @media (min-width: 900px) { .sidebar-overlay { display: none !important; } }
-
         /* Card Styles */
         .card {
             background: var(--card);
@@ -241,7 +219,6 @@
         }
         .card--accent-primary { border-top: 4px solid var(--primary); }
         .card--accent-secondary { border-top: 4px solid var(--secondary); }
-
         .card-header-row {
             display: flex;
             justify-content: space-between;
@@ -249,10 +226,8 @@
             margin-bottom: 8px;
         }
         .card-header-row h3 { margin: 0; font-size: 1.05rem; }
-
         .muted-text { font-size: 0.82rem; color: var(--text-muted); }
         .muted-caption { font-size: 0.76rem; color: var(--text-muted); }
-
         .sidebar-section {
             margin-bottom: 20px;
             padding-bottom: 18px;
@@ -263,7 +238,6 @@
             margin-bottom: 0;
             padding-bottom: 0;
         }
-
         /* =========================================================
            5. BUTTONS & UI ACTIONS
            ========================================================= */
@@ -279,7 +253,6 @@
             transition: all 0.2s;
         }
         .reset-btn:hover { background: var(--danger); color: white; }
-
         .sync-btn {
             background: var(--accent);
             color: var(--text);
@@ -318,7 +291,6 @@
         .toggle-btn:hover { background: #e2e8f0; color: var(--text); }
         .sync-btn:hover, .btn-add-cost:hover { filter: brightness(0.96); }
         .sync-btn:active, .btn-add-cost:active { transform: scale(0.97); }
-
         .export-btn {
             background: #059669;
             color: white;
@@ -339,7 +311,6 @@
         }
         .export-btn:active { transform: scale(0.98); }
         .export-btn:disabled { opacity: 0.6; cursor: progress; }
-
         /* BACKUP & RESTORE BOX */
         .backup-card {
             background: #f8fafc;
@@ -390,14 +361,12 @@
             color: #166534;
         }
         .btn-backup:active { transform: scale(0.96); }
-
         /* =========================================================
            6. FORM ELEMENTS
            ========================================================= */
         .form-group { margin-bottom: 12px; }
         .form-group--grow { flex: 1; }
         label { display: block; margin-bottom: 4px; font-weight: 600; font-size: 0.82rem; color: #4b5563;}
-
         input[type="number"], input[type="text"], select {
             width: 100%;
             padding: 9px 11px;
@@ -415,15 +384,30 @@
             box-shadow: 0 0 0 2px rgba(162, 210, 255, 0.4);
         }
         .date-row { display: flex; gap: 8px; }
-
         .plant-cost-row {
             display: flex;
             gap: 8px;
             align-items: center;
         }
         .plant-cost-row select:first-child { flex: 2; }
-        .plant-cost-row select:last-child { flex: 1; }
-
+        .plant-cost-row select:last-child { flex: 1.3; }
+        /* 🆕 Subcontract: ช่อง PVD ที่ถูกล็อกเป็น 0 */
+        .fix-cost-row input[readonly] {
+            background: #f1f5f9;
+            color: var(--text-subtle);
+            cursor: not-allowed;
+        }
+        .sub-badge {
+            display: inline-block;
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+            border-radius: 6px;
+            padding: 2px 8px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            margin-top: 4px;
+        }
         /* =========================================================
            7. GAUGE METER (ระดับเงินเดือน)
            ========================================================= */
@@ -473,7 +457,6 @@
             color: var(--danger);
             margin: 0 4px;
         }
-
         /* =========================================================
            8. SLIDERS
            ========================================================= */
@@ -491,9 +474,7 @@
             font-size: 0.95rem;
         }
         .slider-hours.is-diverged { color: var(--danger); }
-
         .slider-controls { display: flex; align-items: center; gap: 5px; }
-
         input[type="range"] {
             -webkit-appearance: none;
             appearance: none;
@@ -541,7 +522,6 @@
             margin-top: 4px;
             padding-right: 42px;
         }
-
         /* =========================================================
            9. FIX COST
            ========================================================= */
@@ -553,7 +533,6 @@
         }
         .fix-cost-row input[type="text"] { flex: 2; padding: 7px 9px; font-size: 0.88rem; }
         .fix-cost-row input[type="number"] { flex: 1.3; padding: 7px 9px; font-size: 0.88rem; }
-
         .del-cost-btn {
             background: #fee2e2;
             color: var(--danger);
@@ -571,7 +550,6 @@
             flex-shrink: 0;
         }
         .del-cost-btn:hover { background: #fca5a5; color: white; }
-
         .fix-cost-footer {
             display: flex;
             justify-content: space-between;
@@ -583,14 +561,12 @@
             font-size: 0.88rem;
         }
         .fix-cost-total { color: var(--danger); font-size: 0.95rem; }
-
         .empty-state {
             text-align: center;
             color: var(--text-subtle);
             font-size: 0.82rem;
             padding: 10px 0;
         }
-
         /* =========================================================
            10. RESULTS / FINAL SUMMARY
            ========================================================= */
@@ -625,9 +601,7 @@
         }
         .net-income { color: var(--success); font-weight: 800; }
         .net-income.is-negative { color: var(--danger); }
-
         .rates-note { margin-top: 10px; font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; }
-
         /* =========================================================
            11. CALENDAR & DISTINCT BADGES (ปรับ Font กระชับ ไม่ล้นช่อง)
            ========================================================= */
@@ -638,7 +612,6 @@
         }
         .calendar-grid--header { margin-top: 8px; margin-bottom: 4px; }
         .calendar-grid--body { margin-top: 0; }
-
         .cal-header {
             text-align: center;
             font-weight: bold;
@@ -646,7 +619,6 @@
             padding: 3px 0;
             color: var(--text-muted);
         }
-
         .cal-cell {
             min-height: 76px;
             border: 1px solid var(--border);
@@ -675,9 +647,7 @@
             cursor: default;
         }
         .cal-cell--placeholder:active { transform: none; }
-
         .cal-day-number { font-weight: 700; font-size: 0.9rem; line-height: 1.1; margin-bottom: 2px; }
-
         .cal-note-icon {
             position: absolute;
             top: 2px;
@@ -686,7 +656,6 @@
             line-height: 1;
             pointer-events: none;
         }
-
         /* ป้ายแสดงผล ปรับ Font ให้กระชับ ไม่โดนตัด ... */
         .meal-badge, .ot-indicator {
             font-size: 0.55rem;          /* ขนาดฟอนต์พอดีกับตารางมือถือ */
@@ -703,7 +672,6 @@
             box-sizing: border-box;
             line-height: 1.25;
         }
-
         /* 🌙 OT เย็น 1.5x (สีฟ้าสดใส) */
         .ot-indicator.ot-15 {
             background-color: var(--ot-15-bg);
@@ -728,7 +696,6 @@
             color: var(--ot-30-text);
             border: 1px solid var(--ot-30-border);
         }
-
         /* ยอดรวมชั่วโมงกรณีทำหลายกะในวันเดียว (สีเข้ม Slate ไม่ตีกับสีม่วงของวันหยุด) */
         .ot-indicator.sum {
             background-color: #334155;
@@ -752,14 +719,12 @@
     margin-bottom: 2px;
     border-radius: 4px;
 }
-
         /* 🍚 ป้ายค่าอาหาร OT (สีเหลืองทอง) */
         .meal-badge {
             background-color: var(--meal-bg);
             color: var(--meal-text);
             border: 1px solid var(--meal-border);
         }
-
         .cal-summary {
             margin-top: 10px;
             padding: 10px 12px;
@@ -770,7 +735,6 @@
             line-height: 1.45;
         }
         .cal-summary__meal { color: var(--meal-text); font-weight: 700; font-size: 0.82rem; }
-
         /* =========================================================
            12. MODAL & QUICK PRESETS (สุดยอดการกดง่าย)
            ========================================================= */
@@ -786,7 +750,6 @@
             backdrop-filter: blur(2px);
         }
         .modal-overlay.is-open { display: flex; }
-
         .modal {
             background: white;
             padding: 18px 20px;
@@ -802,7 +765,6 @@
             from { transform: scale(0.92); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
         }
-
         .modal-header-tag {
             display: flex;
             justify-content: space-between;
@@ -820,7 +782,6 @@
             cursor: pointer;
             padding: 4px;
         }
-
         /* QUICK PRESET CHIPS GRID */
         .quick-preset-container {
             margin-bottom: 14px;
@@ -882,10 +843,8 @@
             background: #ede9fe;
             box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2);
         }
-
         .chip-main { font-weight: 700; font-size: 0.85rem; color: #1e293b; }
         .chip-sub { font-size: 0.7rem; color: #64748b; }
-
         .preset-clear-btn {
             width: 100%;
             margin-top: 8px;
@@ -900,7 +859,6 @@
             transition: all 0.15s;
         }
         .preset-clear-btn:active { background: #e2e8f0; color: #334155; }
-
         /* Manual Inputs Accordion */
         .manual-toggle-btn {
             background: transparent;
@@ -924,7 +882,6 @@
         }
         .modal-noot-row { text-align: left; margin-bottom: 8px; }
         .modal-noot-row label { display: inline; cursor: pointer; font-size: 0.85rem; }
-
         .modal-ot-fields {
             border: 0;
             margin: 0;
@@ -933,11 +890,9 @@
             transition: opacity 0.2s;
         }
         .modal-ot-fields:disabled { opacity: 0.3; }
-
         .modal-input-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .modal-input-row label { width: 45%; margin: 0; font-size: 0.85rem; }
         .modal-input-row input { width: 50%; padding: 6px 10px; }
-
         .modal-detail-row {
             margin-top: 10px;
             padding-top: 10px;
@@ -945,7 +900,6 @@
         }
         .modal-detail-row label { margin-bottom: 4px; }
         .modal-detail-row input { width: 100%; }
-
         .modal-btns { display: flex; gap: 8px; margin-top: 16px; }
         .btn-save, .btn-cancel {
             font-weight: 700;
@@ -961,7 +915,6 @@
         .btn-save:active { transform: scale(0.97); }
         .btn-cancel { background: #e2e8f0; color: #334155; }
         .btn-cancel:active { background: #cbd5e1; }
-
         /* =========================================================
            13. CUSTOM ALERT / CONFIRM DIALOG MODAL
            ========================================================= */
@@ -978,7 +931,6 @@
         .dialog-icon { font-size: 2.2rem; margin-bottom: 8px; line-height: 1; }
         .dialog-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; color: #0f172a; }
         .dialog-message { font-size: 0.88rem; color: #475569; margin-bottom: 18px; line-height: 1.45; }
-
         /* =========================================================
            14. EXPORT SHEET
            ========================================================= */
@@ -1014,8 +966,7 @@
             padding-top: 25px;
             margin-top: 20px;
         }
-        .export-sheet .rates-note { font-size: 1.8rem; margin-top: 40px; }
-        
+        .export-sheet .rates-note { font-size: 1.8rem; margin-top: 40px; }        
         .export-table {
             width: 100%;
             border-collapse: collapse;
@@ -1034,7 +985,6 @@
             font-weight: 700;
         }
         .export-table td.detail-col { text-align: left; }
-
         /* =========================================================
            15. PWA UI Styles
            ========================================================= */
@@ -1056,30 +1006,24 @@
     </style>
 </head>
 <body>
-
 <header class="header">
     <button type="button" class="toggle-sidebar-btn" id="sidebarToggleBtn" aria-label="Toggle Menu">☰ ตั้งค่า</button>
     <h3>OT Calculator by 😎AJ'Bank & AJ'Nerd😎</h3>
     <button id="installPwaBtn" class="install-pwa-btn">📲 ติดตั้งแอป</button>
 </header>
-
 <nav class="tab-container" role="tablist">
     <button type="button" class="tab active" role="tab" data-tab-target="my-ot">🗓️ บันทึก OT ของฉัน</button>
     <button type="button" class="tab" role="tab" data-tab-target="forecast">🔮 คำนวณจำลองล่วงหน้า</button>
 </nav>
-
 <div class="app-layout">
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
     <aside class="sidebar-container open" id="appSidebar">
         <!-- Content injected dynamically -->
     </aside>
-
     <main class="main-container" id="appMainContent">
         <!-- Content injected dynamically -->
     </main>
 </div>
-
 <!-- ===================== Day Edit Modal ===================== -->
 <div id="dayModal" class="modal-overlay" aria-hidden="true">
     <form id="dayModalForm" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" novalidate>
@@ -1087,7 +1031,6 @@
             <h3 id="modalTitle">ลงเวลา OT วันที่</h3>
             <button type="button" class="modal-close-x" id="modalCloseXBtn" aria-label="Close">✕</button>
         </div>
-
         <!-- ⚡ ปุ่มลัด (Quick Chips) แตะเลือกด่วน ไม่ต้องพิมพ์ตัวเลข -->
         <div class="quick-preset-container">
             <div class="quick-preset-title">⚡ แตะเลือกรอบ OT ด่วน (คลิกเลือกได้เลย)</div>
@@ -1129,18 +1072,15 @@
                 ❌ วันนี้ไม่ทำ OT จ้า
             </button>
         </div>
-
         <!-- ตัวเลือกกรอกตัวเลขละเอียด -->
         <button type="button" class="manual-toggle-btn" id="toggleManualInputsBtn">
             ✏️ ปรับกรอกชั่วโมงละเอียดเอง (คลิกเพื่อแก้ไข) ▾
         </button>
-
         <div class="manual-container" id="manualInputsBox">
             <div class="form-group modal-noot-row">
                 <input type="checkbox" id="modalNoOT">
                 <label for="modalNoOT">ทำเครื่องหมาย "ไม่มี OT (0 ชั่วโมง)"</label>
             </div>
-
             <fieldset id="modalInputs" class="modal-ot-fields">
                 <div class="modal-input-row"><label for="in_1_5">OT ปกติกะเย็น (1.5x)</label><input type="number" min="0" step="0.5" inputmode="decimal" id="in_1_5"></div>
                 <div class="modal-input-row"><label for="in_1_5l">OT พักเที่ยง (1.5x L)</label><input type="number" min="0" step="0.5" inputmode="decimal" id="in_1_5l"></div>
@@ -1148,19 +1088,16 @@
                 <div class="modal-input-row"><label for="in_3_0">OT วันหยุดพิเศษ (3.0x)</label><input type="number" min="0" step="0.5" inputmode="decimal" id="in_3_0"></div>
             </fieldset>
         </div>
-
         <div class="modal-detail-row">
             <label for="in_detail">📝 โน้ตรายละเอียดงาน (ไม่ใส่ก็ได้)</label>
             <input type="text" id="in_detail" maxlength="200" autocomplete="off" placeholder="เช่น ซ่อมบำรุง Line A / เซ็ต Jig">
         </div>
-
         <div class="modal-btns">
             <button type="button" class="btn-cancel" id="modalCancelBtn">ยกเลิก</button>
             <button type="submit" class="btn-save">💾 บันทึกข้อมูล</button>
         </div>
     </form>
 </div>
-
 <!-- ===================== Custom Dialog / Alert / Confirm Modal ===================== -->
 <div id="customDialogModal" class="modal-overlay" aria-hidden="true">
     <div class="dialog-box" role="dialog" aria-modal="true">
@@ -1173,7 +1110,6 @@
         </div>
     </div>
 </div>
-
 <!-- ===================== PWA Modals ===================== -->
 <div id="pwaIosModal" class="modal-overlay" aria-hidden="true">
     <div class="modal" role="dialog">
@@ -1186,7 +1122,6 @@
         <button type="button" class="pwa-btn-primary" onclick="document.getElementById('pwaIosModal').classList.remove('is-open')">เข้าใจแล้ว</button>
     </div>
 </div>
-
 <div id="pwaLineModal" class="modal-overlay" aria-hidden="true">
     <div class="modal" role="dialog">
         <div class="pwa-modal-header">⚠️ กำลังเปิดผ่าน LINE อยู่</div>
@@ -1196,14 +1131,11 @@
         <button type="button" class="pwa-btn-primary" onclick="document.getElementById('pwaLineModal').classList.remove('is-open')">ปิดหน้าต่างนี้</button>
     </div>
 </div>
-
 <!-- Hidden area for Off-screen elements (Exporting) -->
 <div id="offscreen-area" style="position: absolute; top: 0; left: -9999px; z-index: -1;"></div>
-
 <script>
 (() => {
     'use strict';
-
     /* =========================================================
        1. CONFIGURATION & CONSTANTS
        ========================================================= */
@@ -1212,14 +1144,12 @@
         'my-ot': 'ข้อมูลของฉัน (My OT)',
         'forecast': 'จำลองคำนวณ (Forecast)'
     });
-
     const OT_TYPES = Object.freeze([
         { id: '1.5x',  dataKey: '1.5',  label: '1.5x OT ปกติกะเย็น', cellLabel: '1.5',  summaryLabel: '1.5x',        modalInputId: 'in_1_5',  multiplier: 1.5, badgeClass: 'ot-15' },
         { id: '1.5xl', dataKey: '1.5l', label: '1.5x OT พักเที่ยง',   cellLabel: '1.5l', summaryLabel: '1.5x(Lunch)', modalInputId: 'in_1_5l', multiplier: 1.5, badgeClass: 'ot-15l' },
         { id: '2.0x',  dataKey: '2.0',  label: '2.0x OT วันหยุด',     cellLabel: '2.0',  summaryLabel: '2.0x',        modalInputId: 'in_2_0',  multiplier: 2.0, badgeClass: 'ot-20' },
         { id: '3.0x',  dataKey: '3.0',  label: '3.0x OT วันหยุดพิเศษ', cellLabel: '3.0', summaryLabel: '3.0x',        modalInputId: 'in_3_0',  multiplier: 3.0, badgeClass: 'ot-30' }
     ]);
-
     const MONTH_NAMES = Object.freeze([
         'January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'
@@ -1229,43 +1159,52 @@
         'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
     ]);
     const WEEKDAY_LABELS = Object.freeze(['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.']);
-
     const MEAL_ALLOWANCE = 83;
-    const FIX_LUNCH_ALLOWANCE = 1700;
-    
+    const FIX_LUNCH_ALLOWANCE = 1700;    
+    /* 
+       🆕 Subcontract
+       - ค่าใน Grade Select = 'SUB'
+       - ไม่ได้รับเงินช่วยเหลือสถานที่ทำงาน (Plant) ทุก Plant = 0
+       - ไม่มีกองทุนสำรองเลี้ยงชีพ (15%) → ล็อกเป็น 0
+       - ระดับเพดานเงินเดือน (Band) และฐานปรับขึ้น ใช้ข้อมูลของ G2
+    */
+    const SUBCONTRACT_GRADE = 'SUB';
+    const SUBCONTRACT_LABEL = 'Subcontract';
+    const SUBCONTRACT_BAND_REFERENCE = 'G2';
+    const isSubcontract = (grade) => grade === SUBCONTRACT_GRADE;
+    const getGradeLabel = (grade) => (isSubcontract(grade) ? SUBCONTRACT_LABEL : grade);
+    const isPvdItem = (item) => Boolean(item && typeof item.name === 'string' && item.name.includes('กองทุนสำรองเลี้ยงชีพ'));
     /* 
        สถานที่ทำงาน (Plant & Grade)
        - BANPHO (BP): G1-G6 ตามสเกล
        - GATEWAY (GW): G1-G6 ตามสเกล
        - SAMRONG (SR): G1-G6 = 0 บาท ทุกเกรด
+       - Subcontract (SUB): 0 บาท ทุก Plant
     */
     const WORKPLACE_ALLOWANCE = Object.freeze({
-        'BANPHO PLANT':  { 'G1': 500, 'G2': 700,  'G3': 900,  'G4': 1000, 'G5': 1300, 'G6': 1500 },
-        'GATEWAY PLANT': { 'G1': 800, 'G2': 1000, 'G3': 1500, 'G4': 1700, 'G5': 2300, 'G6': 2500 },
-        'SAMRONG PLANT': { 'G1': 0,   'G2': 0,    'G3': 0,    'G4': 0,    'G5': 0,    'G6': 0 }
+        'BANPHO PLANT':  { 'G1': 500, 'G2': 700,  'G3': 900,  'G4': 1000, 'G5': 1300, 'G6': 1500, 'SUB': 0 },
+        'GATEWAY PLANT': { 'G1': 800, 'G2': 1000, 'G3': 1500, 'G4': 1700, 'G5': 2300, 'G6': 2500, 'SUB': 0 },
+        'SAMRONG PLANT': { 'G1': 0,   'G2': 0,    'G3': 0,    'G4': 0,    'G5': 0,    'G6': 0,    'SUB': 0 }
     });
-
     const SALARY_BANDS = Object.freeze({
         'G1': { min: 12145, max: 22650 },
         'G2': { min: 12145, max: 27545 },
         'G3': { min: 15210, max: 37120 },
         'G4': { min: 20700, max: 61400 },
         'G5': { min: 34000, max: 87600 },
-        'G6': { min: 62755, max: 123000 }
+        'G6': { min: 62755, max: 123000 },
+        'SUB': { min: 12145, max: 27545 }   // 🆕 Subcontract ใช้ Band เดียวกับ G2
     });
-
     const SALARY_BASE_FOR_INCREASE = Object.freeze({
-        'G1': 16200, 'G2': 20200, 'G3': 26900, 'G4': 40400, 'G5': 60700, 'G6': 93000
+        'G1': 16200, 'G2': 20200, 'G3': 26900, 'G4': 40400, 'G5': 60700, 'G6': 93000,
+        'SUB': 20200                         // 🆕 Subcontract ใช้ฐานเดียวกับ G2
     });
-
     const DEFAULT_SALARY = 30000;
     const DEFAULT_YEAR = 2026;
     const SLIDER_MAX_HOURS = 200;
     const SLIDER_STEP_HOURS = 0.5;
     const DETAIL_MAX_LENGTH = 200;
-
     const MEAL_RULE = Object.freeze({ min1_5: 1.0, min2_0: 5.0, min3_0: 1.0 });
-
     /* วันหยุดบริษัทปี 2026 */
     const COMPANY_HOLIDAYS = Object.freeze({
         'BANPHO': {
@@ -1317,7 +1256,6 @@
             }
         }
     });
-
     const DEFAULT_FIX_COSTS = Object.freeze([
         { name: 'กองทุนสำรองเลี้ยงชีพ (15%)', amount: 5000 },
         { name: 'ค่าหุ้นสหกรณ์ออมทรัพย์', amount: 3000.00 },
@@ -1325,7 +1263,6 @@
         { name: 'ค่าฌาปนกิจ สหภาพ (Max)', amount: 380.00 },
         { name: 'ค่าฌาปนกิจ บริษัท (Max)', amount: 170.00 }
     ]);
-
     const STORAGE_PREFIX = 'otPro_';
     const STORAGE_KEYS = Object.freeze({
         salary:         (tabId) => `${STORAGE_PREFIX}${tabId}_salary`,
@@ -1338,7 +1275,6 @@
         calendarData:   (tabId) => `${STORAGE_PREFIX}cal_data_${tabId}`,
         fixCosts:       (tabId) => `${STORAGE_PREFIX}fix_cost_${tabId}`
     });
-
     /* =========================================================
        2. UTILITIES & MODAL ALERT / CONFIRM SYSTEM
        ========================================================= */
@@ -1346,30 +1282,23 @@
     const toFiniteNumber = (value, fallback = 0) => { const p = parseFloat(value); return Number.isFinite(p) ? p : fallback; };
     const toNonNegativeNumber = (value) => Math.max(0, toFiniteNumber(value));
     const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
-
     const formatFixed2 = (value) => value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const formatUpTo2 = (value) => value.toLocaleString('en-US', { maximumFractionDigits: 2 });
-
     const padTwoDigits = (number) => String(number).padStart(2, '0');
     const buildDateKey = (year, monthIndex, day) => `${year}-${padTwoDigits(monthIndex)}-${padTwoDigits(day)}`;
     const DATE_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
-
     const getTabElement = (prefix, tabId) => document.getElementById(`${prefix}_${tabId}`);
-
     function escapeHtml(value) {
         if (value === null || value === undefined) return '';
         return String(value).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#039;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
-
     function createElementWithText(tagName, className, text) {
         const element = document.createElement(tagName);
         if (className) element.className = className;
         element.textContent = text;
         return element;
     }
-
     function cloneDefaultFixCosts() { return DEFAULT_FIX_COSTS.map((item) => ({ ...item })); }
-
     /* Custom Message Box System (แทนที่ alert & confirm เดิม) */
     let dialogCallback = null;
     function showCustomDialog({ title = 'แจ้งเตือน', message = '', icon = 'ℹ️', isConfirm = false, onConfirm = null }) {
@@ -1377,26 +1306,21 @@
         document.getElementById('customDialogTitle').textContent = title;
         document.getElementById('customDialogMessage').innerHTML = message;
         document.getElementById('customDialogIcon').textContent = icon;
-
         const cancelBtn = document.getElementById('customDialogCancelBtn');
         cancelBtn.style.display = isConfirm ? 'block' : 'none';
-
         dialogCallback = onConfirm;
         modal.classList.add('is-open');
     }
-
     function closeCustomDialog() {
         document.getElementById('customDialogModal').classList.remove('is-open');
         dialogCallback = null;
     }
-
     document.getElementById('customDialogConfirmBtn').addEventListener('click', () => {
         const cb = dialogCallback;
         closeCustomDialog();
         if (typeof cb === 'function') cb();
     });
     document.getElementById('customDialogCancelBtn').addEventListener('click', closeCustomDialog);
-
     /* =========================================================
        3. STORAGE LAYER
        ========================================================= */
@@ -1431,7 +1355,6 @@
         const setJSON = (key, value) => setRaw(key, JSON.stringify(value));
         return Object.freeze({ getRaw, setRaw, remove, listKeys, getJSON, setJSON });
     })();
-
     /* =========================================================
        4. APPLICATION STATE
        ========================================================= */
@@ -1439,7 +1362,6 @@
     const fixCostData = { 'my-ot': cloneDefaultFixCosts(), 'forecast': cloneDefaultFixCosts() };
     const modalState = { tabId: null, dateKey: null };
     let currentTabId = 'my-ot';
-
     /* =========================================================
        5. DOMAIN LOGIC
        ========================================================= */
@@ -1451,12 +1373,10 @@
         if (detail) entry.detail = detail;
         return entry;
     }
-
     const getDayHours = (entry, dataKey) => (entry && !entry.noOT ? Number(entry[dataKey]) || 0 : 0);
     const getDayTotalHours = (entry) => OT_TYPES.reduce((sum, type) => sum + getDayHours(entry, type.dataKey), 0);
     const hasDayDetail = (entry) => Boolean(entry && typeof entry.detail === 'string' && entry.detail.trim());
     const isDayEntryEmpty = (entry) => !entry.noOT && getDayTotalHours(entry) === 0 && !hasDayDetail(entry);
-
     /* 
        ★ จุดแก้ไขสำคัญ: OT เที่ยง (1.5l) ต้องไม่ได้ค่าอาหาร
        ตัด getDayHours(entry, '1.5l') ออก เพื่อไม่ให้นับเป็นมื้ออาหาร
@@ -1466,29 +1386,24 @@
         const h15 = getDayHours(entry, '1.5'); // คิดเฉพาะกะเย็น
         const h20 = getDayHours(entry, '2.0'); // วันหยุด
         const h30 = getDayHours(entry, '3.0'); // วันหยุดพิเศษ
-
         if (h15 >= MEAL_RULE.min1_5) return 1;
         if (h30 >= MEAL_RULE.min3_0) return 1;
         if (h20 >= MEAL_RULE.min2_0) return 1;
         return 0;
     }
-
     function isCompanyHoliday(year, monthIndex, day, plantName) {
         let plantKey = 'BANPHO';
         if ((plantName || '').includes('GATEWAY')) plantKey = 'GATEWAY';
         else if ((plantName || '').includes('SAMRONG')) plantKey = 'SAMRONG';
-
         const hols = COMPANY_HOLIDAYS[plantKey] && COMPANY_HOLIDAYS[plantKey][year] && COMPANY_HOLIDAYS[plantKey][year][monthIndex];
         return Array.isArray(hols) && hols.includes(day);
     }
-
     function shouldHighlightAsHoliday(entry, isHoliday) {
         if (!entry || entry.noOT) return isHoliday;
         if (getDayHours(entry, '2.0') > 0 || getDayHours(entry, '3.0') > 0) return true;
         if (getDayHours(entry, '1.5') > 0 || getDayHours(entry, '1.5l') > 0) return false;
         return isHoliday;
     }
-
     function getSelectedPeriod(tabId) {
         const monthName = getTabElement('month', tabId).value;
         const monthIndex = Math.max(1, MONTH_NAMES.indexOf(monthName) + 1);
@@ -1499,25 +1414,25 @@
             startWeekday: new Date(year, monthIndex - 1, 1).getDay()
         };
     }
-
     function getCalendarTotals(tabId) {
         const { year, monthIndex, daysInMonth } = getSelectedPeriod(tabId);
         const hoursByType = Object.fromEntries(OT_TYPES.map((type) => [type.dataKey, 0]));
         let mealCount = 0;
-
         for (let day = 1; day <= daysInMonth; day++) {
             const entry = calendarData[tabId][buildDateKey(year, monthIndex, day)];
             if (!entry || entry.noOT) continue;
             OT_TYPES.forEach((type) => { hoursByType[type.dataKey] += getDayHours(entry, type.dataKey); });
             mealCount += getMealAllowanceCount(entry);
         }
-
         const totalHours = OT_TYPES.reduce((sum, type) => sum + hoursByType[type.dataKey], 0);
         return { hoursByType, totalHours, mealCount, mealTotal: mealCount * MEAL_ALLOWANCE };
     }
-
     const getFixCostTotal = (tabId) => (fixCostData[tabId] || []).reduce((sum, item) => sum + toFiniteNumber(item.amount), 0);
-
+    /* 🆕 ตรวจว่าแท็บนี้เลือก Subcontract อยู่หรือไม่ */
+    function isTabSubcontract(tabId) {
+        const gradeEl = getTabElement('grade', tabId);
+        return Boolean(gradeEl && isSubcontract(gradeEl.value));
+    }
     /* =========================================================
        6. PERSISTENCE & DATA LOSS PREVENTION (BACKUP / RESTORE)
        ========================================================= */
@@ -1531,9 +1446,7 @@
         });
         return cleanData;
     }
-
     const saveCalendarData = (tabId) => storage.setJSON(STORAGE_KEYS.calendarData(tabId), calendarData[tabId]);
-
     function loadFixCostData(tabId) {
         const rawList = storage.getJSON(STORAGE_KEYS.fixCosts(tabId), null, Array.isArray);
         if (!rawList) return cloneDefaultFixCosts();
@@ -1544,9 +1457,7 @@
                 amount: toFiniteNumber(item.amount)
             }));
     }
-
     const saveFixCostData = (tabId) => storage.setJSON(STORAGE_KEYS.fixCosts(tabId), fixCostData[tabId]);
-
     function saveData(tabId) {
         storage.setRaw(STORAGE_KEYS.salary(tabId), getTabElement('salary', tabId).value);
         storage.setRaw(STORAGE_KEYS.plant(tabId), getTabElement('plant', tabId).value);
@@ -1559,25 +1470,19 @@
             storage.setRaw(STORAGE_KEYS.sliderCalTotal(tabId, type.id), slider.dataset.calTotal || '0');
         });
     }
-
     function loadData(tabId) {
         const savedSalary = storage.getRaw(STORAGE_KEYS.salary(tabId));
         getTabElement('salary', tabId).value = savedSalary !== null ? savedSalary : DEFAULT_SALARY;
-
         const savedPlant = storage.getRaw(STORAGE_KEYS.plant(tabId));
         if (savedPlant) getTabElement('plant', tabId).value = savedPlant;
         else getTabElement('plant', tabId).value = "BANPHO PLANT";
-
         const savedGrade = storage.getRaw(STORAGE_KEYS.grade(tabId));
         if (savedGrade) getTabElement('grade', tabId).value = savedGrade;
         else getTabElement('grade', tabId).value = "G5";
-
         const savedMonth = storage.getRaw(STORAGE_KEYS.month(tabId));
         if (MONTH_NAMES.includes(savedMonth)) getTabElement('month', tabId).value = savedMonth;
-
         const savedYear = parseInt(storage.getRaw(STORAGE_KEYS.year(tabId)), 10);
         if (Number.isInteger(savedYear)) getTabElement('year', tabId).value = savedYear;
-
         let hasSavedSliderState = false;
         OT_TYPES.forEach((type) => {
             const savedHours = storage.getRaw(STORAGE_KEYS.sliderHours(tabId, type.id));
@@ -1587,12 +1492,11 @@
         });
         return hasSavedSliderState;
     }
-
     /* 💾 ระบบสำรองข้อมูลไฟล์ JSON (ป้องกันการ Clear Cache) */
     function exportBackupFile() {
         const backupData = {
             app: 'OT Calculator ProMax',
-            version: '2.0',
+            version: '2.1',
             exportedAt: new Date().toISOString(),
             calendarData: calendarData,
             fixCostData: fixCostData,
@@ -1613,13 +1517,11 @@
                 }
             }
         };
-
         const jsonString = JSON.stringify(backupData, null, 2);
         const blob = new Blob([jsonString], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const nowStr = new Date().toISOString().slice(0, 10);
         const fileName = `OT_ProMax_Backup_${nowStr}.json`;
-
         const a = document.createElement('a');
         a.href = url;
         a.download = fileName;
@@ -1627,14 +1529,12 @@
         a.click();
         a.remove();
         URL.revokeObjectURL(url);
-
         showCustomDialog({
             title: 'สำรองข้อมูลสำเร็จ!',
             message: `ไฟล์ <b>${fileName}</b> ถูกดาวน์โหลดลงเครื่องแล้ว<br><small>ส่งไฟล์นี้เข้า LINE ตัวเองเก็บไว้ได้เลยครับ</small>`,
             icon: '✅'
         });
     }
-
     function importBackupFile(file) {
         if (!file) return;
         const reader = new FileReader();
@@ -1644,7 +1544,6 @@
                 if (!data || (!data.calendarData && !data.settings)) {
                     throw new Error('Invalid format');
                 }
-
                 if (data.calendarData) {
                     TAB_IDS.forEach(tab => {
                         if (data.calendarData[tab]) {
@@ -1653,7 +1552,6 @@
                         }
                     });
                 }
-
                 if (data.fixCostData) {
                     TAB_IDS.forEach(tab => {
                         if (Array.isArray(data.fixCostData[tab])) {
@@ -1662,7 +1560,6 @@
                         }
                     });
                 }
-
                 if (data.settings) {
                     TAB_IDS.forEach(tab => {
                         const set = data.settings[tab];
@@ -1676,12 +1573,10 @@
                         }
                     });
                 }
-
                 TAB_IDS.forEach(tab => {
                     renderFixCostList(tab);
                     refreshCalendar(tab, { syncSliders: true });
                 });
-
                 showCustomDialog({
                     title: 'กู้คืนข้อมูลสำเร็จ!',
                     message: 'ข้อมูลชั่วโมง OT, เงินเดือน, และรายการหักเงินเดือนกลับมาครบ 100% แล้วครับ 🎉',
@@ -1698,14 +1593,12 @@
         };
         reader.readAsText(file);
     }
-
     /* =========================================================
        7. RENDERING — Layout & Sidebar
        ========================================================= */
     function buildMonthOptionsMarkup() {
         return MONTH_NAMES.map((name, i) => `<option value="${name}">${name} (${MONTH_THAI_NAMES[i]})</option>`).join('');
     }
-
     function buildSliderMarkup(tabId, type) {
         return `
             <div class="slider-container">
@@ -1722,24 +1615,20 @@
                 <div class="money-display" id="mon_${type.id}_${tabId}">0.00 THB</div>
             </div>`;
     }
-
     function buildSidebarMarkup(tabId) {
         return `
-        <div id="sidebar_${tabId}" style="display: ${tabId === 'my-ot' ? 'block' : 'none'}; height: 100%;">
-            
+        <div id="sidebar_${tabId}" style="display: ${tabId === 'my-ot' ? 'block' : 'none'}; height: 100%;">            
             <!-- Section 1: Calculations Config -->
             <div class="sidebar-section">
                 <div class="card-header-row" style="margin-bottom:12px;">
                     <h2 style="font-size:1.15rem; margin:0;">${TAB_TITLES[tabId]}</h2>
                     <button type="button" class="reset-btn" data-action="reset" data-tab="${tabId}">🔄 ล้างข้อมูล</button>
-                </div>
-                
+                </div>                
                 <div class="form-group">
                     <label for="salary_${tabId}">เงินเดือนพื้นฐาน (THB)</label>
                     <input type="number" id="salary_${tabId}" min="0" inputmode="decimal" placeholder="กรอกเงินเดือน"
                            data-action="recalculate" data-tab="${tabId}">
-                </div>
-                
+                </div>                
                 <div class="form-group">
                     <label>สถานที่ทำงาน (Plant & Grade)</label>
                     <div class="plant-cost-row">
@@ -1755,13 +1644,16 @@
                             <option value="G4">G4</option>
                             <option value="G5">G5</option>
                             <option value="G6">G6</option>
+                            <option value="${SUBCONTRACT_GRADE}">${SUBCONTRACT_LABEL}</option>
                         </select>
                     </div>
                     <small class="muted-caption" style="display:block; margin-top:3px;">
-                        * BP/GW มีเงินช่วยเหลือสถานที่ทำงาน / SR ไม่มีเงินช่วยเหลือ
+                        * BP/GW มีเงินช่วยเหลือสถานที่ทำงาน / SR และ Subcontract ไม่มีเงินช่วยเหลือ
                     </small>
+                    <span class="sub-badge" id="subBadge_${tabId}" style="display:none;">
+                        🧾 Subcontract: ไม่มีค่า Plant / ไม่มี PVD 15% / Band อ้างอิง G2
+                    </span>
                 </div>
-
                 <div class="date-row">
                     <div class="form-group form-group--grow">
                         <label for="month_${tabId}">เลือกเดือน</label>
@@ -1772,10 +1664,9 @@
                         <input type="number" id="year_${tabId}" min="2011" max="2050" value="${DEFAULT_YEAR}" data-action="change-period" data-tab="${tabId}">
                     </div>
                 </div>
-
                 <div class="gauge-container" id="gaugeContainer_${tabId}">
                     <div class="gauge-header">
-                        <span>⚡ ระดับเพดานเงินเดือน (Band)</span>
+                        <span id="gaugeTitle_${tabId}">⚡ ระดับเพดานเงินเดือน (Band)</span>
                         <span id="gaugePercent_${tabId}">0%</span>
                     </div>
                     <div class="gauge-track">
@@ -1783,19 +1674,17 @@
                     </div>
                     <div class="time-to-max" id="timeToMax_${tabId}"></div>
                 </div>
-
                 <!-- 🛡️ กล่องสำรองข้อมูลป้องกันการเผลอล้างแคช -->
                 <div class="backup-card">
                     <div class="backup-title">🛡️ สำรอง & กู้คืนข้อมูล (กันแคชหาย)</div>
                     <div class="backup-desc">โหลดไฟล์สำรองเก็บไว้ในมือถือได้ตลอดเวลา ล้างเครื่องหรือเคลียร์แคชก็กู้กลับได้ 100%</div>
                     <div class="backup-btn-group">
                         <button type="button" class="btn-backup btn-backup--save" data-action="backup-export">📥 สำรองไฟล์</button>
-                        <button type="button" class="btn-backup btn-backup--restore" data-action="backup-import-click">📤 กู้คืนไฟล์</button>
+                        <button type="button" class="btn-backup btn-backup--restore" data-action="backup-import-click" data-tab="${tabId}">📤 กู้คืนไฟล์</button>
                     </div>
                     <input type="file" id="backupFileInput_${tabId}" accept=".json" style="display:none;" data-action="backup-file-selected">
                 </div>
             </div>
-
             <!-- Section 2: OT Hours Adjustment -->
             <div class="sidebar-section">
                 <div class="card-header-row">
@@ -1807,7 +1696,6 @@
                     ${OT_TYPES.map((type) => buildSliderMarkup(tabId, type)).join('')}
                 </div>
             </div>
-
             <!-- Section 3: Fix Cost -->
             <div class="sidebar-section" style="border-bottom:none;">
                 <div class="card-header-row" style="margin-bottom: 0;">
@@ -1825,10 +1713,8 @@
                     </div>
                 </div>
             </div>
-
         </div>`;
     }
-
     function buildMainContentMarkup(tabId) {
         return `
         <div id="mainContent_${tabId}" style="display: ${tabId === 'my-ot' ? 'block' : 'none'};">
@@ -1846,7 +1732,6 @@
                     <div id="calendarBody_${tabId}" class="calendar-grid calendar-grid--body"></div>
                     <div class="cal-summary" id="calendarSummary_${tabId}"></div>
                 </div>
-
                 <div class="card" id="exportArea_${tabId}">
                     <h3 style="margin-bottom:10px;">📊 สรุปยอดเงินเดือน & OT (Final Summary)</h3>
                     <div class="results">
@@ -1862,14 +1747,12 @@
                     </div>
                     <div class="rates-note"><strong>อัตราค่าจ้างต่อชั่วโมง (Rates per Hour):</strong><br><span id="rates_${tabId}"></span></div>
                 </div>
-
                 <button type="button" class="export-btn" data-action="export" data-tab="${tabId}">
                     📸 บันทึกรูปรายงาน A3 (Export Image)
                 </button>
             </div>
         </div>`;
     }
-
     /* =========================================================
        8. RENDERING — Calendar With Smart Badges (ไม่มีล้น & สีตรงประเภท)
        ========================================================= */
@@ -1883,28 +1766,22 @@
         cell.tabIndex = 0;
         cell.setAttribute('role', 'button');
         cell.setAttribute('aria-label', `ลงเวลาวันที่ ${dateKey}`);
-
         cell.appendChild(createElementWithText('div', 'cal-day-number', String(day)));
-
         if (hasDayDetail(entry)) {
             const noteIcon = createElementWithText('span', 'cal-note-icon', '📝');
             noteIcon.setAttribute('aria-hidden', 'true');
             cell.appendChild(noteIcon);
             cell.title = `📝 ${entry.detail}`;
         }
-
         if (!entry) return cell;
-
         // ปรับเป็น 'ไม่ทำ' สั้นกระชับ ไม่โดนตัดเป็น 'ไม่ทำ ...'
         if (entry.noOT) {
     cell.appendChild(createElementWithText('div', 'ot-indicator no-ot', 'ไม่ทำ'));
     return cell;
 }
-
         // คัดกรองประเภท OT ที่มีชั่วโมงในวันนั้น
         const activeTypes = OT_TYPES.filter((type) => getDayHours(entry, type.dataKey) > 0);
         const totalHours = getDayTotalHours(entry);
-
         if (activeTypes.length === 1) {
             // ★ กรณีมี OT กะเดียว: แสดงป้ายเดียว ใช้สีตามประเภทนั้นทันที (เช่น กะเย็น = สีฟ้า) ไม่โชว์แถบสีม่วงมาหลอกตา
             const single = activeTypes[0];
@@ -1916,37 +1793,30 @@
             });
             cell.appendChild(createElementWithText('div', 'ot-indicator sum', `รวม ${totalHours}h`));
         }
-
         // แสดง Badge ค่าอาหารเฉพาะวันที่ได้จริง (OT เที่ยงจะไม่มีป้ายนี้ขึ้น)
         if (getMealAllowanceCount(entry) > 0) {
             cell.appendChild(createElementWithText('div', 'meal-badge', `🍚 ฿${MEAL_ALLOWANCE}`));
         }
-
         return cell;
     }
-
     function renderCalendarGrid(tabId) {
         const grid = getTabElement('calendarBody', tabId);
         const { year, monthIndex, daysInMonth, startWeekday } = getSelectedPeriod(tabId);
         const plantName = getTabElement('plant', tabId).value;
         const fragment = document.createDocumentFragment();
-
         for (let i = 0; i < startWeekday; i++) {
             const placeholder = document.createElement('div');
             placeholder.className = 'cal-cell cal-cell--placeholder';
             placeholder.setAttribute('aria-hidden', 'true');
             fragment.appendChild(placeholder);
         }
-
         for (let day = 1; day <= daysInMonth; day++) {
             const dateKey = buildDateKey(year, monthIndex, day);
             fragment.appendChild(createDayCell(tabId, day, dateKey, calendarData[tabId][dateKey], isCompanyHoliday(year, monthIndex, day, plantName)));
         }
-
         grid.innerHTML = '';
         grid.appendChild(fragment);
     }
-
     function updateCalendarSummary(tabId) {
         const totals = getCalendarTotals(tabId);
         const breakdown = OT_TYPES.map((type) => `${type.summaryLabel}: ${totals.hoursByType[type.dataKey]} ชม.`).join(' | ');
@@ -1955,7 +1825,6 @@
             <small style="color:#64748b;">${breakdown}</small><br>
             <span class="cal-summary__meal">🍚 ได้รับเงินค่าอาหาร OT: ${totals.mealCount} มื้อ (฿${totals.mealTotal.toLocaleString('en-US')})</span>`;
     }
-
     function refreshCalendar(tabId, { syncSliders }) {
         renderCalendarGrid(tabId);
         updateCalendarSummary(tabId);
@@ -1966,28 +1835,23 @@
             calculate(tabId);
         }
     }
-
     function handleDateChange(tabId) {
         refreshCalendar(tabId, { syncSliders: true });
     }
-
     /* =========================================================
        9. SLIDERS
        ========================================================= */
     const getSlider = (tabId, typeId) => getTabElement(`sl_${typeId}`, tabId);
-
     function adjustSlider(tabId, typeId, deltaHours) {
         const slider = getSlider(tabId, typeId);
         if (!slider) return;
         slider.value = clamp(toFiniteNumber(slider.value) + deltaHours, 0, SLIDER_MAX_HOURS);
         calculate(tabId);
     }
-
     function updateSliderCalendarReferences(tabId) {
         const { hoursByType } = getCalendarTotals(tabId);
         OT_TYPES.forEach((type) => { getSlider(tabId, type.id).dataset.calTotal = hoursByType[type.dataKey]; });
     }
-
     function syncSlidersToCalendar(tabId) {
         const { hoursByType } = getCalendarTotals(tabId);
         OT_TYPES.forEach((type) => {
@@ -1997,7 +1861,6 @@
         });
         calculate(tabId);
     }
-
     function updateSliderVisual(slider) {
         const value = toFiniteNumber(slider.value);
         const max = toFiniteNumber(slider.max, SLIDER_MAX_HOURS) || SLIDER_MAX_HOURS;
@@ -2005,12 +1868,10 @@
         const valuePercent = (value / max) * 100;
         const calendarPercent = (calendarTotal / max) * 100;
         const fill = 'var(--secondary)', shortfall = 'var(--danger-track)', empty = 'var(--border)';
-
         slider.style.background = value < calendarTotal
             ? `linear-gradient(to right, ${fill} 0%, ${fill} ${valuePercent}%, ${shortfall} ${valuePercent}%, ${shortfall} ${calendarPercent}%, ${empty} ${calendarPercent}%, ${empty} 100%)`
             : `linear-gradient(to right, ${fill} 0%, ${fill} ${valuePercent}%, ${empty} ${valuePercent}%, ${empty} 100%)`;
     }
-
    /* =========================================================
        10. CALCULATION ENGINE
        ========================================================= */
@@ -2018,45 +1879,51 @@
         const salary = toFiniteNumber(getTabElement('salary', tabId).value);
         const plant = getTabElement('plant', tabId).value;
         const grade = getTabElement('grade', tabId).value;
-
-        // 🌟 เพิ่มท่อนนี้: คำนวณกองทุนสำรองเลี้ยงชีพ 15% จากเงินเดือนอัตโนมัติ
+        const isSub = isSubcontract(grade);
+        // 🆕 Subcontract ใช้ข้อมูล Band / ฐานปรับขึ้นของ G2
+        const bandGrade = isSub ? SUBCONTRACT_BAND_REFERENCE : grade;
+        // 🆕 แสดง/ซ่อนป้าย Subcontract
+        const subBadge = getTabElement('subBadge', tabId);
+        if (subBadge) subBadge.style.display = isSub ? 'inline-block' : 'none';
+        // 🌟 คำนวณกองทุนสำรองเลี้ยงชีพ 15% จากเงินเดือนอัตโนมัติ (Subcontract = 0 ไม่มี PVD)
         let pvdUpdated = false;
         (fixCostData[tabId] || []).forEach((item) => {
-            if (item.name.includes('กองทุนสำรองเลี้ยงชีพ')) {
-                const autoPvd = Math.round(salary * 0.15 * 100) / 100; // คิด 15% ของเงินเดือน
+            if (isPvdItem(item)) {
+                const autoPvd = isSub ? 0 : Math.round(salary * 0.15 * 100) / 100; // คิด 15% ของเงินเดือน
                 if (item.amount !== autoPvd) {
                     item.amount = autoPvd;
                     pvdUpdated = true;
                 }
             }
         });
-        if (pvdUpdated) {
-            saveFixCostData(tabId);
-            renderFixCostList(tabId);
-        }
-        // 🌟 สิ้นสุดท่อนที่เพิ่ม
-        
-        const band = SALARY_BANDS[grade];
+        // 🆕 ถ้าสลับเข้า/ออกโหมด Subcontract ต้อง Render รายการหักใหม่ (ล็อก/ปลดล็อกช่อง PVD)
+        const fixCostListEl = getTabElement('fixCostList', tabId);
+        const subModeChanged = Boolean(fixCostListEl && fixCostListEl.dataset.subMode !== String(isSub));
+        if (pvdUpdated) saveFixCostData(tabId);
+        if (pvdUpdated || subModeChanged) renderFixCostList(tabId);
+        // 🌟 สิ้นสุดท่อน PVD        
+        const band = SALARY_BANDS[bandGrade];
         let percent = 0;
         if (band && salary > 0) {
             percent = (salary / band.max) * 100;
         }
-        const visualPercent = clamp(percent, 0, 100);
-        
+        const visualPercent = clamp(percent, 0, 100);        
         const gaugeFill = getTabElement('gaugeFill', tabId);
         const timeToMaxEl = getTabElement('timeToMax', tabId);
-
-        if (gaugeFill && timeToMaxEl) {
+        const gaugeTitle = getTabElement('gaugeTitle', tabId);
+        if (gaugeTitle) {
+            gaugeTitle.textContent = isSub
+                ? `⚡ ระดับเพดานเงินเดือน (Band อ้างอิง ${SUBCONTRACT_BAND_REFERENCE})`
+                : '⚡ ระดับเพดานเงินเดือน (Band)';
+        }
+        if (gaugeFill && timeToMaxEl && band) {
             gaugeFill.style.width = `${visualPercent}%`;
             if (percent < 60) gaugeFill.style.backgroundColor = 'var(--success)';
             else if (percent < 85) gaugeFill.style.backgroundColor = '#f59e0b';
-            else gaugeFill.style.backgroundColor = 'var(--danger)';
-            
+            else gaugeFill.style.backgroundColor = 'var(--danger)';            
             getTabElement('gaugePercent', tabId).textContent = `${percent.toFixed(1)}%`;
-
-            const baseSalaryForUp = SALARY_BASE_FOR_INCREASE[grade];
+            const baseSalaryForUp = SALARY_BASE_FOR_INCREASE[bandGrade] || 0;
             const yearlyUp = baseSalaryForUp * 0.045; 
-
             if (salary >= band.max) {
                 timeToMaxEl.innerHTML = `🚀 เงินเดือนของคุณเต็มเพดานกระบอกแล้ว!`;
                 timeToMaxEl.style.color = 'var(--success)';
@@ -2070,86 +1937,80 @@
                 timeToMaxEl.innerHTML = `ไม่สามารถคำนวณฐานเงินเดือนขึ้นได้`;
             }
         }
-
-        /* เงินช่วยเหลือตามสถานที่ทำงาน (SAMRONG = 0) */
+        /* เงินช่วยเหลือตามสถานที่ทำงาน (SAMRONG = 0 / Subcontract = 0) */
         let fixLocationAllowance = 0;
-        if (WORKPLACE_ALLOWANCE[plant] && WORKPLACE_ALLOWANCE[plant][grade] !== undefined) {
+        if (!isSub && WORKPLACE_ALLOWANCE[plant] && WORKPLACE_ALLOWANCE[plant][grade] !== undefined) {
             fixLocationAllowance = WORKPLACE_ALLOWANCE[plant][grade];
         }
-
         const actualFixLunchAllowance = (grade === 'G6') ? 0 : FIX_LUNCH_ALLOWANCE;
         const hourlyRate = Math.round((salary * 3 / 500) * 10) / 10;
-
         let totalOtHours = 0;
         let totalOtPay = 0;
         const rateLines = [];
-
         OT_TYPES.forEach((type) => {
             const slider = getSlider(tabId, type.id);
             const hours = toFiniteNumber(slider.value);
             const calendarHours = toFiniteNumber(slider.dataset.calTotal);
             const ratePerHour = hourlyRate * type.multiplier;
             const pay = ratePerHour * hours;
-
             const hoursLabel = getTabElement(`val_${type.id}`, tabId);
             hoursLabel.textContent = `${hours} ชม.`;
             hoursLabel.classList.toggle('is-diverged', hours !== calendarHours);
             getTabElement(`mon_${type.id}`, tabId).textContent = `${formatFixed2(pay)} THB`;
             updateSliderVisual(slider);
-
             totalOtHours += hours;
             totalOtPay += pay;
             rateLines.push(`${type.label}: ${formatFixed2(ratePerHour)} บาท/ชม.`);
         });
-
         const { mealTotal } = getCalendarTotals(tabId);
         const grossIncome = salary + totalOtPay + mealTotal + actualFixLunchAllowance + fixLocationAllowance;
         const totalFixCost = getFixCostTotal(tabId);
         const netIncome = grossIncome - totalFixCost;
-
         getTabElement('fixCostTotalCard', tabId).textContent = `${formatFixed2(totalFixCost)} THB`;
         getTabElement('totalHours', tabId).textContent = `${totalOtHours} ชม.`;
         getTabElement('totalMoney', tabId).textContent = `${formatUpTo2(totalOtPay)} THB`;
         getTabElement('totalMeal', tabId).textContent = `${formatUpTo2(mealTotal)} THB`;
         getTabElement('dispSalary', tabId).textContent = `${formatUpTo2(salary)} THB`;
         getTabElement('dispFixLunch', tabId).textContent = `${formatUpTo2(actualFixLunchAllowance)} THB`;
-        getTabElement('dispFixLocation', tabId).textContent = `${formatUpTo2(fixLocationAllowance)} THB`;
+        getTabElement('dispFixLocation', tabId).textContent = isSub
+            ? `0 THB (Subcontract)`
+            : `${formatUpTo2(fixLocationAllowance)} THB`;
         getTabElement('totalIncome', tabId).textContent = `${formatUpTo2(grossIncome)} THB`;
         getTabElement('dispFixCost', tabId).textContent = `- ${formatUpTo2(totalFixCost)} THB`;
-
         const netIncomeElement = getTabElement('netIncome', tabId);
         netIncomeElement.textContent = `${formatUpTo2(netIncome)} THB`;
         netIncomeElement.classList.toggle('is-negative', netIncome < 0);
-
         getTabElement('rates', tabId).innerHTML = rateLines.map(escapeHtml).join('<br>');
-
         saveData(tabId);
     }
-
     /* =========================================================
        11. FIX COST
        ========================================================= */
     function renderFixCostList(tabId) {
         const listElement = getTabElement('fixCostList', tabId);
         if (!listElement) return;
-
+        const isSub = isTabSubcontract(tabId);
+        listElement.dataset.subMode = String(isSub);
         const items = fixCostData[tabId] || [];
         if (items.length === 0) {
             listElement.innerHTML = `<div class="empty-state">ไม่มีรายการหักเงินเดือน กดปุ่ม '+ เพิ่มรายการหักเงิน' ได้เลยครับ</div>`;
             return;
         }
-
-        listElement.innerHTML = items.map((item, index) => `
+        listElement.innerHTML = items.map((item, index) => {
+            // 🆕 Subcontract: ล็อกช่อง PVD เป็น 0 (ไม่มีกองทุนสำรองเลี้ยงชีพ)
+            const lockPvd = isSub && isPvdItem(item);
+            return `
             <div class="fix-cost-row">
                 <input type="text" placeholder="ชื่อรายการ (เช่น กู้สหกรณ์)" aria-label="ชื่อรายการ" value="${escapeHtml(item.name)}"
                        data-action="fix-cost-name" data-tab="${tabId}" data-index="${index}">
-                <input type="number" placeholder="จำนวนเงิน" aria-label="จำนวนเงิน" min="0" step="any" inputmode="decimal"
-                       value="${item.amount > 0 ? item.amount : ''}" data-action="fix-cost-amount" data-tab="${tabId}" data-index="${index}">
+                <input type="number" placeholder="${lockPvd ? 'Sub: ไม่มี PVD' : 'จำนวนเงิน'}" aria-label="จำนวนเงิน" min="0" step="any" inputmode="decimal"
+                       value="${item.amount > 0 ? item.amount : ''}" data-action="fix-cost-amount" data-tab="${tabId}" data-index="${index}"
+                       ${lockPvd ? 'readonly title="Subcontract ไม่มีกองทุนสำรองเลี้ยงชีพ"' : ''}>
                 <button type="button" class="del-cost-btn" title="ลบรายการนี้" aria-label="ลบรายการ"
                         data-action="remove-fix-cost" data-tab="${tabId}" data-index="${index}">✕</button>
-            </div>`).join('');
+            </div>`;
+        }).join('');
     }
-
     function updateFixCostItem(tabId, index, field, value) {
         const item = fixCostData[tabId] && fixCostData[tabId][index];
         if (!item) return;
@@ -2158,19 +2019,16 @@
         saveFixCostData(tabId);
         calculate(tabId);
     }
-
     function addFixCostItem(tabId) {
         fixCostData[tabId].push({ name: '', amount: 0 });
         saveFixCostData(tabId);
         renderFixCostList(tabId);
         calculate(tabId);
     }
-
     function removeFixCostItem(tabId, index) {
         const item = fixCostData[tabId] && fixCostData[tabId][index];
         if (!item) return;
         const itemLabel = item.name.trim() || 'รายการนี้';
-
         showCustomDialog({
             title: 'ยืนยันการลบรายการ',
             message: `ต้องการลบรายการหัก <b>"${escapeHtml(itemLabel)}"</b> ใช่หรือไม่?`,
@@ -2184,7 +2042,6 @@
             }
         });
     }
-
     /* =========================================================
        12. DAY MODAL & QUICK PRESETS (สุดยอดการกดง่าย)
        ========================================================= */
@@ -2195,44 +2052,34 @@
         get otFieldset() { return document.getElementById('modalInputs'); },
         get detailInput() { return document.getElementById('in_detail'); }
     };
-
     function openDayModal(tabId, dateKey) {
         modalState.tabId = tabId;
         modalState.dateKey = dateKey;
-
         const entry = calendarData[tabId][dateKey] || { noOT: false };
-
         const parts = dateKey.split('-');
         const dayNum = parts[2];
         const mTh = MONTH_THAI_NAMES[Number(parts[1]) - 1];
         modalElements.title.textContent = `ลงเวลา OT วันที่ ${dayNum} ${mTh} (${parts[0]})`;
-
         OT_TYPES.forEach((type) => {
             document.getElementById(type.modalInputId).value = getDayHours(entry, type.dataKey);
         });
         modalElements.noOtCheckbox.checked = entry.noOT === true;
         modalElements.detailInput.value = entry.detail || '';
         toggleNoOT();
-
         updateActivePresetVisual();
-
         modalElements.overlay.classList.add('is-open');
         modalElements.overlay.setAttribute('aria-hidden', 'false');
     }
-
     function toggleNoOT() {
         modalElements.otFieldset.disabled = modalElements.noOtCheckbox.checked;
     }
-
     function closeModal() {
         modalElements.overlay.classList.remove('is-open');
         modalElements.overlay.setAttribute('aria-hidden', 'true');
         modalState.tabId = null;
         modalState.dateKey = null;
     }
-
     const isModalOpen = () => modalElements.overlay.classList.contains('is-open');
-
     /* 
        ★ การทำงานของปุ่มลัด (Preset): 
        สามารถกดเลือก "เที่ยง" ควบคู่กับ "กะเย็น" ในวันเดียวกันได้ โดยไม่ล้างค่ากันเอง
@@ -2240,12 +2087,10 @@
     function applyPreset(presetType) {
         modalElements.noOtCheckbox.checked = false;
         toggleNoOT();
-
         const in15 = document.getElementById('in_1_5');
         const in15l = document.getElementById('in_1_5l');
         const in20 = document.getElementById('in_2_0');
         const in30 = document.getElementById('in_3_0');
-
         switch (presetType) {
             case '1.0-evening':
                 in15.value = 1.0; in20.value = 0; in30.value = 0;
@@ -2279,15 +2124,12 @@
                 break;
             default: break;
         }
-
         updateActivePresetVisual();
     }
-
     function updateActivePresetVisual() {
         const h15 = parseFloat(document.getElementById('in_1_5').value) || 0;
         const h15l = parseFloat(document.getElementById('in_1_5l').value) || 0;
         const h20 = parseFloat(document.getElementById('in_2_0').value) || 0;
-
         document.querySelectorAll('.preset-chip').forEach(chip => {
             const p = chip.dataset.preset;
             let active = false;
@@ -2302,11 +2144,9 @@
             chip.classList.toggle('active-preset', active);
         });
     }
-
     function readDayEntryFromModal() {
         const detail = modalElements.detailInput.value.trim().slice(0, DETAIL_MAX_LENGTH);
         const entry = modalElements.noOtCheckbox.checked ? { noOT: true } : { noOT: false };
-
         if (!entry.noOT) {
             OT_TYPES.forEach((type) => {
                 entry[type.dataKey] = toNonNegativeNumber(document.getElementById(type.modalInputId).value);
@@ -2315,23 +2155,19 @@
         if (detail) entry.detail = detail;
         return entry;
     }
-
     function saveDayData() {
         const { tabId, dateKey } = modalState;
         if (!tabId || !dateKey) {
             closeModal();
             return;
         }
-
         const entry = readDayEntryFromModal();
         if (isDayEntryEmpty(entry)) delete calendarData[tabId][dateKey];
         else calendarData[tabId][dateKey] = entry;
-
         saveCalendarData(tabId);
         refreshCalendar(tabId, { syncSliders: true });
         closeModal();
     }
-
     /* =========================================================
        13. RESET
        ========================================================= */
@@ -2345,25 +2181,21 @@
                 storage.listKeys()
                     .filter((key) => key.startsWith(STORAGE_PREFIX) && key.includes(`_${tabId}`))
                     .forEach((key) => storage.remove(key));
-
                 calendarData[tabId] = {};
                 fixCostData[tabId] = cloneDefaultFixCosts();
                 getTabElement('salary', tabId).value = DEFAULT_SALARY;
                 getTabElement('plant', tabId).value = "BANPHO PLANT";
                 getTabElement('grade', tabId).value = "G4";
-
                 renderFixCostList(tabId);
                 handleDateChange(tabId);
             }
         });
     }
-
     /* =========================================================
        14. EXPORT TO IMAGE
        ========================================================= */
     function getOtTimeText(hours, type) {
-        if (!hours || hours <= 0) return '-';
-        
+        if (!hours || hours <= 0) return '-';        
         let timeStr = '';
         if (type === '1.5l') {
             timeStr = '11:30-12:30';
@@ -2381,29 +2213,24 @@
             if (hours === 8.0) timeStr = '07:30-16:30';
             else if (hours === 4.0) timeStr = '12:30-16:30';
         }
-
         if (timeStr) {
             return `${hours} <br><span style="font-size: 0.7em; color: #4b5563;">(${timeStr})</span>`;
         }
         return `${hours}`;
     }
-
     function buildExportSheet(tabId, monthName, year) {
         const sheet = document.createElement('div');
         sheet.className = 'export-sheet';
-
         const plantVal = getTabElement('plant', tabId).value;
         const gradeVal = getTabElement('grade', tabId).value;
-
+        const gradeText = isSubcontract(gradeVal) ? SUBCONTRACT_LABEL : `Grade ${gradeVal}`;
         const title = document.createElement('h1');
         title.className = 'export-title';
-        title.innerHTML = `สรุปผลตอบแทน & ค่าใช้จ่าย (OT Report)<br>ประจำเดือน ${escapeHtml(monthName)} ${escapeHtml(year)}<br><small style="font-size: 1.6rem; color: #4b5563;">${escapeHtml(plantVal)} [Grade ${escapeHtml(gradeVal)}]</small>`;
-
+        title.innerHTML = `สรุปผลตอบแทน & ค่าใช้จ่าย (OT Report)<br>ประจำเดือน ${escapeHtml(monthName)} ${escapeHtml(year)}<br><small style="font-size: 1.6rem; color: #4b5563;">${escapeHtml(plantVal)} [${escapeHtml(gradeText)}]</small>`;
         const summaryClone = getTabElement('exportArea', tabId).cloneNode(true);
         summaryClone.removeAttribute('id');
         summaryClone.querySelectorAll('[id]').forEach((node) => node.removeAttribute('id'));
         summaryClone.classList.add('export-card');
-
         const table = document.createElement('table');
         table.className = 'export-table';
         table.innerHTML = `
@@ -2419,22 +2246,18 @@
             </thead>
             <tbody>
         `;
-
         const { monthIndex, daysInMonth } = getSelectedPeriod(tabId);
         let hasData = false;
         let tbodyHtml = '';
-
         for (let day = 1; day <= daysInMonth; day++) {
             const dateKey = buildDateKey(year, monthIndex, day);
             const entry = calendarData[tabId][dateKey];
-
             if (entry) {
                 const h15 = getDayHours(entry, '1.5');
                 const h15l = getDayHours(entry, '1.5l');
                 const h20 = getDayHours(entry, '2.0');
                 const h30 = getDayHours(entry, '3.0');
                 const detailStr = entry.detail ? escapeHtml(entry.detail) : '';
-
                 if (h15 > 0 || h15l > 0 || h20 > 0 || h30 > 0 || detailStr !== '') {
                     hasData = true;
                     tbodyHtml += `
@@ -2450,17 +2273,14 @@
                 }
             }
         }
-
         if (hasData) {
             table.innerHTML += tbodyHtml + '</tbody>';
         } else {
             table.innerHTML += `<tr><td colspan="6" style="padding: 30px; color: #9ca3af;">ไม่มีบันทึก OT หรือรายละเอียดงานในเดือนนี้</td></tr></tbody>`;
         }
-
         sheet.append(title, summaryClone, table);
         return sheet;
     }
-
     function triggerDownload(dataUrl, fileName) {
         const link = document.createElement('a');
         link.download = fileName;
@@ -2469,7 +2289,6 @@
         link.click();
         link.remove();
     }
-
     async function exportToJPEG(tabId, triggerButton) {
         if (typeof window.html2canvas !== 'function') {
             showCustomDialog({
@@ -2479,18 +2298,14 @@
             });
             return;
         }
-
         const { monthName, year } = getSelectedPeriod(tabId);
         const sheet = buildExportSheet(tabId, monthName, year);
         const originalLabel = triggerButton ? triggerButton.textContent : '';
-
         if (triggerButton) {
             triggerButton.disabled = true;
             triggerButton.textContent = '⏳ กำลังสร้างรูปภาพ A3...';
-        }
-        
+        }        
         document.getElementById('offscreen-area').appendChild(sheet);
-
         try {
             if (document.fonts && document.fonts.ready) await document.fonts.ready;
             const canvas = await window.html2canvas(sheet, { scale: 1, backgroundColor: '#ffffff' });
@@ -2510,48 +2325,39 @@
             }
         }
     }
-
     /* =========================================================
        15. TAB NAVIGATION & SIDEBAR LOGIC
        ========================================================= */
     function switchTab(tabId) {
-        currentTabId = tabId;
-        
+        currentTabId = tabId;        
         document.querySelectorAll('.tab').forEach((tab) => {
             const isActive = tab.dataset.tabTarget === tabId;
             tab.classList.toggle('active', isActive);
             tab.setAttribute('aria-selected', String(isActive));
-        });
-        
+        });        
         document.querySelectorAll('[id^="sidebar_"]').forEach((el) => {
             el.style.display = el.id === `sidebar_${tabId}` ? 'block' : 'none';
         });
-
         document.querySelectorAll('[id^="mainContent_"]').forEach((el) => {
             el.style.display = el.id === `mainContent_${tabId}` ? 'block' : 'none';
-        });
-        
+        });        
         if (window.innerWidth < 900) {
             closeSidebar();
         }
     }
-
     function toggleSidebar() {
         const sidebar = document.getElementById('appSidebar');
         if (sidebar.classList.contains('open')) closeSidebar();
         else openSidebar();
     }
-
     function openSidebar() {
         document.getElementById('appSidebar').classList.add('open');
         document.getElementById('sidebarOverlay').classList.add('active');
     }
-
     function closeSidebar() {
         document.getElementById('appSidebar').classList.remove('open');
         document.getElementById('sidebarOverlay').classList.remove('active');
     }
-
     /* =========================================================
        16. EVENT WIRING
        ========================================================= */
@@ -2559,7 +2365,6 @@
         const target = event.target.closest('[data-action]');
         if (!target) return;
         const { action, tab: tabId } = target.dataset;
-
         switch (action) {
             case 'reset':                 resetData(tabId); break;
             case 'adjust-slider':         adjustSlider(tabId, target.dataset.typeId, toFiniteNumber(target.dataset.delta)); break;
@@ -2589,11 +2394,9 @@
             default: break;
         }
     }
-
     function handleAppInput(event) {
         const target = event.target;
         const { action, tab: tabId } = target.dataset;
-
         switch (action) {
             case 'recalculate':     calculate(tabId); break;
             case 'fix-cost-name':   updateFixCostItem(tabId, Number(target.dataset.index), 'name', target.value); break;
@@ -2601,11 +2404,9 @@
             default: break;
         }
     }
-
     function handleAppChange(event) {
         const target = event.target;
         const { action, tab: tabId } = target.dataset;
-
         if (action === 'change-period') handleDateChange(tabId);
         else if (action === 'change-plant') {
             refreshCalendar(tabId, { syncSliders: false });
@@ -2619,7 +2420,6 @@
             }
         }
     }
-
     function handleAppKeydown(event) {
         const target = event.target;
         if (target.dataset.action !== 'open-day') return;
@@ -2628,26 +2428,21 @@
             openDayModal(target.dataset.tab, target.dataset.dateKey);
         }
     }
-
     function wireEvents() {
         document.getElementById('sidebarToggleBtn').addEventListener('click', toggleSidebar);
         document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar);
-
         document.querySelector('.tab-container').addEventListener('click', (event) => {
             const tab = event.target.closest('[data-tab-target]');
             if (tab) switchTab(tab.dataset.tabTarget);
         });
-
         const appSidebar = document.getElementById('appSidebar');
-        const appMainContent = document.getElementById('appMainContent');
-        
+        const appMainContent = document.getElementById('appMainContent');        
         [appSidebar, appMainContent].forEach(el => {
             el.addEventListener('click', handleAppClick);
             el.addEventListener('input', handleAppInput);
             el.addEventListener('change', handleAppChange);
             el.addEventListener('keydown', handleAppKeydown);
         });
-
         // Day Modal Quick Preset Click
         document.getElementById('dayModal').addEventListener('click', (event) => {
             const presetBtn = event.target.closest('[data-preset]');
@@ -2655,7 +2450,6 @@
                 applyPreset(presetBtn.dataset.preset);
             }
         });
-
         // Toggle Manual Inputs
         const toggleManualBtn = document.getElementById('toggleManualInputsBtn');
         const manualInputsBox = document.getElementById('manualInputsBox');
@@ -2669,7 +2463,6 @@
             }
         });
         manualInputsBox.style.display = 'none';
-
         // Modal Events
         document.getElementById('dayModalForm').addEventListener('submit', (event) => {
             event.preventDefault(); 
@@ -2682,37 +2475,29 @@
             if (event.key === 'Escape' && isModalOpen()) closeModal();
         });
     }
-
     /* =========================================================
        17. BOOTSTRAP
        ========================================================= */
     function initTab(tabId) {
         calendarData[tabId] = loadCalendarData(tabId);
-        fixCostData[tabId] = loadFixCostData(tabId);
-        
+        fixCostData[tabId] = loadFixCostData(tabId);        
         const sidebarContainer = document.getElementById('appSidebar');
-        const mainContentContainer = document.getElementById('appMainContent');
-        
+        const mainContentContainer = document.getElementById('appMainContent');        
         sidebarContainer.insertAdjacentHTML('beforeend', buildSidebarMarkup(tabId));
         mainContentContainer.insertAdjacentHTML('beforeend', buildMainContentMarkup(tabId));
-
         renderFixCostList(tabId);
-
         const hasSavedSliderState = loadData(tabId);
         refreshCalendar(tabId, { syncSliders: !hasSavedSliderState });
     }
-
     function init() {
         TAB_IDS.forEach(initTab);
         wireEvents();
         switchTab('my-ot');
     }
-
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
     else init();
 })();
 </script>
-
 <!-- ===================== PWA Installation Script (คงเดิม ไม่กระทบกับระบบเดิม) ===================== -->
 <script>
 (() => {
@@ -2721,21 +2506,17 @@
             navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW error:', err));
         });
     }
-
     let deferredPrompt;
     const installBtn = document.getElementById('installPwaBtn');
     const iosModal = document.getElementById('pwaIosModal');
     const lineModal = document.getElementById('pwaLineModal');
-
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     const isLine = navigator.userAgent.includes('Line');
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-
     if (isStandalone) {
         installBtn.style.display = 'none'; 
         return;
     }
-
     if (isLine) {
         installBtn.style.display = 'block';
         installBtn.addEventListener('click', () => lineModal.classList.add('is-open'));
