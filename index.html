@@ -135,19 +135,26 @@
             background: white;
             border-bottom: 1px solid var(--border);
             z-index: 100;
+            overflow-x: auto;
+            scrollbar-width: none; /* Firefox */
+        }
+        .tab-container::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
         }
         .tab {
             flex: 1;
-            padding: 12px 8px;
+            min-width: 110px;
+            padding: 12px 6px;
             text-align: center;
             cursor: pointer;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.88rem;
             transition: all 0.2s;
             background: transparent;
             border: none;
             border-bottom: 3px solid transparent;
             color: #4b5563;
+            white-space: nowrap;
         }
         .tab.active {
             border-bottom-color: var(--secondary-dark);
@@ -705,20 +712,20 @@
             border: 1px solid #1e293b;
         }
         .ot-indicator.no-ot {
-    background: #000000 !important;   /* พื้นหลังสีดำสนิท */
-    color: #ffffff !important;        /* ตัวอักษรสีขาว */
-    font-weight: 800 !important;      /* ตัวอักษรหนาพิเศษ */
-    font-size: 0.72rem !important;    /* ปรับขนาดให้อ่านง่าย */
-    border: none !important;
-    width: 96%;
-    flex: 1;                          /* สั่งให้กรอบยืดลงมาคลุมเต็มพื้นที่ช่อง */
-    display: flex;
-    align-items: center;              /* จัดตัวหนังสือให้อยู่กึ่งกลาง */
-    justify-content: center;
-    margin-top: 4px;
-    margin-bottom: 2px;
-    border-radius: 4px;
-}
+            background: #000000 !important;   /* พื้นหลังสีดำสนิท */
+            color: #ffffff !important;        /* ตัวอักษรสีขาว */
+            font-weight: 800 !important;      /* ตัวอักษรหนาพิเศษ */
+            font-size: 0.72rem !important;    /* ปรับขนาดให้อ่านง่าย */
+            border: none !important;
+            width: 96%;
+            flex: 1;                          /* สั่งให้กรอบยืดลงมาคลุมเต็มพื้นที่ช่อง */
+            display: flex;
+            align-items: center;              /* จัดตัวหนังสือให้อยู่กึ่งกลาง */
+            justify-content: center;
+            margin-top: 4px;
+            margin-bottom: 2px;
+            border-radius: 4px;
+        }
         /* 🍚 ป้ายค่าอาหาร OT (สีเหลืองทอง) */
         .meal-badge {
             background-color: var(--meal-bg);
@@ -735,6 +742,108 @@
             line-height: 1.45;
         }
         .cal-summary__meal { color: var(--meal-text); font-weight: 700; font-size: 0.82rem; }
+        
+        /* =========================================================
+           NEW: LEAVE SYSTEM CSS
+           ========================================================= */
+        .leave-card {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .leave-card.is-active-period {
+            border: 2px solid var(--secondary-dark);
+            background: #f0f7ff;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.08);
+        }
+        .active-badge {
+            background: var(--secondary-dark);
+            color: white;
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 6px;
+            vertical-align: middle;
+            font-weight: 700;
+        }
+        .leave-card-title {
+            font-weight: 700;
+            color: #1f2937;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+        .leave-stats {
+            font-size: 0.85rem;
+            color: #4b5563;
+            margin-bottom: 6px;
+        }
+        .leave-progress-bg {
+            background: #f1f5f9;
+            border-radius: 99px;
+            height: 8px;
+            width: 100%;
+            overflow: hidden;
+        }
+        .leave-progress-fill {
+            background: var(--primary);
+            height: 100%;
+            transition: width 0.3s;
+        }
+        .leave-progress-fill.is-full {
+            background: var(--danger);
+        }
+        .leave-annual { background: #dcfce7 !important; color: #166534 !important; border-color: #bbf7d0 !important; }
+        .leave-sick { background: #fee2e2 !important; color: #991b1b !important; border-color: #fecaca !important; }
+        .leave-personal { background: #fef08a !important; color: #854d0e !important; border-color: #fde047 !important; }
+        .leave-type-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .leave-type-label input { display: none; }
+        .leave-type-box {
+            display: block;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .leave-type-label input:checked + .leave-type-box {
+            border-color: var(--secondary-dark);
+            background: #f0f7ff;
+            color: #0369a1;
+        }
+        .leave-type-label.no-leave input:checked + .leave-type-box {
+            border-color: var(--danger);
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .leave-preset-btns {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .leave-preset-btn {
+            flex: 1;
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #334155;
+        }
+        .leave-preset-btn:active { background: #e2e8f0; }
+
         /* =========================================================
            12. MODAL & QUICK PRESETS (สุดยอดการกดง่าย)
            ========================================================= */
@@ -1013,7 +1122,8 @@
 </header>
 <nav class="tab-container" role="tablist">
     <button type="button" class="tab active" role="tab" data-tab-target="my-ot">🗓️ บันทึก OT ของฉัน</button>
-    <button type="button" class="tab" role="tab" data-tab-target="forecast">🔮 คำนวณจำลองล่วงหน้า</button>
+    <button type="button" class="tab" role="tab" data-tab-target="forecast">🔮 จำลองคำนวณล่วงหน้า</button>
+    <button type="button" class="tab" role="tab" data-tab-target="leave">🏖️ บันทึกวันลา</button>
 </nav>
 <div class="app-layout">
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -1098,6 +1208,46 @@
         </div>
     </form>
 </div>
+
+<!-- ===================== Leave Entry Modal (วันลา) ===================== -->
+<div id="leaveModal" class="modal-overlay" aria-hidden="true">
+    <form id="leaveModalForm" class="modal" role="dialog" aria-modal="true" novalidate>
+        <div class="modal-header-tag">
+            <h3 id="leaveModalTitle">บันทึกวันลา</h3>
+            <button type="button" class="modal-close-x" id="leaveModalCloseBtn" aria-label="Close">✕</button>
+        </div>
+        <div class="form-group" style="margin-bottom:16px;">
+            <label style="margin-bottom:8px;">ประเภทการลา</label>
+            <div class="leave-type-grid">
+                <label class="leave-type-label"><input type="radio" name="leaveType" value="annual"><span class="leave-type-box">🏖️ พักร้อน</span></label>
+                <label class="leave-type-label"><input type="radio" name="leaveType" value="sick"><span class="leave-type-box">🤒 ลาป่วย</span></label>
+                <label class="leave-type-label"><input type="radio" name="leaveType" value="personal"><span class="leave-type-box">💼 ลากิจ</span></label>
+                <label class="leave-type-label no-leave"><input type="radio" name="leaveType" value="none"><span class="leave-type-box">❌ ลบข้อมูล</span></label>
+            </div>
+        </div>
+        <div id="leaveDurationArea" class="form-group">
+            <label>ระยะเวลาที่ลา (ชั่วโมง)</label>
+            <div class="leave-preset-btns">
+                <button type="button" class="leave-preset-btn" onclick="document.getElementById('leaveHoursInput').value=8">เต็มวัน (8h)</button>
+                <button type="button" class="leave-preset-btn" onclick="document.getElementById('leaveHoursInput').value=4">ครึ่งวัน (4h)</button>
+            </div>
+            <div class="modal-input-row" style="margin-bottom: 0;">
+                <label for="leaveHoursInput">ระบุเอง (1-7 ชม.)</label>
+                <input type="number" id="leaveHoursInput" min="1" max="8" value="8" inputmode="numeric">
+            </div>
+            <small style="color:var(--text-subtle); display:block; text-align:right; margin-bottom:12px;">* 8 ชั่วโมง = 1 วัน</small>
+        </div>
+        <div class="modal-detail-row">
+            <label for="leaveDetailInput">📝 โน้ตรายละเอียด (ไม่ใส่ก็ได้)</label>
+            <input type="text" id="leaveDetailInput" maxlength="200" autocomplete="off" placeholder="เช่น ลาพักผ่อนครอบครัว / ป่วยไข้หวัด">
+        </div>
+        <div class="modal-btns">
+            <button type="button" class="btn-cancel" id="leaveModalCancelBtn">ยกเลิก</button>
+            <button type="submit" class="btn-save">💾 บันทึกการลา</button>
+        </div>
+    </form>
+</div>
+
 <!-- ===================== Custom Dialog / Alert / Confirm Modal ===================== -->
 <div id="customDialogModal" class="modal-overlay" aria-hidden="true">
     <div class="dialog-box" role="dialog" aria-modal="true">
@@ -1139,10 +1289,11 @@
     /* =========================================================
        1. CONFIGURATION & CONSTANTS
        ========================================================= */
-    const TAB_IDS = Object.freeze(['my-ot', 'forecast']);
+    const TAB_IDS = Object.freeze(['my-ot', 'forecast', 'leave']);
     const TAB_TITLES = Object.freeze({
         'my-ot': 'ข้อมูลของฉัน (My OT)',
-        'forecast': 'จำลองคำนวณ (Forecast)'
+        'forecast': 'จำลองคำนวณ (Forecast)',
+        'leave': 'บันทึกวันลา (Leave Management)'
     });
     const OT_TYPES = Object.freeze([
         { id: '1.5x',  dataKey: '1.5',  label: '1.5x OT ปกติกะเย็น', cellLabel: '1.5',  summaryLabel: '1.5x',        modalInputId: 'in_1_5',  multiplier: 1.5, badgeClass: 'ot-15' },
@@ -1205,7 +1356,7 @@
     const SLIDER_STEP_HOURS = 0.5;
     const DETAIL_MAX_LENGTH = 200;
     const MEAL_RULE = Object.freeze({ min1_5: 1.0, min2_0: 5.0, min3_0: 1.0 });
-    /* วันหยุดบริษัทปี 2026 */
+    /* วันหยุดบริษัทปี 2026 และ 2027 */
     const COMPANY_HOLIDAYS = Object.freeze({
         'BANPHO': {
             2026: {
@@ -1221,6 +1372,20 @@
                 10: [3, 4, 10, 11, 18, 19, 23, 25, 31],
                 11: [1, 8, 15, 22, 28, 29],
                 12: [5, 6, 7, 10, 12, 13, 20, 26, 27, 28, 29, 30, 31]
+            },
+            2027: {
+                1:  [1, 2, 3, 9, 10, 17, 23, 24, 30, 31],
+                2:  [6, 7, 13, 14, 20, 21, 22, 28],
+                3:  [6, 7, 14, 20, 21, 27, 28],
+                4:  [3, 4, 10, 11, 12, 13, 14, 15, 16, 17, 18, 25],
+                5:  [1, 2, 3, 4, 9, 15, 16, 20, 23, 29, 30],
+                6:  [3, 4, 5, 6, 12, 13, 20, 26, 27],
+                7:  [4, 10, 11, 17, 18, 19, 24, 25, 28],
+                8:  [1, 7, 8, 12, 15, 21, 22, 29],
+                9:  [4, 5, 11, 12, 18, 19, 26],
+                10: [2, 3, 10, 13, 16, 17, 23, 24, 25, 26, 27, 28, 29, 30, 31],
+                11: [6, 7, 13, 14, 21, 27, 28],
+                12: [5, 6, 11, 12, 19, 25, 26, 27, 28, 29, 30, 31]
             }
         },
         'GATEWAY': {
@@ -1237,6 +1402,20 @@
                 10: [3, 4, 11, 18, 19, 23, 25],
                 11: [1, 7, 8, 14, 15, 22, 28, 29],
                 12: [5, 6, 7, 10, 13, 20, 26, 27, 28, 29, 30, 31]
+            },
+            2027: {
+                1:  [1, 2, 3, 9, 10, 17, 23, 24, 30, 31],
+                2:  [6, 7, 13, 14, 20, 21, 22, 28],
+                3:  [6, 7, 14, 20, 21, 27, 28],
+                4:  [3, 4, 10, 11, 12, 13, 14, 15, 16, 17, 18, 25],
+                5:  [1, 2, 3, 4, 9, 15, 16, 20, 23, 29, 30],
+                6:  [3, 4, 5, 6, 12, 13, 20, 26, 27],
+                7:  [4, 10, 11, 17, 18, 19, 24, 25, 28],
+                8:  [1, 7, 8, 12, 15, 21, 22, 29],
+                9:  [4, 5, 11, 12, 18, 19, 26],
+                10: [2, 3, 10, 13, 16, 17, 23, 24, 25, 26, 27, 28, 29, 30, 31],
+                11: [6, 7, 13, 14, 21, 27, 28],
+                12: [5, 6, 11, 12, 19, 25, 26, 27, 28, 29, 30, 31]
             }
         },
         'SAMRONG': {
@@ -1253,6 +1432,20 @@
                 10: [3, 4, 10, 11, 18, 19, 23, 25, 31],
                 11: [1, 8, 15, 22, 28, 29],
                 12: [5, 6, 7, 10, 12, 13, 20, 26, 27, 28, 29, 30, 31]
+            },
+            2027: {
+                1:  [1, 2, 3, 9, 10, 17, 23, 24, 30, 31],
+                2:  [6, 7, 13, 14, 20, 21, 22, 28],
+                3:  [6, 7, 14, 20, 21, 27, 28],
+                4:  [3, 4, 10, 11, 12, 13, 14, 15, 16, 17, 18, 25],
+                5:  [1, 2, 3, 4, 9, 15, 16, 20, 23, 29, 30],
+                6:  [3, 4, 5, 6, 12, 13, 20, 26, 27],
+                7:  [4, 10, 11, 17, 18, 19, 24, 25, 28],
+                8:  [1, 7, 8, 12, 15, 21, 22, 29],
+                9:  [4, 5, 11, 12, 18, 19, 26],
+                10: [2, 3, 10, 13, 16, 17, 23, 24, 25, 26, 27, 28, 29, 30, 31],
+                11: [6, 7, 13, 14, 21, 27, 28],
+                12: [5, 6, 11, 12, 19, 25, 26, 27, 28, 29, 30, 31]
             }
         }
     });
@@ -1358,15 +1551,22 @@
     /* =========================================================
        4. APPLICATION STATE
        ========================================================= */
-    const calendarData = { 'my-ot': {}, 'forecast': {} };
-    const fixCostData = { 'my-ot': cloneDefaultFixCosts(), 'forecast': cloneDefaultFixCosts() };
+    const calendarData = { 'my-ot': {}, 'forecast': {}, 'leave': {} };
+    const fixCostData = { 'my-ot': cloneDefaultFixCosts(), 'forecast': cloneDefaultFixCosts(), 'leave': [] };
     const modalState = { tabId: null, dateKey: null };
     let currentTabId = 'my-ot';
     /* =========================================================
        5. DOMAIN LOGIC
        ========================================================= */
-    function normalizeDayEntry(rawEntry) {
+    function normalizeDayEntry(rawEntry, tabId) {
         if (!isPlainObject(rawEntry)) return null;
+        if (tabId === 'leave') {
+            const type = rawEntry.type;
+            if (!['annual', 'sick', 'personal'].includes(type)) return null;
+            const hours = clamp(toFiniteNumber(rawEntry.hours), 1, 8);
+            const detail = typeof rawEntry.detail === 'string' ? rawEntry.detail.trim().slice(0, DETAIL_MAX_LENGTH) : '';
+            return { type, hours, detail };
+        }
         const entry = { noOT: rawEntry.noOT === true };
         if (!entry.noOT) { OT_TYPES.forEach((type) => { entry[type.dataKey] = toNonNegativeNumber(rawEntry[type.dataKey]); }); }
         const detail = typeof rawEntry.detail === 'string' ? rawEntry.detail.trim().slice(0, DETAIL_MAX_LENGTH) : '';
@@ -1398,7 +1598,8 @@
         const hols = COMPANY_HOLIDAYS[plantKey] && COMPANY_HOLIDAYS[plantKey][year] && COMPANY_HOLIDAYS[plantKey][year][monthIndex];
         return Array.isArray(hols) && hols.includes(day);
     }
-    function shouldHighlightAsHoliday(entry, isHoliday) {
+    function shouldHighlightAsHoliday(entry, isHoliday, tabId) {
+        if (tabId === 'leave') return isHoliday;
         if (!entry || entry.noOT) return isHoliday;
         if (getDayHours(entry, '2.0') > 0 || getDayHours(entry, '3.0') > 0) return true;
         if (getDayHours(entry, '1.5') > 0 || getDayHours(entry, '1.5l') > 0) return false;
@@ -1407,7 +1608,8 @@
     function getSelectedPeriod(tabId) {
         const monthName = getTabElement('month', tabId).value;
         const monthIndex = Math.max(1, MONTH_NAMES.indexOf(monthName) + 1);
-        const year = parseInt(getTabElement('year', tabId).value, 10) || DEFAULT_YEAR;
+        const yearInput = parseInt(getTabElement('year', tabId).value, 10);
+        const year = Number.isInteger(yearInput) ? yearInput : new Date().getFullYear();
         return {
             monthName, monthIndex, year,
             daysInMonth: new Date(year, monthIndex, 0).getDate(),
@@ -1441,13 +1643,14 @@
         const cleanData = {};
         Object.entries(rawData).forEach(([dateKey, rawEntry]) => {
             if (!DATE_KEY_PATTERN.test(dateKey)) return;
-            const entry = normalizeDayEntry(rawEntry);
+            const entry = normalizeDayEntry(rawEntry, tabId);
             if (entry) cleanData[dateKey] = entry;
         });
         return cleanData;
     }
     const saveCalendarData = (tabId) => storage.setJSON(STORAGE_KEYS.calendarData(tabId), calendarData[tabId]);
     function loadFixCostData(tabId) {
+        if (tabId === 'leave') return [];
         const rawList = storage.getJSON(STORAGE_KEYS.fixCosts(tabId), null, Array.isArray);
         if (!rawList) return cloneDefaultFixCosts();
         return rawList
@@ -1457,13 +1660,24 @@
                 amount: toFiniteNumber(item.amount)
             }));
     }
-    const saveFixCostData = (tabId) => storage.setJSON(STORAGE_KEYS.fixCosts(tabId), fixCostData[tabId]);
+    const saveFixCostData = (tabId) => { if (tabId !== 'leave') storage.setJSON(STORAGE_KEYS.fixCosts(tabId), fixCostData[tabId]); };
     function saveData(tabId) {
+        const m = getTabElement('month', tabId).value;
+        const y = getTabElement('year', tabId).value;
+        
+        // 🔗 GLOBAL SYNC
+        storage.setRaw(STORAGE_PREFIX + 'global_month', m);
+        storage.setRaw(STORAGE_PREFIX + 'global_year', y);
+        
+        if (tabId === 'leave') {
+            const annualQuota = getTabElement('annualQuota', tabId).value;
+            storage.setRaw(STORAGE_PREFIX + 'annualQuota', annualQuota);
+            return;
+        }
+
         storage.setRaw(STORAGE_KEYS.salary(tabId), getTabElement('salary', tabId).value);
         storage.setRaw(STORAGE_KEYS.plant(tabId), getTabElement('plant', tabId).value);
         storage.setRaw(STORAGE_KEYS.grade(tabId), getTabElement('grade', tabId).value);
-        storage.setRaw(STORAGE_KEYS.month(tabId), getTabElement('month', tabId).value);
-        storage.setRaw(STORAGE_KEYS.year(tabId), getTabElement('year', tabId).value);
         OT_TYPES.forEach((type) => {
             const slider = getSlider(tabId, type.id);
             storage.setRaw(STORAGE_KEYS.sliderHours(tabId, type.id), slider.value);
@@ -1471,6 +1685,22 @@
         });
     }
     function loadData(tabId) {
+        const now = new Date();
+        let globalMonth = storage.getRaw(STORAGE_PREFIX + 'global_month');
+        let globalYear = storage.getRaw(STORAGE_PREFIX + 'global_year');
+        
+        if (!globalMonth) { globalMonth = MONTH_NAMES[now.getMonth()]; storage.setRaw(STORAGE_PREFIX + 'global_month', globalMonth); }
+        if (!globalYear) { globalYear = String(now.getFullYear()); storage.setRaw(STORAGE_PREFIX + 'global_year', globalYear); }
+        
+        getTabElement('month', tabId).value = globalMonth;
+        getTabElement('year', tabId).value = parseInt(globalYear, 10);
+        
+        if (tabId === 'leave') {
+            const savedQuota = storage.getRaw(STORAGE_PREFIX + 'annualQuota');
+            if (savedQuota !== null) getTabElement('annualQuota', tabId).value = savedQuota;
+            return false;
+        }
+
         const savedSalary = storage.getRaw(STORAGE_KEYS.salary(tabId));
         getTabElement('salary', tabId).value = savedSalary !== null ? savedSalary : DEFAULT_SALARY;
         const savedPlant = storage.getRaw(STORAGE_KEYS.plant(tabId));
@@ -1479,10 +1709,7 @@
         const savedGrade = storage.getRaw(STORAGE_KEYS.grade(tabId));
         if (savedGrade) getTabElement('grade', tabId).value = savedGrade;
         else getTabElement('grade', tabId).value = "G5";
-        const savedMonth = storage.getRaw(STORAGE_KEYS.month(tabId));
-        if (MONTH_NAMES.includes(savedMonth)) getTabElement('month', tabId).value = savedMonth;
-        const savedYear = parseInt(storage.getRaw(STORAGE_KEYS.year(tabId)), 10);
-        if (Number.isInteger(savedYear)) getTabElement('year', tabId).value = savedYear;
+        
         let hasSavedSliderState = false;
         OT_TYPES.forEach((type) => {
             const savedHours = storage.getRaw(STORAGE_KEYS.sliderHours(tabId, type.id));
@@ -1496,27 +1723,22 @@
     function exportBackupFile() {
         const backupData = {
             app: 'OT Calculator ProMax',
-            version: '2.1',
+            version: '2.2',
             exportedAt: new Date().toISOString(),
             calendarData: calendarData,
             fixCostData: fixCostData,
-            settings: {
-                'my-ot': {
-                    salary: getTabElement('salary', 'my-ot')?.value,
-                    plant: getTabElement('plant', 'my-ot')?.value,
-                    grade: getTabElement('grade', 'my-ot')?.value,
-                    month: getTabElement('month', 'my-ot')?.value,
-                    year: getTabElement('year', 'my-ot')?.value
-                },
-                'forecast': {
-                    salary: getTabElement('salary', 'forecast')?.value,
-                    plant: getTabElement('plant', 'forecast')?.value,
-                    grade: getTabElement('grade', 'forecast')?.value,
-                    month: getTabElement('month', 'forecast')?.value,
-                    year: getTabElement('year', 'forecast')?.value
-                }
-            }
+            settings: {}
         };
+        TAB_IDS.forEach(tab => {
+            backupData.settings[tab] = { month: getTabElement('month', tab)?.value, year: getTabElement('year', tab)?.value };
+            if (tab !== 'leave') {
+                backupData.settings[tab].salary = getTabElement('salary', tab)?.value;
+                backupData.settings[tab].plant = getTabElement('plant', tab)?.value;
+                backupData.settings[tab].grade = getTabElement('grade', tab)?.value;
+            } else {
+                backupData.settings[tab].annualQuota = getTabElement('annualQuota', tab)?.value;
+            }
+        });
         const jsonString = JSON.stringify(backupData, null, 2);
         const blob = new Blob([jsonString], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
@@ -1553,7 +1775,7 @@
                     });
                 }
                 if (data.fixCostData) {
-                    TAB_IDS.forEach(tab => {
+                    ['my-ot', 'forecast'].forEach(tab => {
                         if (Array.isArray(data.fixCostData[tab])) {
                             fixCostData[tab] = data.fixCostData[tab];
                             saveFixCostData(tab);
@@ -1564,22 +1786,31 @@
                     TAB_IDS.forEach(tab => {
                         const set = data.settings[tab];
                         if (set) {
-                            if (set.salary) getTabElement('salary', tab).value = set.salary;
-                            if (set.plant) getTabElement('plant', tab).value = set.plant;
-                            if (set.grade) getTabElement('grade', tab).value = set.grade;
-                            if (set.month) getTabElement('month', tab).value = set.month;
-                            if (set.year) getTabElement('year', tab).value = set.year;
+                            if (tab !== 'leave') {
+                                if (set.salary) getTabElement('salary', tab).value = set.salary;
+                                if (set.plant) getTabElement('plant', tab).value = set.plant;
+                                if (set.grade) getTabElement('grade', tab).value = set.grade;
+                            } else {
+                                if (set.annualQuota) getTabElement('annualQuota', tab).value = set.annualQuota;
+                            }
+                            // 🔗 นำเดือนและปีไปกำหนดไว้ที่ Global
+                            if (set.month && set.year) {
+                                storage.setRaw(STORAGE_PREFIX + 'global_month', set.month);
+                                storage.setRaw(STORAGE_PREFIX + 'global_year', set.year);
+                                getTabElement('month', tab).value = set.month;
+                                getTabElement('year', tab).value = set.year;
+                            }
                             saveData(tab);
                         }
                     });
                 }
                 TAB_IDS.forEach(tab => {
-                    renderFixCostList(tab);
+                    if (tab !== 'leave') renderFixCostList(tab);
                     refreshCalendar(tab, { syncSliders: true });
                 });
                 showCustomDialog({
                     title: 'กู้คืนข้อมูลสำเร็จ!',
-                    message: 'ข้อมูลชั่วโมง OT, เงินเดือน, และรายการหักเงินเดือนกลับมาครบ 100% แล้วครับ 🎉',
+                    message: 'ข้อมูลชั่วโมง OT, วันลา, เงินเดือน, และรายการหักเงินเดือนกลับมาครบ 100% แล้วครับ 🎉',
                     icon: '🎉'
                 });
             } catch (err) {
@@ -1616,6 +1847,43 @@
             </div>`;
     }
     function buildSidebarMarkup(tabId) {
+        if (tabId === 'leave') {
+            return `
+            <div id="sidebar_${tabId}" style="display: none; height: 100%;">
+                <div class="sidebar-section" style="border-bottom:none;">
+                    <div class="card-header-row" style="margin-bottom:12px;">
+                        <h2 style="font-size:1.15rem; margin:0;">🏖️ บันทึกวันลา</h2>
+                        <button type="button" class="reset-btn" data-action="reset" data-tab="${tabId}">🔄 ล้างข้อมูล</button>
+                    </div>
+                    <div class="date-row">
+                        <div class="form-group form-group--grow">
+                            <label for="month_${tabId}">เลือกเดือน</label>
+                            <select id="month_${tabId}" data-action="change-period" data-tab="${tabId}">${buildMonthOptionsMarkup()}</select>
+                        </div>
+                        <div class="form-group form-group--grow">
+                            <label for="year_${tabId}">ปี (ค.ศ.)</label>
+                            <input type="number" id="year_${tabId}" min="2011" max="2050" value="" data-action="change-period" data-tab="${tabId}">
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top:4px;">
+                        <label for="annualQuota_${tabId}">โควต้าลาพักร้อนประจำปีปฏิทิน (วัน)</label>
+                        <input type="number" id="annualQuota_${tabId}" min="0" value="6" data-action="recalculate" data-tab="${tabId}">
+                    </div>
+                    
+                    <div id="leaveDashboardArea_${tabId}" style="margin-top:16px;"></div>
+                    
+                    <div class="backup-card">
+                        <div class="backup-title">🛡️ สำรอง & กู้คืนข้อมูล (กันแคชหาย)</div>
+                        <div class="backup-desc">โหลดไฟล์สำรองเก็บไว้ในมือถือได้ตลอดเวลา ล้างเครื่องหรือเคลียร์แคชก็กู้กลับได้ 100%</div>
+                        <div class="backup-btn-group">
+                            <button type="button" class="btn-backup btn-backup--save" data-action="backup-export">📥 สำรองไฟล์</button>
+                            <button type="button" class="btn-backup btn-backup--restore" data-action="backup-import-click" data-tab="${tabId}">📤 กู้คืนไฟล์</button>
+                        </div>
+                        <input type="file" id="backupFileInput_${tabId}" accept=".json" style="display:none;" data-action="backup-file-selected">
+                    </div>
+                </div>
+            </div>`;
+        }
         return `
         <div id="sidebar_${tabId}" style="display: ${tabId === 'my-ot' ? 'block' : 'none'}; height: 100%;">            
             <!-- Section 1: Calculations Config -->
@@ -1661,7 +1929,7 @@
                     </div>
                     <div class="form-group form-group--grow">
                         <label for="year_${tabId}">ปี (ค.ศ.)</label>
-                        <input type="number" id="year_${tabId}" min="2011" max="2050" value="${DEFAULT_YEAR}" data-action="change-period" data-tab="${tabId}">
+                        <input type="number" id="year_${tabId}" min="2011" max="2050" value="" data-action="change-period" data-tab="${tabId}">
                     </div>
                 </div>
                 <div class="gauge-container" id="gaugeContainer_${tabId}">
@@ -1700,7 +1968,7 @@
             <div class="sidebar-section" style="border-bottom:none;">
                 <div class="card-header-row" style="margin-bottom: 0;">
                     <div>
-                        <h3 style="margin:0; font-size:1rem;">รายการหักเงินเดือน / หนี้สิน</h3>
+                        <h3 style="margin:0; font-size:1rem;">รายการหักเงินเดือน / หหนี้สิน</h3>
                     </div>
                     <button type="button" class="toggle-btn" data-action="toggle-section" data-target="fix-cost-content_${tabId}">ซ่อน/แสดง</button>
                 </div>
@@ -1716,6 +1984,27 @@
         </div>`;
     }
     function buildMainContentMarkup(tabId) {
+        if (tabId === 'leave') {
+            return `
+            <div id="mainContent_${tabId}" style="display: none;">
+                <div class="content-area active">
+                    <div class="card card--accent-primary">
+                        <div class="card-header-row" style="margin-bottom:2px;"><h3 style="margin:0;">📅 ปฏิทินวันลา (Leave Calendar)</h3></div>
+                        <p class="muted-text" style="margin-top:0; margin-bottom: 8px;">👉 <b>แตะที่ช่องวันที่</b> เพื่อบันทึกประวัติการลา</p>
+                        <div class="calendar-grid calendar-grid--header">${WEEKDAY_LABELS.map((label) => `<div class="cal-header">${label}</div>`).join('')}</div>
+                        <div id="calendarBody_${tabId}" class="calendar-grid calendar-grid--body"></div>
+                        <div class="cal-summary" id="calendarSummary_${tabId}"></div>
+                    </div>
+                    <div class="card" id="exportArea_${tabId}">
+                        <h3 style="margin-bottom:10px;">📊 สรุปประวัติการลา (Leave Summary)</h3>
+                        <div id="exportLeaveSummary_${tabId}"></div>
+                    </div>
+                    <button type="button" class="export-btn" data-action="export" data-tab="${tabId}">
+                        📸 บันทึกรูปรายงานวันลา A3
+                    </button>
+                </div>
+            </div>`;
+        }
         return `
         <div id="mainContent_${tabId}" style="display: ${tabId === 'my-ot' ? 'block' : 'none'};">
             <div class="content-area active">
@@ -1756,29 +2045,58 @@
     /* =========================================================
        8. RENDERING — Calendar With Smart Badges (ไม่มีล้น & สีตรงประเภท)
        ========================================================= */
+    function formatLeaveAmount(totalHours) {
+        const d = Math.floor(totalHours / 8);
+        const h = totalHours % 8;
+        if (d === 0 && h === 0) return '0 วัน';
+        if (d > 0 && h === 0) return `${d} วัน`;
+        if (d === 0 && h > 0) return `${h} ชม.`;
+        return `${d} วัน ${h} ชม.`;
+    }
+
     function createDayCell(tabId, day, dateKey, entry, isHoliday) {
         const cell = document.createElement('div');
         cell.className = 'cal-cell';
-        if (shouldHighlightAsHoliday(entry, isHoliday)) cell.classList.add('weekend');
-        cell.dataset.action = 'open-day';
+        if (shouldHighlightAsHoliday(entry, isHoliday, tabId)) cell.classList.add('weekend');
+        cell.dataset.action = tabId === 'leave' ? 'open-leave-day' : 'open-day';
         cell.dataset.tab = tabId;
         cell.dataset.dateKey = dateKey;
         cell.tabIndex = 0;
         cell.setAttribute('role', 'button');
         cell.setAttribute('aria-label', `ลงเวลาวันที่ ${dateKey}`);
         cell.appendChild(createElementWithText('div', 'cal-day-number', String(day)));
+        
         if (hasDayDetail(entry)) {
             const noteIcon = createElementWithText('span', 'cal-note-icon', '📝');
             noteIcon.setAttribute('aria-hidden', 'true');
             cell.appendChild(noteIcon);
             cell.title = `📝 ${entry.detail}`;
         }
+        
         if (!entry) return cell;
+        
+        if (tabId === 'leave') {
+            if (entry.type) {
+                let badgeClass = '', label = '';
+                const timeStr = formatLeaveAmount(entry.hours || 0);
+                if (entry.type === 'annual') { badgeClass = 'leave-annual'; label = `🏖️ พักร้อน\n(${timeStr})`; }
+                if (entry.type === 'sick') { badgeClass = 'leave-sick'; label = `🤒 ลาป่วย\n(${timeStr})`; }
+                if (entry.type === 'personal') { badgeClass = 'leave-personal'; label = `💼 ลากิจ\n(${timeStr})`; }
+                
+                const badge = document.createElement('div');
+                badge.className = `ot-indicator ${badgeClass}`;
+                badge.style.marginTop = 'auto'; badge.style.marginBottom = 'auto'; badge.style.whiteSpace = 'pre-wrap';
+                badge.textContent = label;
+                cell.appendChild(badge);
+            }
+            return cell;
+        }
+
         // ปรับเป็น 'ไม่ทำ' สั้นกระชับ ไม่โดนตัดเป็น 'ไม่ทำ ...'
         if (entry.noOT) {
-    cell.appendChild(createElementWithText('div', 'ot-indicator no-ot', 'ไม่ทำ'));
-    return cell;
-}
+            cell.appendChild(createElementWithText('div', 'ot-indicator no-ot', 'ไม่ทำ'));
+            return cell;
+        }
         // คัดกรองประเภท OT ที่มีชั่วโมงในวันนั้น
         const activeTypes = OT_TYPES.filter((type) => getDayHours(entry, type.dataKey) > 0);
         const totalHours = getDayTotalHours(entry);
@@ -1802,7 +2120,7 @@
     function renderCalendarGrid(tabId) {
         const grid = getTabElement('calendarBody', tabId);
         const { year, monthIndex, daysInMonth, startWeekday } = getSelectedPeriod(tabId);
-        const plantName = getTabElement('plant', tabId).value;
+        const plantName = tabId === 'leave' ? 'BANPHO PLANT' : getTabElement('plant', tabId).value;
         const fragment = document.createDocumentFragment();
         for (let i = 0; i < startWeekday; i++) {
             const placeholder = document.createElement('div');
@@ -1818,6 +2136,10 @@
         grid.appendChild(fragment);
     }
     function updateCalendarSummary(tabId) {
+        if (tabId === 'leave') {
+            getTabElement('calendarSummary', tabId).innerHTML = `<strong>* สรุปโควต้าวันลา สามารถเลื่อนดูได้ที่แผงควบคุมตั้งค่า หรือกรอบด้านล่างนี้ครับ</strong>`;
+            return;
+        }
         const totals = getCalendarTotals(tabId);
         const breakdown = OT_TYPES.map((type) => `${type.summaryLabel}: ${totals.hoursByType[type.dataKey]} ชม.`).join(' | ');
         getTabElement('calendarSummary', tabId).innerHTML = `
@@ -1828,31 +2150,35 @@
     function refreshCalendar(tabId, { syncSliders }) {
         renderCalendarGrid(tabId);
         updateCalendarSummary(tabId);
-        if (syncSliders) {
-            syncSlidersToCalendar(tabId);
+        if (tabId !== 'leave') {
+            if (syncSliders) {
+                syncSlidersToCalendar(tabId);
+            } else {
+                updateSliderCalendarReferences(tabId);
+                calculate(tabId);
+            }
         } else {
-            updateSliderCalendarReferences(tabId);
             calculate(tabId);
         }
-    }
-    function handleDateChange(tabId) {
-        refreshCalendar(tabId, { syncSliders: true });
     }
     /* =========================================================
        9. SLIDERS
        ========================================================= */
     const getSlider = (tabId, typeId) => getTabElement(`sl_${typeId}`, tabId);
     function adjustSlider(tabId, typeId, deltaHours) {
+        if (tabId === 'leave') return;
         const slider = getSlider(tabId, typeId);
         if (!slider) return;
         slider.value = clamp(toFiniteNumber(slider.value) + deltaHours, 0, SLIDER_MAX_HOURS);
         calculate(tabId);
     }
     function updateSliderCalendarReferences(tabId) {
+        if (tabId === 'leave') return;
         const { hoursByType } = getCalendarTotals(tabId);
         OT_TYPES.forEach((type) => { getSlider(tabId, type.id).dataset.calTotal = hoursByType[type.dataKey]; });
     }
     function syncSlidersToCalendar(tabId) {
+        if (tabId === 'leave') return;
         const { hoursByType } = getCalendarTotals(tabId);
         OT_TYPES.forEach((type) => {
             const slider = getSlider(tabId, type.id);
@@ -1875,7 +2201,98 @@
    /* =========================================================
        10. CALCULATION ENGINE
        ========================================================= */
+    function buildProgressBar(usedHours, totalHours) {
+        const percent = totalHours > 0 ? Math.min(100, (usedHours / totalHours) * 100) : 0;
+        const isFull = usedHours >= totalHours;
+        return `<div class="leave-progress-bg"><div class="leave-progress-fill ${isFull ? 'is-full' : ''}" style="width: ${percent}%"></div></div>`;
+    }
+
+    function calculateLeave(tabId) {
+        const yearInput = parseInt(getTabElement('year', tabId).value, 10);
+        const year = Number.isInteger(yearInput) ? yearInput : new Date().getFullYear();
+        const monthName = getTabElement('month', tabId).value;
+        const monthIndex = Math.max(1, MONTH_NAMES.indexOf(monthName) + 1);
+
+        let fy = year;
+        if (monthIndex <= 3) {
+            fy = year - 1;
+        }
+
+        const p1Start = new Date(fy, 3, 1).getTime();       
+        const p1End = new Date(fy, 9, 0).getTime();         
+        const p1Name = `(เม.ย. ${fy} - ก.ย. ${fy})`;
+
+        const p2Start = new Date(fy, 9, 1).getTime();       
+        const p2End = new Date(fy + 1, 3, 0).getTime();     
+        const p2Name = `(ต.ค. ${fy} - มี.ค. ${fy + 1})`;
+
+        const isP1Active = (monthIndex >= 4 && monthIndex <= 9);
+        const isP2Active = (monthIndex >= 10 || monthIndex <= 3);
+
+        let annualUsed = 0, personalUsed = 0;
+        let sharedUsedP1 = 0, sharedUsedP2 = 0;
+        
+        const annualQuotaDays = toFiniteNumber(getTabElement('annualQuota', tabId).value) || 0;
+        const annualQuotaHrs = annualQuotaDays * 8;
+        const personalQuotaHrs = 5 * 8; 
+        const sharedQuotaHrs = (6 * 8) + 7; 
+
+        const data = calendarData[tabId] || {};
+        Object.entries(data).forEach(([dateKey, entry]) => {
+            if (!entry || !entry.type || entry.type === 'none') return;
+            const parts = dateKey.split('-');
+            const entryY = parseInt(parts[0], 10), entryM = parseInt(parts[1], 10), entryD = parseInt(parts[2], 10);
+            const entryTime = new Date(entryY, entryM - 1, entryD).getTime();
+            const hrs = entry.hours || 0;
+
+            if (entryY === year) {
+                if (entry.type === 'annual') annualUsed += hrs;
+                if (entry.type === 'personal') personalUsed += hrs;
+            }
+
+            if (entry.type === 'sick' || entry.type === 'personal') {
+                if (entryTime >= p1Start && entryTime <= p1End) sharedUsedP1 += hrs;
+                if (entryTime >= p2Start && entryTime <= p2End) sharedUsedP2 += hrs;
+            }
+        });
+
+        const dashHtml = `
+            <div class="leave-card">
+                <div class="leave-card-title">🏖️ พักร้อน (โควต้าปีปฏิทิน ${year})</div>
+                <div class="leave-stats">ใช้ไป: <b>${formatLeaveAmount(annualUsed)}</b> / คงเหลือ: <b style="color:var(--success)">${formatLeaveAmount(Math.max(0, annualQuotaHrs - annualUsed))}</b></div>
+                ${buildProgressBar(annualUsed, annualQuotaHrs)}
+            </div>
+            <div class="leave-card">
+                <div class="leave-card-title">💼 ลากิจ (โควต้าปีปฏิทิน ${year} สูงสุด 5 วัน)</div>
+                <div class="leave-stats">ใช้ไป: <b>${formatLeaveAmount(personalUsed)}</b> / คงเหลือ: <b style="color:var(--success)">${formatLeaveAmount(Math.max(0, personalQuotaHrs - personalUsed))}</b></div>
+                ${buildProgressBar(personalUsed, personalQuotaHrs)}
+            </div>
+            <div class="leave-card ${isP1Active ? 'is-active-period' : ''}">
+                <div class="leave-card-title">🤒 ป่วย+กิจ ช่วง 1 <b>${p1Name}</b> ${isP1Active ? '<span class="active-badge">รอบปัจจุบัน</span>' : ''}</div>
+                <div class="leave-stats" style="font-size:0.75rem; color:#64748b; margin-bottom:4px;">* โควต้าร่วม 6 วัน 7 ชม. (ปีงบประมาณ ${fy})</div>
+                <div class="leave-stats">ใช้ไป: <b>${formatLeaveAmount(sharedUsedP1)}</b> / คงเหลือ: <b style="color:var(--success)">${formatLeaveAmount(Math.max(0, sharedQuotaHrs - sharedUsedP1))}</b></div>
+                ${buildProgressBar(sharedUsedP1, sharedQuotaHrs)}
+            </div>
+            <div class="leave-card ${isP2Active ? 'is-active-period' : ''}">
+                <div class="leave-card-title">🤒 ป่วย+กิจ ช่วง 2 <b>${p2Name}</b> ${isP2Active ? '<span class="active-badge">รอบปัจจุบัน</span>' : ''}</div>
+                <div class="leave-stats" style="font-size:0.75rem; color:#64748b; margin-bottom:4px;">* โควต้าร่วม 6 วัน 7 ชม. (ปีงบประมาณ ${fy})</div>
+                <div class="leave-stats">ใช้ไป: <b>${formatLeaveAmount(sharedUsedP2)}</b> / คงเหลือ: <b style="color:var(--success)">${formatLeaveAmount(Math.max(0, sharedQuotaHrs - sharedUsedP2))}</b></div>
+                ${buildProgressBar(sharedUsedP2, sharedQuotaHrs)}
+            </div>
+        `;
+        
+        getTabElement('leaveDashboardArea', tabId).innerHTML = dashHtml;
+        const exportSummary = getTabElement('exportLeaveSummary', tabId);
+        if (exportSummary) exportSummary.innerHTML = dashHtml;
+        
+        saveData(tabId);
+    }
+
     function calculate(tabId) {
+        if (tabId === 'leave') {
+            calculateLeave(tabId);
+            return;
+        }
         const salary = toFiniteNumber(getTabElement('salary', tabId).value);
         const plant = getTabElement('plant', tabId).value;
         const grade = getTabElement('grade', tabId).value;
@@ -1987,6 +2404,7 @@
        11. FIX COST
        ========================================================= */
     function renderFixCostList(tabId) {
+        if (tabId === 'leave') return;
         const listElement = getTabElement('fixCostList', tabId);
         if (!listElement) return;
         const isSub = isTabSubcontract(tabId);
@@ -2012,6 +2430,7 @@
         }).join('');
     }
     function updateFixCostItem(tabId, index, field, value) {
+        if (tabId === 'leave') return;
         const item = fixCostData[tabId] && fixCostData[tabId][index];
         if (!item) return;
         if (field === 'amount') item.amount = toFiniteNumber(value);
@@ -2020,12 +2439,14 @@
         calculate(tabId);
     }
     function addFixCostItem(tabId) {
+        if (tabId === 'leave') return;
         fixCostData[tabId].push({ name: '', amount: 0 });
         saveFixCostData(tabId);
         renderFixCostList(tabId);
         calculate(tabId);
     }
     function removeFixCostItem(tabId, index) {
+        if (tabId === 'leave') return;
         const item = fixCostData[tabId] && fixCostData[tabId][index];
         if (!item) return;
         const itemLabel = item.name.trim() || 'รายการนี้';
@@ -2076,10 +2497,16 @@
     function closeModal() {
         modalElements.overlay.classList.remove('is-open');
         modalElements.overlay.setAttribute('aria-hidden', 'true');
+        
+        const leaveModalOverlay = document.getElementById('leaveModal');
+        if (leaveModalOverlay) {
+            leaveModalOverlay.classList.remove('is-open');
+        }
+
         modalState.tabId = null;
         modalState.dateKey = null;
     }
-    const isModalOpen = () => modalElements.overlay.classList.contains('is-open');
+    const isModalOpen = () => modalElements.overlay.classList.contains('is-open') || document.getElementById('leaveModal').classList.contains('is-open');
     /* 
        ★ การทำงานของปุ่มลัด (Preset): 
        สามารถกดเลือก "เที่ยง" ควบคู่กับ "กะเย็น" ในวันเดียวกันได้ โดยไม่ล้างค่ากันเอง
@@ -2168,13 +2595,48 @@
         refreshCalendar(tabId, { syncSliders: true });
         closeModal();
     }
+
+    /* LEAVE MODAL FUNCTION */
+    function openLeaveModal(tabId, dateKey) {
+        modalState.tabId = tabId;
+        modalState.dateKey = dateKey;
+        const entry = calendarData[tabId][dateKey] || {};
+        const parts = dateKey.split('-');
+        document.getElementById('leaveModalTitle').textContent = `บันทึกวันลา: ${parts[2]} ${MONTH_THAI_NAMES[Number(parts[1]) - 1]} (${parts[0]})`;
+        
+        const typeRadios = document.getElementsByName('leaveType');
+        let typeFound = false;
+        typeRadios.forEach(r => { if (r.value === entry.type) { r.checked = true; typeFound = true; } });
+        if (!typeFound) document.querySelector('input[name="leaveType"][value="annual"]').checked = true; // Default
+        
+        document.getElementById('leaveHoursInput').value = entry.hours || 8;
+        document.getElementById('leaveDetailInput').value = entry.detail || '';
+        
+        document.getElementById('leaveModal').classList.add('is-open');
+    }
+    
+    function saveLeaveData() {
+        const type = document.querySelector('input[name="leaveType"]:checked').value;
+        const hours = clamp(parseInt(document.getElementById('leaveHoursInput').value, 10) || 8, 1, 8);
+        const detail = document.getElementById('leaveDetailInput').value.trim();
+        
+        if (type === 'none') {
+            delete calendarData['leave'][modalState.dateKey];
+        } else {
+            calendarData['leave'][modalState.dateKey] = { type, hours, detail };
+        }
+        saveCalendarData('leave'); 
+        refreshCalendar('leave', { syncSliders: false });
+        closeModal();
+    }
+
     /* =========================================================
        13. RESET
        ========================================================= */
     function resetData(tabId) {
         showCustomDialog({
             title: 'ยืนยันล้างข้อมูลทั้งหมด',
-            message: `ต้องการล้างข้อมูลชั่วโมง OT และการตั้งค่าทั้งหมดในแท็บนี้ใช่หรือไม่?<br><small style="color:var(--danger);">* แนะนำให้กดสำรองไฟล์ไว้ก่อนหากต้องการเก็บข้อมูล</small>`,
+            message: `ต้องการล้างข้อมูลและตั้งค่าทั้งหมดในแท็บนี้ใช่หรือไม่?<br><small style="color:var(--danger);">* แนะนำให้กดสำรองไฟล์ไว้ก่อนหากต้องการเก็บข้อมูล</small>`,
             icon: '⚠️',
             isConfirm: true,
             onConfirm: () => {
@@ -2182,12 +2644,22 @@
                     .filter((key) => key.startsWith(STORAGE_PREFIX) && key.includes(`_${tabId}`))
                     .forEach((key) => storage.remove(key));
                 calendarData[tabId] = {};
-                fixCostData[tabId] = cloneDefaultFixCosts();
-                getTabElement('salary', tabId).value = DEFAULT_SALARY;
-                getTabElement('plant', tabId).value = "BANPHO PLANT";
-                getTabElement('grade', tabId).value = "G4";
-                renderFixCostList(tabId);
-                handleDateChange(tabId);
+                fixCostData[tabId] = tabId === 'leave' ? [] : cloneDefaultFixCosts();
+                
+                // 🔥 รีเซ็ตกลับไปเป็นเดือนปัจจุบันทันที
+                const now = new Date();
+                getTabElement('month', tabId).value = MONTH_NAMES[now.getMonth()];
+                getTabElement('year', tabId).value = now.getFullYear();
+
+                if (tabId === 'leave') { 
+                    getTabElement('annualQuota', tabId).value = 6; 
+                } else { 
+                    getTabElement('salary', tabId).value = DEFAULT_SALARY; 
+                    getTabElement('plant', tabId).value = "BANPHO PLANT"; 
+                    getTabElement('grade', tabId).value = "G5"; 
+                    renderFixCostList(tabId); 
+                }
+                refreshCalendar(tabId, { syncSliders: true });
             }
         });
     }
@@ -2221,62 +2693,100 @@
     function buildExportSheet(tabId, monthName, year) {
         const sheet = document.createElement('div');
         sheet.className = 'export-sheet';
-        const plantVal = getTabElement('plant', tabId).value;
-        const gradeVal = getTabElement('grade', tabId).value;
-        const gradeText = isSubcontract(gradeVal) ? SUBCONTRACT_LABEL : `Grade ${gradeVal}`;
         const title = document.createElement('h1');
         title.className = 'export-title';
-        title.innerHTML = `สรุปผลตอบแทน & ค่าใช้จ่าย (OT Report)<br>ประจำเดือน ${escapeHtml(monthName)} ${escapeHtml(year)}<br><small style="font-size: 1.6rem; color: #4b5563;">${escapeHtml(plantVal)} [${escapeHtml(gradeText)}]</small>`;
+        
         const summaryClone = getTabElement('exportArea', tabId).cloneNode(true);
         summaryClone.removeAttribute('id');
         summaryClone.querySelectorAll('[id]').forEach((node) => node.removeAttribute('id'));
         summaryClone.classList.add('export-card');
+        
         const table = document.createElement('table');
         table.className = 'export-table';
-        table.innerHTML = `
-            <thead>
-                <tr>
-                    <th style="width: 12%;">วันที่</th>
-                    <th style="width: 10%;">1.5x</th>
-                    <th style="width: 12%;">1.5x(L)</th>
-                    <th style="width: 10%;">2.0x</th>
-                    <th style="width: 10%;">3.0x</th>
-                    <th style="width: 46%;">รายละเอียดงาน (Detail)</th>
-                </tr>
-            </thead>
-            <tbody>
-        `;
+
         const { monthIndex, daysInMonth } = getSelectedPeriod(tabId);
         let hasData = false;
         let tbodyHtml = '';
-        for (let day = 1; day <= daysInMonth; day++) {
-            const dateKey = buildDateKey(year, monthIndex, day);
-            const entry = calendarData[tabId][dateKey];
-            if (entry) {
-                const h15 = getDayHours(entry, '1.5');
-                const h15l = getDayHours(entry, '1.5l');
-                const h20 = getDayHours(entry, '2.0');
-                const h30 = getDayHours(entry, '3.0');
-                const detailStr = entry.detail ? escapeHtml(entry.detail) : '';
-                if (h15 > 0 || h15l > 0 || h20 > 0 || h30 > 0 || detailStr !== '') {
+
+        if (tabId === 'leave') {
+            title.innerHTML = `สรุปประวัติการลา (Leave Report)<br>ประจำเดือน ${escapeHtml(monthName)} ${escapeHtml(year)}`;
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th style="width: 20%;">วันที่</th>
+                        <th style="width: 20%;">ประเภทการลา</th>
+                        <th style="width: 20%;">จำนวน</th>
+                        <th style="width: 40%;">รายละเอียดงาน (Detail)</th>
+                    </tr>
+                </thead>
+                <tbody>
+            `;
+            for (let day = 1; day <= daysInMonth; day++) {
+                const entry = calendarData[tabId][buildDateKey(year, monthIndex, day)];
+                if (entry && entry.type) {
                     hasData = true;
+                    let typeLabel = '';
+                    if (entry.type === 'annual') typeLabel = '🏖️ พักร้อน'; 
+                    if (entry.type === 'sick') typeLabel = '🤒 ลาป่วย'; 
+                    if (entry.type === 'personal') typeLabel = '💼 ลากิจ';
                     tbodyHtml += `
                         <tr>
                             <td>${day} ${monthName.substring(0,3)}</td>
-                            <td>${getOtTimeText(h15, '1.5')}</td>
-                            <td>${getOtTimeText(h15l, '1.5l')}</td>
-                            <td>${getOtTimeText(h20, '2.0')}</td>
-                            <td>${getOtTimeText(h30, '3.0')}</td>
-                            <td class="detail-col">${detailStr || '-'}</td>
+                            <td>${typeLabel}</td>
+                            <td>${formatLeaveAmount(entry.hours)}</td>
+                            <td class="detail-col">${escapeHtml(entry.detail || '-')}</td>
                         </tr>
                     `;
                 }
             }
+        } else {
+            const plantVal = getTabElement('plant', tabId).value;
+            const gradeVal = getTabElement('grade', tabId).value;
+            const gradeText = isSubcontract(gradeVal) ? SUBCONTRACT_LABEL : `Grade ${gradeVal}`;
+            title.innerHTML = `สรุปผลตอบแทน & ค่าใช้จ่าย (OT Report)<br>ประจำเดือน ${escapeHtml(monthName)} ${escapeHtml(year)}<br><small style="font-size: 1.6rem; color: #4b5563;">${escapeHtml(plantVal)} [${escapeHtml(gradeText)}]</small>`;
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th style="width: 12%;">วันที่</th>
+                        <th style="width: 10%;">1.5x</th>
+                        <th style="width: 12%;">1.5x(L)</th>
+                        <th style="width: 10%;">2.0x</th>
+                        <th style="width: 10%;">3.0x</th>
+                        <th style="width: 46%;">รายละเอียดงาน (Detail)</th>
+                    </tr>
+                </thead>
+                <tbody>
+            `;
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateKey = buildDateKey(year, monthIndex, day);
+                const entry = calendarData[tabId][dateKey];
+                if (entry) {
+                    const h15 = getDayHours(entry, '1.5');
+                    const h15l = getDayHours(entry, '1.5l');
+                    const h20 = getDayHours(entry, '2.0');
+                    const h30 = getDayHours(entry, '3.0');
+                    const detailStr = entry.detail ? escapeHtml(entry.detail) : '';
+                    if (h15 > 0 || h15l > 0 || h20 > 0 || h30 > 0 || detailStr !== '') {
+                        hasData = true;
+                        tbodyHtml += `
+                            <tr>
+                                <td>${day} ${monthName.substring(0,3)}</td>
+                                <td>${getOtTimeText(h15, '1.5')}</td>
+                                <td>${getOtTimeText(h15l, '1.5l')}</td>
+                                <td>${getOtTimeText(h20, '2.0')}</td>
+                                <td>${getOtTimeText(h30, '3.0')}</td>
+                                <td class="detail-col">${detailStr || '-'}</td>
+                            </tr>
+                        `;
+                    }
+                }
+            }
         }
+        
         if (hasData) {
             table.innerHTML += tbodyHtml + '</tbody>';
         } else {
-            table.innerHTML += `<tr><td colspan="6" style="padding: 30px; color: #9ca3af;">ไม่มีบันทึก OT หรือรายละเอียดงานในเดือนนี้</td></tr></tbody>`;
+            table.innerHTML += `<tr><td colspan="6" style="padding: 30px; color: #9ca3af;">ไม่มีบันทึกข้อมูลในเดือนนี้</td></tr></tbody>`;
         }
         sheet.append(title, summaryClone, table);
         return sheet;
@@ -2309,7 +2819,7 @@
         try {
             if (document.fonts && document.fonts.ready) await document.fonts.ready;
             const canvas = await window.html2canvas(sheet, { scale: 1, backgroundColor: '#ffffff' });
-            triggerDownload(canvas.toDataURL('image/jpeg', 0.9), `OT_Report_${monthName}_${year}.jpg`);
+            triggerDownload(canvas.toDataURL('image/jpeg', 0.9), `Report_${tabId}_${monthName}_${year}.jpg`);
         } catch (error) {
             console.error('[export] Failed to export report', error);
             showCustomDialog({
@@ -2372,6 +2882,7 @@
             case 'add-fix-cost':          addFixCostItem(tabId); break;
             case 'remove-fix-cost':       removeFixCostItem(tabId, Number(target.dataset.index)); break;
             case 'open-day':              openDayModal(tabId, target.dataset.dateKey); break;
+            case 'open-leave-day':        openLeaveModal(tabId, target.dataset.dateKey); break;
             case 'export':                exportToJPEG(tabId, target); break;
             case 'backup-export':         exportBackupFile(); break;
             case 'backup-import-click': {
@@ -2407,7 +2918,24 @@
     function handleAppChange(event) {
         const target = event.target;
         const { action, tab: tabId } = target.dataset;
-        if (action === 'change-period') handleDateChange(tabId);
+        if (action === 'change-period') {
+            // 🔗 GLOBAL SYNC: เมื่อเปลี่ยนเดือนในแท็บใดแท็บหนึ่ง ให้อัปเดตทุกแท็บพร้อมกันทันที
+            const newMonth = getTabElement('month', tabId).value;
+            const newYear = getTabElement('year', tabId).value;
+            
+            storage.setRaw(STORAGE_PREFIX + 'global_month', newMonth);
+            storage.setRaw(STORAGE_PREFIX + 'global_year', newYear);
+            
+            TAB_IDS.forEach(tId => {
+                const mEl = getTabElement('month', tId);
+                const yEl = getTabElement('year', tId);
+                if (mEl && yEl) {
+                    mEl.value = newMonth;
+                    yEl.value = newYear;
+                    refreshCalendar(tId, { syncSliders: tId !== 'leave' });
+                }
+            });
+        }
         else if (action === 'change-plant') {
             refreshCalendar(tabId, { syncSliders: false });
             calculate(tabId);
@@ -2422,10 +2950,17 @@
     }
     function handleAppKeydown(event) {
         const target = event.target;
-        if (target.dataset.action !== 'open-day') return;
-        if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            openDayModal(target.dataset.tab, target.dataset.dateKey);
+        if (target.dataset.action === 'open-day') {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                openDayModal(target.dataset.tab, target.dataset.dateKey);
+            }
+        }
+        if (target.dataset.action === 'open-leave-day') {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                openLeaveModal(target.dataset.tab, target.dataset.dateKey);
+            }
         }
     }
     function wireEvents() {
@@ -2463,14 +2998,24 @@
             }
         });
         manualInputsBox.style.display = 'none';
+        
         // Modal Events
         document.getElementById('dayModalForm').addEventListener('submit', (event) => {
             event.preventDefault(); 
             saveDayData();
         });
+        document.getElementById('leaveModalForm').addEventListener('submit', (event) => {
+            event.preventDefault(); 
+            saveLeaveData();
+        });
+        
         document.getElementById('modalCancelBtn').addEventListener('click', closeModal);
         document.getElementById('modalCloseXBtn').addEventListener('click', closeModal);
+        document.getElementById('leaveModalCancelBtn').addEventListener('click', closeModal);
+        document.getElementById('leaveModalCloseBtn').addEventListener('click', closeModal);
+        
         modalElements.noOtCheckbox.addEventListener('change', toggleNoOT);
+        
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Escape' && isModalOpen()) closeModal();
         });
@@ -2485,9 +3030,12 @@
         const mainContentContainer = document.getElementById('appMainContent');        
         sidebarContainer.insertAdjacentHTML('beforeend', buildSidebarMarkup(tabId));
         mainContentContainer.insertAdjacentHTML('beforeend', buildMainContentMarkup(tabId));
-        renderFixCostList(tabId);
+        if (tabId !== 'leave') {
+            renderFixCostList(tabId);
+        }
+        
         const hasSavedSliderState = loadData(tabId);
-        refreshCalendar(tabId, { syncSliders: !hasSavedSliderState });
+        refreshCalendar(tabId, { syncSliders: tabId !== 'leave' && !hasSavedSliderState });
     }
     function init() {
         TAB_IDS.forEach(initTab);
